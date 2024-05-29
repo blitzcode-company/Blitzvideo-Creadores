@@ -1,0 +1,10 @@
+<app-header></app-header>
+
+
+<h1>Crea tu canal</h1>
+
+<form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
+    Nombre de usuario <input type="text" name="nombre" [(ngModel)]="canal.nombre" > <br>
+    Descripcion <input type="text"  name="descripcion" [(ngModel)]="canal.descripcion" > <br>
+<button>Crear</button>
+</form>

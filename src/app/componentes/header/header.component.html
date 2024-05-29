@@ -1,0 +1,25 @@
+<h1>BlitzVideo - Broadcast Yourself</h1>
+
+<ul>
+    <li>
+        <a routerLink="/">Inicio</a>
+    </li>
+    <li *ngIf="!status.isLoggedIn">
+        <a routerLink="/login">Login</a>
+    </li>
+    <li *ngIf="!status.isLoggedIn">
+        <a routerLink="/registro">Registro</a>
+    </li>
+    <li *ngIf="status.isLoggedIn">
+        <a routerLink="/subirVideo">Subir video</a>
+    </li>
+    <li *ngIf="status.isLoggedIn && canalNombre">
+        <a>{{ canalNombre }}</a>
+    </li>
+    <li *ngIf="status.isLoggedIn && !canalNombre">
+        <a routerLink="/crearCanal">Crear canal</a>
+    </li>
+    <li *ngIf="status.isLoggedIn">
+        <a routerLink="/#" (click)="logout()">Cerrar sesion</a>
+    </li>
+</ul>
