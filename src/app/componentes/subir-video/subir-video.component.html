@@ -1,27 +1,33 @@
 <app-header></app-header>
-
-<div class="upload-container">
-  <h2>Subir Video</h2>
-  <form #form="ngForm" (ngSubmit)="onSubmit(form)">
-    <div class="form-group">
-      <label for="titulo">Título:</label>
-      <input type="text" id="titulo" [(ngModel)]="videos.titulo" name="titulo"/>
+<div class="box-root padding-bottom--24 flex-flex flex-justifyContent--center">
+  <h2>Subir video</h2>
+</div>
+<div class="formbg-outer">
+  <div class="formbg">
+    <div class="formbg-inner padding-horizontal--48">
+      <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
+        <div class="field padding-bottom--24 alineado">
+          <input type="text" id="titulo" placeholder="Titulo del video" [(ngModel)]="videos.titulo" name="titulo"/>
+        </div>
+        <div class="field padding-bottom--24 alineado">
+          <textarea id="descripcion" placeholder="Descripcion" [(ngModel)]="videos.descripcion" name="descripcion"></textarea>     
+        </div>
+        <div class="field padding-bottom--24 alineado">
+          <input type="file" id="video" (change)="this.onVideoUpload($event)" >
+        </div>
+        <div class="field padding-bottom--24">
+          <button (click)="listarEtiquetas()">Seleccionar etiquetas</button>
+          <div class="etiquetas-lista">
+            <div *ngFor="let etiqueta of etiquetas" class="etiqueta-container">
+              <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
+              <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
+            </div>
+          </div>
+        </div>
+        <div class="field padding-bottom--24">
+          <button class="boton" type="submit">Subir video</button>
+        </div>
+      </form>
     </div>
-    <div class="form-group">
-      <label for="descripcion">Descripción:</label>
-      <textarea id="descripcion" [(ngModel)]="videos.descripcion" name="descripcion"></textarea>
-    </div>
-    <div class="form-group">
-      <input type="file" id="video" (change)="this.onVideoUpload($event)" >
-    </div>
-    <div class="form-group">
-      <button (click)="listarEtiquetas()">Seleccionar etiquetas</button>
-      <div *ngFor="let etiqueta of etiquetas">
-        <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
-        <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
-      </div>
-    </div>
-    
-    <button type="submit" >Subir</button>
-  </form>
+  </div>
 </div>
