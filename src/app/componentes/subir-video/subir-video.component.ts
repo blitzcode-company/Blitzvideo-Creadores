@@ -4,6 +4,8 @@ import { VideosService } from '../../servicios/videos.service';
 import { AuthService } from '../../servicios/auth.service';
 import { Videos } from '../../clases/videos';
 import { Canal } from '../../clases/canal';
+import { FormBuilder } from '@angular/forms';
+import { Etiqueta } from '../../clases/etiqueta';
 
 
 @Component({
@@ -18,13 +20,17 @@ export class SubirVideoComponent implements OnInit{
   canal:any;
   canals = new Canal();
   canalId:any;
+  etiquetas: Etiqueta[] = [];
+  etiquetasSeleccionadas: Etiqueta[] = []; 
 
 
-  constructor(private videoService: VideosService, private authService: AuthService) { }
+  constructor(private videoService: VideosService, private authService: AuthService,private fb: FormBuilder) {
+   }
 
   ngOnInit() {
     this.obtenerUsuario();
     this.obtenerCanal();
+    this.listarEtiquetas()
   }
 
   
@@ -59,6 +65,29 @@ export class SubirVideoComponent implements OnInit{
     }  
   }
 
+  listarEtiquetas() {
+    this.videoService.listarEtiquetas().subscribe(
+      res => {
+        this.etiquetas = res;
+        this.videos.etiquetas = this.etiquetas;
+        console.log(this.videos.etiquetas)
+      },
+      error => {
+        console.error('Error al obtener las etiquetas:', error);
+      }
+    );
+  }
+
+
+  onEtiquetaSeleccionada(etiqueta: Etiqueta) {
+    const index = this.etiquetasSeleccionadas.findIndex(e => e.id === etiqueta.id);
+    if (index === -1) {
+      this.etiquetasSeleccionadas.push(etiqueta);
+    } else {
+      this.etiquetasSeleccionadas.splice(index, 1);
+    }
+  }
+
   subirVideo() {
     if (this.videos.video && this.canalId && this.videos.titulo && this.videos.descripcion) {
       let formData = new FormData();
@@ -66,6 +95,10 @@ export class SubirVideoComponent implements OnInit{
       formData.set('titulo', this.videos.titulo);
       formData.set('descripcion', this.videos.descripcion);
 
+      this.etiquetasSeleccionadas.forEach((etiqueta, index) => {
+        formData.append(`etiquetas[${index}]`, etiqueta.id.toString()); 
+      });
+      
       this.videoService.subirVideo(this.canalId, formData).subscribe(
         res => {
           console.log('Video subido con éxito', res);

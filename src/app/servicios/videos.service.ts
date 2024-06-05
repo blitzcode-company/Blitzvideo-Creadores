@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Videos } from '../clases/videos';
+import { Etiqueta } from '../clases/etiqueta';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
@@ -10,6 +11,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class VideosService {
 
   private api = 'http://localhost:8001/api/v1/videos/'
+  private etiquetas = 'http://localhost:8001/api/v1/etiquetas/'
 
   constructor(private httpClient: HttpClient, private cookie:CookieService) { }
 
@@ -22,6 +24,12 @@ export class VideosService {
     }
     const url = `${this.api}listar`;
     return this.httpClient.get<Videos>(url, httpOptions);
+  }
+
+  listarEtiquetas(): Observable<Etiqueta[]> {
+    const httpOptions = {
+    }
+    return this.httpClient.get<Etiqueta[]>(this.etiquetas, httpOptions);
   }
 
   obtenerInformacionVideo(idVideo: any): Observable<any> {

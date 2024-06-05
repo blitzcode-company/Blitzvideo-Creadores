@@ -3,7 +3,6 @@
 <div class="upload-container">
   <h2>Subir Video</h2>
   <form #form="ngForm" (ngSubmit)="onSubmit(form)">
- 
     <div class="form-group">
       <label for="titulo">Título:</label>
       <input type="text" id="titulo" [(ngModel)]="videos.titulo" name="titulo"/>
@@ -15,6 +14,14 @@
     <div class="form-group">
       <input type="file" id="video" (change)="this.onVideoUpload($event)" >
     </div>
+    <div class="form-group">
+      <button (click)="listarEtiquetas()">Seleccionar etiquetas</button>
+      <div *ngFor="let etiqueta of etiquetas">
+        <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
+        <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
+      </div>
+    </div>
+    
     <button type="submit" >Subir</button>
   </form>
 </div>

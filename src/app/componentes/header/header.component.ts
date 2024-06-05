@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { AuthService } from '../../servicios/auth.service';
 import { Router } from '@angular/router';
 import { StatusService } from '../../servicios/status.service';
@@ -69,7 +69,23 @@ export class HeaderComponent implements OnInit{
 
   }
 
+  isDropdownOpen = false;
+
+  toggleDropdown(event: Event) {
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+    console.log('Dropdown toggled:', this.isDropdownOpen); // Para depuración
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown')) {
+      this.isDropdownOpen = false;
+    }
+  }
+}
 
 
  
-}
+
