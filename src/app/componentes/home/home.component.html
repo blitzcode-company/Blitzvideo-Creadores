@@ -1,2 +1,13 @@
 <app-header></app-header>
-
+<div class="sidebar" *ngIf="canalNombre">
+    <img class="fotoPerfil" [src]="usuario.foto" alt="">
+    <h1>{{ canalNombre }}</h1>
+    <ul class="menu">
+        <hr>
+        <li class="menu-item" routerLink="/misVideos">Mis videos</li>
+        <li class="menu-item">Editar canal</li>
+    </ul>
+</div>
+<div *ngIf="!canalNombre">
+    <p>No tienes un canal asociado, <a href="/#/crearCanal">Haz click aqui para crear uno</a></p> 
+</div>

@@ -30,7 +30,6 @@ export class CanalService {
     const url = `${this.api}${userId}`;
     const httpOptions = {
       headers: new HttpHeaders({
-          'Content-Type' : 'application/json',
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
       })
     }

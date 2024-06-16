@@ -13,6 +13,7 @@ export class VideosService {
   private api = 'http://localhost:8001/api/v1/videos/'
   private etiquetas = 'http://localhost:8001/api/v1/etiquetas/'
 
+
   constructor(private httpClient: HttpClient, private cookie:CookieService) { }
 
   listarVideo():Observable<any> {
@@ -25,6 +26,9 @@ export class VideosService {
     const url = `${this.api}listar`;
     return this.httpClient.get<Videos>(url, httpOptions);
   }
+
+ 
+
 
   listarEtiquetas(): Observable<Etiqueta[]> {
     const httpOptions = {
@@ -39,9 +43,20 @@ export class VideosService {
       })
     }
 
-    const url = `${this.api}${idVideo}/info`;
+    const url = `${this.api}${idVideo}`;
     return this.httpClient.get(url, httpOptions);
   }
+
+  listarVideosDelUsuario():Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+          'Content-Type' : 'application/json',
+      })
+    }
+    const url = `${this.api}`;
+    return this.httpClient.get<Videos>(url, httpOptions);
+  }
+
 
 
   subirVideo(idCanal:any, video:FormData): Observable<any> {
@@ -67,15 +82,14 @@ export class VideosService {
     return this.httpClient.delete(url, httpOptions);
   }
 
-  editarVideo(idVideo: string, video: Videos): Observable<any> {
+  editarVideo(idVideo: any, video:FormData): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
-          'Content-Type' : 'application/json',
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
       })
     }
 
-    const url = `${this.api}editar/${idVideo}`;
+    const url = `${this.api}${idVideo}`;
     return this.httpClient.post(url, video, httpOptions);
   }
 

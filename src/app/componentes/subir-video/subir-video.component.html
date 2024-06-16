@@ -16,13 +16,18 @@
           <input type="file" id="video" (change)="this.onVideoUpload($event)" >
         </div>
         <div class="field padding-bottom--24">
-          <button (click)="listarEtiquetas()">Seleccionar etiquetas</button>
+          <button type="button" (click)="listarEtiquetas()">Seleccionar etiquetas</button>
           <div class="etiquetas-lista">
-            <div *ngFor="let etiqueta of etiquetas" class="etiqueta-container">
-              <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
-              <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
+            <div class="etiqueta-row" *ngFor="let etiquetaRow of etiquetas | chunkPipe:5">
+              <div *ngFor="let etiqueta of etiquetaRow" class="etiqueta-container">
+                <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
+                <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
+              </div>
             </div>
           </div>
+        </div>
+        <div *ngFor="let alerta of alerta">
+          {{ alerta }}
         </div>
         <div class="field padding-bottom--24">
           <button class="boton" type="submit">Subir video</button>

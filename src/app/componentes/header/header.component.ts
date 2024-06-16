@@ -34,17 +34,13 @@ export class HeaderComponent implements OnInit{
 
 
   obtenerUsuario() {
-    this.api.mostrarUserLogueado().subscribe(
-      (res) => {
-        this.usuario = res;
-        console.log(res);
-        this.obtenerCanal();
+    this.api.usuario$.subscribe(user => {
+      this.usuario = user;
+      this.obtenerCanal();
 
-      },
-      (error) => {
-        console.error('Error al obtener el usuario:', error);
-      }
-    );
+  
+    });
+    this.api.mostrarUserLogueado().subscribe();
   }
 
 
@@ -54,7 +50,6 @@ export class HeaderComponent implements OnInit{
       if (res.canales && res.canales.length > 0) {
         this.canalId = res.canales[0].id;
         this.canalNombre = res.canales[0].nombre;
-        console.log(res.canales[0].id);
       } else {
         console.error('El usuario no tiene canal hecho');
       }
@@ -74,7 +69,6 @@ export class HeaderComponent implements OnInit{
   toggleDropdown(event: Event) {
     event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
-    console.log('Dropdown toggled:', this.isDropdownOpen); // Para depuración
   }
 
   @HostListener('document:click', ['$event'])

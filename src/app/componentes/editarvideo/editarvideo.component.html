@@ -1,0 +1,29 @@
+<app-header></app-header>
+<div class="box-root padding-bottom--24 flex-flex flex-justifyContent--center">
+  <h2>
+    Edita tu video
+  </h2>
+</div>
+<div class="formbg-outer">
+  <div class="formbg">
+    <div class="formbg-inner padding-horizontal--48">
+      <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
+        <div class="field padding-bottom--24">
+          Editar el titulo
+          <input type="text" id="titulo" [(ngModel)]="video.titulo" name="titulo"> <br>
+        </div>
+        <div class="field padding-bottom--24">
+            Editar la descripcion
+            <input type="text" id="descripcion" [(ngModel)]="video.descripcion" name="descripcion"> <br>
+          </div>
+        <div class="field padding-bottom--24">
+          Cambia el video
+          <input type="file" id="video" (change)="onVideoUpload($event)"> <br>
+        </div>
+        <div class="field padding-bottom--24">
+          <button class="boton" type="submit">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

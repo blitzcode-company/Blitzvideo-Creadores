@@ -1,4 +1,21 @@
-.flex-flex {
+.login-root {
+    background: #fff;
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  .loginbackground {
+    min-height: 692px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .flex-flex {
     display: flex;
   }
   .align-center {
@@ -152,25 +169,3 @@
     font-weight: 600;
     margin: 0 10px;
   }
-  .alineado {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .etiquetas-lista {
-    display: flex;
-    flex-direction: column;
-    width: 40px;
-  }
-
-  .etiqueta-row {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .etiqueta-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  

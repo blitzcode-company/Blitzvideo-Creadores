@@ -1,0 +1,139 @@
+
+.containerPadre {
+    display: flex;
+    flex-direction: row;
+}
+
+
+
+
+
+
+
+
+
+.sidebar {
+    width: 250px;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    height: 100vh;
+    width: 40vh;
+    border: 1px solid #7f8c8d;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+
+.menu {
+    list-style: none;
+    width: 100%;
+    padding:0;
+}
+
+.menu-item {
+    padding: 15px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background-color: #a4a7aa;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.menu-item + .menu-item {
+    border-top: 1px solid #7f8c8d;
+}
+
+.fotoPerfil {
+    margin-top: 40px;
+    width: 200px;
+    height: 200px;
+    border-radius: 100px;
+
+}
+
+.selected {
+    color: blue;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 40px;
+  }
+  
+  .fila {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .miniatura {
+    border-radius: 10px;
+  }
+  
+  .canalNombre {
+    font-size: 1em; 
+    color:#4b4b4b;
+  }
+  
+  .video {
+    width: 320px; 
+    max-width: calc(50% - 10px); 
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 37vh;
+  }
+
+  .botones {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;    
+  }
+
+  .fotoUser {
+    border-radius: 25px;
+  }
+  
+  @media (min-width: 768px) {
+    .video {
+      max-width: calc(33.33% - 10px);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .video {
+      max-width: calc(25% - 10px); 
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .video {
+      width: 100%;
+      max-width: none; 
+    }
+  }
+  
+  

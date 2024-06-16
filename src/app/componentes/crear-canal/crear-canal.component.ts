@@ -18,6 +18,8 @@ export class CrearCanalComponent {
 
 usuario:any;
 canal = new Canal();
+imagenSeleccionada: File | null = null;
+imagenUrl:any;
 
 
 ngOnInit() {
@@ -33,14 +35,19 @@ obtenerUsuario() {
 }
 
 crearCanal() {
-  this.canalService.crearCanal(this.usuario.id, this.canal).subscribe(res =>  {
-  });
+  this.canalService.crearCanal(this.usuario.id, this.canal).subscribe(() => {
+    console.log('Canal creado correctamente');
+    this.router.navigate(['/']);
+    });
 }
+
+
 
 
 onSubmit(form: NgForm) {
   if (form.valid) {
     this.crearCanal();
+    this.router.navigate(['/']);
   }
 }
 

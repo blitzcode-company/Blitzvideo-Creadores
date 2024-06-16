@@ -1,10 +1,26 @@
 <app-header></app-header>
-
-
-<h1>Crea tu canal</h1>
-
-<form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
-    Nombre de usuario <input type="text" name="nombre" [(ngModel)]="canal.nombre" > <br>
-    Descripcion <input type="text"  name="descripcion" [(ngModel)]="canal.descripcion" > <br>
-<button>Crear</button>
-</form>
+<div class="box-root padding-bottom--24 flex-flex flex-justifyContent--center">
+     <h2 >
+    Crea tu canal     
+    </h2>
+  </div>
+<div class="formbg-outer">
+    <div class="formbg">
+      
+      <div class="formbg-inner padding-horizontal--48">
+         <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
+          <div class="field padding-bottom--24">
+            Nombre de usuario <input type="text" name="nombre" [(ngModel)]="canal.nombre" > <br>
+        </div>
+          <div class="field padding-bottom--24">
+            Descripcion <input type="text"  name="descripcion" [(ngModel)]="canal.descripcion" > <br>
+        </div>
+     
+          <div class="field padding-bottom--24">
+            <button class="boton">Crear</button>
+          </div>
+         
+        </form>
+      </div>
+    </div>
+  </div>

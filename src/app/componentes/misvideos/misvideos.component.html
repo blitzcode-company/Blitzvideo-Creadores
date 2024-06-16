@@ -1,0 +1,33 @@
+<app-header></app-header>
+<div class="containerPadre">
+    <div class="sidebar" *ngIf="canalNombre">
+        <img class="fotoPerfil" [src]="usuario.foto" alt="">
+        <h1>{{ canalNombre }}</h1>
+        <ul class="menu">
+            <hr>
+            <li class="menu-item selected" routerLink="/misVideos">Mis videos</li>
+            <li class="menu-item">Editar canal</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <div class="fila" *ngFor="let chunk of videos | chunkPipe: 4">
+            <div class="video" *ngFor="let video of chunk">
+                <a [routerLink]="['/video', video.id]">
+                <img class="miniatura" [src]="video.miniatura" width="290" height="160" alt="miniatura">
+                <h2>{{ video.titulo }}</h2>
+                <hr>
+                </a>
+                <br>
+                <div class="botones">
+                    <a [routerLink]="['/editarVideo', video.id]">Editar</a>
+                    <a href="">Borrar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+<div *ngIf="!canalNombre">
+    <p>No tienes acceso a este sitio</p> 
+</div>

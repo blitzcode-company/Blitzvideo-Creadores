@@ -6,6 +6,8 @@ import { Videos } from '../../clases/videos';
 import { Canal } from '../../clases/canal';
 import { FormBuilder } from '@angular/forms';
 import { Etiqueta } from '../../clases/etiqueta';
+import { Route, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -22,9 +24,15 @@ export class SubirVideoComponent implements OnInit{
   canalId:any;
   etiquetas: Etiqueta[] = [];
   etiquetasSeleccionadas: Etiqueta[] = []; 
+  alerta: string[] = [];
 
 
-  constructor(private videoService: VideosService, private authService: AuthService,private fb: FormBuilder) {
+
+  constructor(private videoService: VideosService, 
+              private authService: AuthService,
+              private fb: FormBuilder, 
+              public router: Router,
+              public location: Location) {
    }
 
   ngOnInit() {
@@ -102,21 +110,31 @@ export class SubirVideoComponent implements OnInit{
       this.videoService.subirVideo(this.canalId, formData).subscribe(
         res => {
           console.log('Video subido con éxito', res);
+          this.alerta.push('Video subido con éxito');
+
         },
         error => {
           console.error('Error al subir el video', error);
+          this.alerta.push('Error al subir el video');
         }
       );
     } else {
+      this.alerta.push('Faltan datos requeridos para subir el video');
       console.error('Faltan datos requeridos para subir el video');
     }
+  
   }
+
 
   onSubmit(form: NgForm) {
     if (form.valid && this.videos.video) {
+      this.alerta.push('Formulario válido, enviando video...');
       console.log('Formulario válido, enviando video...');
       this.subirVideo();
+    
+
     } else {
+      this.alerta.push('Formulario no válido o archivo de video no seleccionado');
       console.error('Formulario no válido o archivo de video no seleccionado');
     }
   }
