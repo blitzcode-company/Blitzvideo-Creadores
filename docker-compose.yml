@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  frontendcreadores:
+    container_name: frontendcreadores
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: serve-frontendcreadores
+      args:
+        CLIENT_ID: "1"
+        CLIENT_SECRET: "lbzFPOR6PyvT8RurLQsWjMHZ67UTisBIUkTEZ1m7"
+    ports:
+      - "3001:80"
+    networks:
+      - blitzvideo-api_default
+
+networks:
+  blitzvideo-api_default:
+    external: true
+

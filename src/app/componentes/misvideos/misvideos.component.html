@@ -21,13 +21,21 @@
                 <br>
                 <div class="botones">
                     <a [routerLink]="['/editarVideo', video.id]">Editar</a>
-                    <a href="">Borrar</a>
+                    <a href="" id="abrirModal">Borrar</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-  
+<div id="ventanaModal" class="modal">
+    <div class="modal-content">
+        <span class="cerrar">&times;</span>
+        <h2>Ventana modal</h2>
+        <p>Esto es el texto de la ventana</p>
+    </div>
+  </div>  
+
+
 <div *ngIf="!canalNombre">
     <p>No tienes acceso a este sitio</p> 
 </div>
