@@ -23,7 +23,7 @@ git clone https://github.com/blitzcode-company/Blitzvideo-Creadores.git
 -   Ingresamos al proyecto `cd Blitzvideo-Creadores` y ejecutamos:
 
 ```
-npm install
+ npm install --legacy-peer-deps     
 ```
 
 -   Generamos el contenedor de Blitzvideo-Creadores con:
