@@ -20,7 +20,7 @@ git clone git@github.com:blitzcode-company/Blitzvideo-Creadores.git
 git clone https://github.com/blitzcode-company/Blitzvideo-Creadores.git
 ```
 
--   Ingresamos al proyecto `cd Blitzvideo-Visualizer` y ejecutamos:
+-   Ingresamos al proyecto `cd Blitzvideo-Creadores` y ejecutamos:
 
 ```
 npm install
