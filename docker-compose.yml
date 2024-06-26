@@ -6,9 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
       target: serve-frontendcreadores
-      args:
-        CLIENT_ID: "1"
-        CLIENT_SECRET: "lbzFPOR6PyvT8RurLQsWjMHZ67UTisBIUkTEZ1m7"
     ports:
       - "3001:80"
     networks:

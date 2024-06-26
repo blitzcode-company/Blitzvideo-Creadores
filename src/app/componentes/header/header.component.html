@@ -1,7 +1,7 @@
 <header class="header">
   <div class="container">
-    <a href="http://localhost:4200/#/">
-      <img class="logo" src="../../../assets/images/logo.png" alt="Logo de blitzvideo">
+    <a href="http://localhost:3000/#/">
+      <img class="logo" src="assets/images/logo.png" alt="Logo de blitzvideo">
     </a>
     <nav class="nav"></nav>
     <div class="search-box">
@@ -12,8 +12,8 @@
         <div class="dropdown-content">
           <a *ngIf="status.isLoggedIn && canalNombre" routerLink="/miCanal" class="dropdown-item canal">{{ canalNombre }}</a>
           <img *ngIf="status.isLoggedIn && usuario?.foto" [src]="usuario.foto" alt="User Photo" width="32" height="32" class="avatar">
-          <img *ngIf="status.isLoggedIn && !usuario?.foto" src="../../../assets/images/user.png" alt="Default User" width="48" height="32" class="avatar">
-          <img *ngIf="!status.isLoggedIn" src="../../../assets/images/user.png" alt="Default User" width="48" height="32" class="avatar">
+          <img *ngIf="status.isLoggedIn && !usuario?.foto" src="assets/images/user.png" alt="Default User" width="48" height="32" class="avatar">
+          <img *ngIf="!status.isLoggedIn" src="assets/images/user.png" alt="Default User" width="48" height="32" class="avatar">
         </div>
       </button>
       <div class="dropdown-menu">
@@ -21,8 +21,8 @@
         <a *ngIf="status.isLoggedIn && !canalNombre" routerLink="/crearCanal" class="dropdown-item">Crear canal</a>
         <hr class="dropdown-divider">
         <a *ngIf="status.isLoggedIn" routerLink="/#" (click)="logout()" class="dropdown-item">Cerrar sesión</a>
-        <a *ngIf="!status.isLoggedIn" routerLink="/login" class="dropdown-item">Login</a>
-        <a *ngIf="!status.isLoggedIn" routerLink="/registro" class="dropdown-item">Registro</a>
+        <a *ngIf="!status.isLoggedIn" href="http://localhost:3002/#/" class="dropdown-item">Login</a>
+        <a *ngIf="!status.isLoggedIn" routerLink="http://localhost:3002/#/registro" class="dropdown-item">Registro</a>
       </div>
     </div>
   </div>

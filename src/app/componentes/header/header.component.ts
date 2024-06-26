@@ -60,7 +60,7 @@ export class HeaderComponent implements OnInit{
     localStorage.removeItem("accessToken");
     this.cookie.delete('accessToken');
     this.status.isLoggedIn = false;
-    this.router.navigateByUrl("/login")
+    window.location.href = 'http://localhost:3000'; 
 
   }
 
