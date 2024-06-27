@@ -1,13 +1,11 @@
 version: "3.8"
 services:
   frontendcreadores:
-    container_name: frontendcreadores
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: serve-frontendcreadores
+    image: creador
     ports:
-      - "3001:80"
+      - "3001:3001"
+    volumes:
+      - ./:/app
     networks:
       - blitzvideo-api_default
 
