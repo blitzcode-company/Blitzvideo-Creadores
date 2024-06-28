@@ -11,7 +11,7 @@ describe('CrearCanalComponent', () => {
       declarations: [CrearCanalComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(CrearCanalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

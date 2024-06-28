@@ -13,7 +13,7 @@
     <div class="container">
         <div class="fila" *ngFor="let chunk of videos | chunkPipe: 4">
             <div class="video" *ngFor="let video of chunk">
-                <a [routerLink]="['/video', video.id]">
+                <a href="http://localhost:3000/#/video/{{ video.id }}">
                 <img class="miniatura" [src]="video.miniatura" width="290" height="160" alt="miniatura">
                 <h2>{{ video.titulo }}</h2>
                 <hr>
@@ -21,20 +21,20 @@
                 <br>
                 <div class="botones">
                     <a [routerLink]="['/editarVideo', video.id]">Editar</a>
-                    <a href="" id="abrirModal">Borrar</a>
+                    <a href="#" (click)="abrirModal($event)">Borrar</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div id="ventanaModal" class="modal">
+
+<div id="ventanaModal" class="modal" [class.show]="modalAbierto">
     <div class="modal-content">
-        <span class="cerrar">&times;</span>
+        <span class="cerrar" (click)="cerrarModal()">&times;</span>
         <h2>Ventana modal</h2>
         <p>Esto es el texto de la ventana</p>
     </div>
-  </div>  
-
+</div>
 
 <div *ngIf="!canalNombre">
     <p>No tienes acceso a este sitio</p> 

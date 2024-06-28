@@ -11,7 +11,7 @@ describe('SubirVideoComponent', () => {
       declarations: [SubirVideoComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(SubirVideoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

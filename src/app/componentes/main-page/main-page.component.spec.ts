@@ -11,7 +11,7 @@ describe('MainPageComponent', () => {
       declarations: [MainPageComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(MainPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -11,7 +11,7 @@ describe('MisvideosComponent', () => {
       declarations: [MisvideosComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(MisvideosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -19,6 +19,8 @@ export class MisvideosComponent implements OnInit{
   canals = new Canal();
   canalId:any;
   canalNombre:any
+  modalAbierto = false;
+
 
   videos:any;
 
@@ -37,6 +39,15 @@ export class MisvideosComponent implements OnInit{
       }
     });
     this.authService.mostrarUserLogueado().subscribe();
+  }
+
+  abrirModal(event: Event): void {
+    event.preventDefault();
+    this.modalAbierto = true;
+  }
+
+  cerrarModal(): void {
+    this.modalAbierto = false;
   }
 
   obtenerCanal() {

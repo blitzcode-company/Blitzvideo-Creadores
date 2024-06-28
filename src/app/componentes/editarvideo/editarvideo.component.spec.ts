@@ -11,7 +11,7 @@ describe('EditarvideoComponent', () => {
       declarations: [EditarvideoComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(EditarvideoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
