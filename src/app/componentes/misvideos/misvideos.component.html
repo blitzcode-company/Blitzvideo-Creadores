@@ -21,21 +21,17 @@
                 <br>
                 <div class="botones">
                     <a [routerLink]="['/editarVideo', video.id]">Editar</a>
-                    <a href="#" (click)="abrirModal($event)">Borrar</a>
+                    <a href="#" (click)="eliminarVideo(video.id); $event.preventDefault()">Eliminar</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="ventanaModal" class="modal" [class.show]="modalAbierto">
-    <div class="modal-content">
-        <span class="cerrar" (click)="cerrarModal()">&times;</span>
-        <h2>Ventana modal</h2>
-        <p>Esto es el texto de la ventana</p>
-    </div>
-</div>
+
 
 <div *ngIf="!canalNombre">
     <p>No tienes acceso a este sitio</p> 
 </div>
+
+

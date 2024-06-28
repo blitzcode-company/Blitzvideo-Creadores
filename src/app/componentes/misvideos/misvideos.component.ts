@@ -4,7 +4,8 @@ import { AuthService } from '../../servicios/auth.service';
 import { StatusService } from '../../servicios/status.service';
 import { Canal } from '../../clases/canal';
 import { CanalService } from '../../servicios/canal.service';
-
+import { ModalEliminarVideoComponent } from '../modal-eliminar-video/modal-eliminar-video.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -19,12 +20,17 @@ export class MisvideosComponent implements OnInit{
   canals = new Canal();
   canalId:any;
   canalNombre:any
-  modalAbierto = false;
 
 
   videos:any;
 
-  constructor(private videoService:VideosService, private authService: AuthService, public status:StatusService, private canalService: CanalService ){}
+  constructor(private videoService:VideosService, 
+    private authService: AuthService, 
+    public status:StatusService, 
+    private canalService: CanalService,
+    public dialog: MatDialog){
+
+    }
 
   ngOnInit() {
     this.obtenerUsuario();
@@ -41,13 +47,26 @@ export class MisvideosComponent implements OnInit{
     this.authService.mostrarUserLogueado().subscribe();
   }
 
-  abrirModal(event: Event): void {
-    event.preventDefault();
-    this.modalAbierto = true;
-  }
+  eliminarVideo(idVideo: any) {
+    const dialogRef = this.dialog.open(ModalEliminarVideoComponent, {
+      width: '250px',
+    });
 
-  cerrarModal(): void {
-    this.modalAbierto = false;
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) { // Si el usuario hace clic en Aceptar
+        this.videoService.eliminarVideo(idVideo)
+          .subscribe(
+            (data) => {
+              console.log('Video eliminado correctamente', data);
+              // Aquí podrías añadir lógica adicional después de eliminar el video
+            },
+            (error) => {
+              console.error('Error al eliminar el video', error);
+              // Aquí manejas el error, mostrando un mensaje al usuario o realizando alguna acción específica
+            }
+          );
+      }
+    });
   }
 
   obtenerCanal() {

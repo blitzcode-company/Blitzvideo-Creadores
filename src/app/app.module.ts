@@ -3,7 +3,6 @@ import { BrowserModule, provideClientHydration } from '@angular/platform-browser
 import { CookieService } from 'ngx-cookie-service';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CrearCanalComponent } from './componentes/crear-canal/crear-canal.component';
@@ -18,6 +17,10 @@ import { SubirVideoComponent } from './componentes/subir-video/subir-video.compo
 import { ChunkPipe } from './pipes/chunk.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ModalEliminarVideoComponent } from './componentes/modal-eliminar-video/modal-eliminar-video.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
+
 
 @NgModule({
   declarations: [
@@ -31,14 +34,16 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     MisvideosComponent,
     RegistroComponent,
     SubirVideoComponent,
-    ChunkPipe
+    ChunkPipe,
+    ModalEliminarVideoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    MatDialogModule
   ],
   providers: [
     CookieService,
