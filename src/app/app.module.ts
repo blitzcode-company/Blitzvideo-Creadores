@@ -19,6 +19,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ModalEliminarVideoComponent } from './componentes/modal-eliminar-video/modal-eliminar-video.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { EditarCanalComponent } from './componentes/editar-canal/editar-canal.component';
 
 
 
@@ -35,7 +36,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     RegistroComponent,
     SubirVideoComponent,
     ChunkPipe,
-    ModalEliminarVideoComponent
+    ModalEliminarVideoComponent,
+    EditarCanalComponent
   ],
   imports: [
     BrowserModule,

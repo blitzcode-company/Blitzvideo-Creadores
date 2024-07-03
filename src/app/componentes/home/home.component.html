@@ -1,6 +1,8 @@
 <app-header></app-header>
 <div class="sidebar" *ngIf="canalNombre">
-    <img class="fotoPerfil" [src]="usuario.foto" alt="">
+    <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="">
+
+    <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="">
     <h1>{{ canalNombre }}</h1>
     <ul class="menu">
         <hr>

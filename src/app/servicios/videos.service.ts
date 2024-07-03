@@ -4,66 +4,62 @@ import { Observable } from 'rxjs';
 import { Videos } from '../clases/videos';
 import { Etiqueta } from '../clases/etiqueta';
 import { CookieService } from 'ngx-cookie-service';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VideosService {
 
-  private api = 'http://localhost:8001/api/v1/videos/'
-  private etiquetas = 'http://localhost:8001/api/v1/etiquetas/'
-
-
+  private apiUrl = environment.apiUrl
   constructor(private httpClient: HttpClient, private cookie:CookieService) { }
 
   listarVideo():Observable<any> {
+    const url = `${this.apiUrl}api/v1/videos/listar`;
     const httpOptions = {
       headers: new HttpHeaders({
           'Content-Type' : 'application/json',
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
       })
     }
-    const url = `${this.api}listar`;
     return this.httpClient.get<Videos>(url, httpOptions);
   }
 
   listarEtiquetas(): Observable<Etiqueta[]> {
+    const url = `${this.apiUrl}api/v1/etiquetas/`
     const httpOptions = {
     }
-    return this.httpClient.get<Etiqueta[]>(this.etiquetas, httpOptions);
+    return this.httpClient.get<Etiqueta[]>(url, httpOptions);
   }
 
   obtenerInformacionVideo(idVideo: any): Observable<any> {
+    const url = `${this.apiUrl}api/v1/videos/${idVideo}`;
     const httpOptions = {
       headers: new HttpHeaders({
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
       })
     }
 
-    const url = `${this.api}${idVideo}`;
     return this.httpClient.get(url, httpOptions);
   }
 
   listarVideosDelUsuario():Observable<any> {
+    const url = `${this.apiUrl}api/v1/videos/`;
     const httpOptions = {
       headers: new HttpHeaders({
           'Content-Type' : 'application/json',
       })
     }
-    const url = `${this.api}`;
     return this.httpClient.get<Videos>(url, httpOptions);
   }
 
-
-
   subirVideo(idCanal:any, video:FormData): Observable<any> {
-    
+    const url = `${this.apiUrl}api/v1/videos/canal/${idCanal}`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization' : 'Bearer ' + this.cookie.get('accessToken') 
       })
     }
-    const url = `${this.api}canal/${idCanal}`;
     return this.httpClient.post(url, video, httpOptions); 
    }
 
@@ -75,7 +71,7 @@ export class VideosService {
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
       })
     }
-    const url = `${this.api}${idVideo}`;
+    const url = `${this.apiUrl}api/v1/videos/${idVideo}`;
     return this.httpClient.delete(url, httpOptions);
   }
 
@@ -85,8 +81,7 @@ export class VideosService {
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
       })
     }
-
-    const url = `${this.api}${idVideo}`;
+    const url = `${this.apiUrl}api/v1/videos/${idVideo}`;
     return this.httpClient.post(url, video, httpOptions);
   }
 
@@ -98,8 +93,7 @@ export class VideosService {
           'Authorization' : 'Bearer ' + this.cookie.get('accessToken') 
       })
     }
-
-    const url = `${this.api}buscar/${nombre}`;
+    const url = `${this.apiUrl}api/v1/videos/buscar/${nombre}`;
     return this.httpClient.get(url, httpOptions);
   }
 

@@ -21,6 +21,9 @@ canal = new Canal();
 imagenSeleccionada: File | null = null;
 imagenUrl:any;
 
+portada: File | undefined = undefined;
+
+
 
 ngOnInit() {
   this.obtenerUsuario();
@@ -34,13 +37,31 @@ obtenerUsuario() {
   });
 }
 
-crearCanal() {
-  this.canalService.crearCanal(this.usuario.id, this.canal).subscribe(() => {
-    console.log('Canal creado correctamente');
-    this.router.navigate(['/']);
-    });
+onFileChange(event: any) {
+  const file = event.target.files[0];
+  if (file) {
+    this.canal.portada = file;
+  }
+  console.log('Archivo seleccionado:', this.usuario.foto);
 }
 
+onFileSelected(event: any): void {
+  if (event.target.files.length > 0) {
+    this.portada = event.target.files[0];
+  }
+}
+
+crearCanal() {
+  const formData = new FormData();
+  formData.append('portada', this.canal.portada || ''); 
+  formData.append('nombre', this.canal.nombre); 
+  formData.append('descripcion', this.canal.descripcion);
+
+  this.canalService.crearCanal(this.usuario.id, formData).subscribe(() => {
+    console.log('Canal creado correctamente');
+    this.router.navigate(['/']);
+  });
+}
 
 
 

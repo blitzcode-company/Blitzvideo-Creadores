@@ -61,6 +61,8 @@
     width: 200px;
     height: 200px;
     border-radius: 100px;
+    object-fit: cover;
+
 
 }
 
@@ -115,7 +117,19 @@ a {
 
   .fotoUser {
     border-radius: 25px;
+    object-fit: cover;
+
   }
+
+  .fotoPerfilDefault {
+    margin-top: 40px;
+    width: 250px;
+    height: 150px;
+    border-radius: 100px;
+    object-fit: cover;
+
+}
+
   
   @media (min-width: 768px) {
     .video {

@@ -15,6 +15,9 @@
           <div class="field padding-bottom--24">
             Descripcion <input type="text"  name="descripcion" [(ngModel)]="canal.descripcion" > <br>
         </div>
+        <div class="field padding-bottom--24">
+          Portada <input type="file" id="foto" (change)="onFileSelected($event)" > <br>
+      </div>
      
           <div class="field padding-bottom--24">
             <button class="boton">Crear</button>
