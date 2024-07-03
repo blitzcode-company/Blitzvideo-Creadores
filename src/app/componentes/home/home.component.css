@@ -47,6 +47,8 @@
     width: 200px;
     height: 200px;
     border-radius: 100px;
+    object-fit: cover;
+
 
 }
 .fotoPerfilDefault {
@@ -54,5 +56,6 @@
     width: 250px;
     height: 150px;
     border-radius: 100px;
+    object-fit: cover;
 
 }
