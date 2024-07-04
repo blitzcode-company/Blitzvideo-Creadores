@@ -1,29 +1,27 @@
 <app-header></app-header>
 <div class="box-root padding-bottom--24 flex-flex flex-justifyContent--center">
-     <h2 >
-    Crea tu canal     
-    </h2>
-  </div>
+  <h2>Crea tu canal</h2>
+</div>
 <div class="formbg-outer">
-    <div class="formbg">
-      
-      <div class="formbg-inner padding-horizontal--48">
-         <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
-          <div class="field padding-bottom--24">
-            Nombre de usuario <input type="text" name="nombre" [(ngModel)]="canal.nombre" > <br>
-        </div>
-          <div class="field padding-bottom--24">
-            Descripcion <input type="text"  name="descripcion" [(ngModel)]="canal.descripcion" > <br>
+  <div class="formbg">
+    <div class="formbg-inner padding-horizontal--48">
+      <form #dataform="ngForm" (ngSubmit)="crearCanal()">
+        <div class="field padding-bottom--24">
+          Nombre del canal
+          <input type="text" name="nombre" [(ngModel)]="canal.nombre" required>
         </div>
         <div class="field padding-bottom--24">
-          Portada <input type="file" id="foto" (change)="onFileSelected($event)" > <br>
-      </div>
-     
-          <div class="field padding-bottom--24">
-            <button class="boton">Crear</button>
-          </div>
-         
-        </form>
-      </div>
+          Descripción
+          <input type="text" name="descripcion" [(ngModel)]="canal.descripcion" required>
+        </div>
+        <div class="field padding-bottom--24">
+          Portada
+          <input type="file" id="foto" (change)="onFileSelected($event)" accept="image/*" required>
+        </div>
+        <div class="field padding-bottom--24">
+          <button type="submit" class="boton">Crear</button>
+        </div>
+      </form>
     </div>
   </div>
+</div>

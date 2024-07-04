@@ -37,38 +37,47 @@ obtenerUsuario() {
   });
 }
 
-onFileChange(event: any) {
+
+onFileSelected(event: any): void {
   const file = event.target.files[0];
   if (file) {
     this.canal.portada = file;
-  }
-  console.log('Archivo seleccionado:', this.usuario.foto);
-}
-
-onFileSelected(event: any): void {
-  if (event.target.files.length > 0) {
-    this.portada = event.target.files[0];
+  } else {
+    console.error('No se seleccionó un archivo para la portada.');
   }
 }
 
-crearCanal() {
+
+crearCanal(): void {
+  if (!this.canal.nombre || !this.canal.descripcion || !this.canal.portada) {
+    console.error('Nombre, Descripción o Portada faltan.');
+    return;
+  }
+
   const formData = new FormData();
-  formData.append('portada', this.canal.portada || ''); 
   formData.append('nombre', this.canal.nombre); 
   formData.append('descripcion', this.canal.descripcion);
+  formData.append('portada', this.canal.portada);
 
-  this.canalService.crearCanal(this.usuario.id, formData).subscribe(() => {
-    console.log('Canal creado correctamente');
-    this.router.navigate(['/']);
+  // Verificar el contenido del FormData usando `forEach()`
+  formData.forEach((value, key) => {
+    console.log(`${key}:`, value);
+  });
+
+  this.canalService.crearCanal(this.usuario.id, formData).subscribe({
+    next: () => {
+      console.log('Canal creado correctamente');
+      this.router.navigate(['/']);
+    },
+    error: (err) => {
+      console.error('Error al crear el canal', err);
+    }
   });
 }
-
-
 
 onSubmit(form: NgForm) {
   if (form.valid) {
     this.crearCanal();
-    this.router.navigate(['/']);
   }
 }
 
