@@ -1,6 +1,6 @@
 <header class="header">
     <div class="container">
-      <a href="http://localhost:3000/#/">
+      <a [href]="serverIp + ':3000/#/">
         <img class="logo" src="assets/images/logo.png" alt="Logo de blitzvideo">
       </a>
       <nav class="nav"></nav>
@@ -21,8 +21,8 @@
           <a *ngIf="status.isLoggedIn && !canalNombre" routerLink="/crearCanal" class="dropdown-item">Crear canal</a>
           <hr class="dropdown-divider">
           <a *ngIf="status.isLoggedIn" routerLink="/#" (click)="logout()" class="dropdown-item">Cerrar sesión</a>
-          <a *ngIf="!status.isLoggedIn" href="http://localhost:3002/#/" class="dropdown-item">Login</a>
-          <a *ngIf="!status.isLoggedIn" routerLink="http://localhost:3002/#/registro" class="dropdown-item">Registro</a>
+          <a *ngIf="!status.isLoggedIn" [href]="serverIp + ':3002/#/" class="dropdown-item">Login</a>
+          <a *ngIf="!status.isLoggedIn" [href]="serverIp + ':3002/#/registro" class="dropdown-item">Registro</a>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { StatusService } from '../../servicios/status.service';
 import { CookieService } from 'ngx-cookie-service';
 import { Canal } from '../../clases/canal';
+import { environment } from '../../../environments/environment.prod';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class HeaderComponent implements OnInit{
               
 
   public loggedIn: boolean=false;
-
+serverIp = environment.serverIp
 
   usuario:any;
   canal:any;
@@ -60,7 +61,7 @@ export class HeaderComponent implements OnInit{
     localStorage.removeItem("accessToken");
     this.cookie.delete('accessToken');
     this.status.isLoggedIn = false;
-    window.location.href = 'http://localhost:3000'; 
+    window.location.href = `${this.serverIp}:3002/#/`; 
 
   }
 
