@@ -53,16 +53,14 @@ export class MisvideosComponent implements OnInit{
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) { // Si el usuario hace clic en Aceptar
+      if (result) { 
         this.videoService.eliminarVideo(idVideo)
           .subscribe(
             (data) => {
               console.log('Video eliminado correctamente', data);
-              // Aquí podrías añadir lógica adicional después de eliminar el video
             },
             (error) => {
               console.error('Error al eliminar el video', error);
-              // Aquí manejas el error, mostrando un mensaje al usuario o realizando alguna acción específica
             }
           );
       }

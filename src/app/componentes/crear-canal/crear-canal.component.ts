@@ -59,7 +59,6 @@ crearCanal(): void {
   formData.append('descripcion', this.canal.descripcion);
   formData.append('portada', this.canal.portada);
 
-  // Verificar el contenido del FormData usando `forEach()`
   formData.forEach((value, key) => {
     console.log(`${key}:`, value);
   });
