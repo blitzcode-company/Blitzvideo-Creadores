@@ -1,27 +1,30 @@
 <app-header></app-header>
-<div class="box-root padding-bottom--24 flex-flex flex-justifyContent--center">
-  <h2>Crea tu canal</h2>
-</div>
-<div class="formbg-outer">
-  <div class="formbg">
-    <div class="formbg-inner padding-horizontal--48">
-      <form #dataform="ngForm" (ngSubmit)="crearCanal()">
-        <div class="field padding-bottom--24">
-          Nombre del canal
-          <input type="text" name="nombre" [(ngModel)]="canal.nombre" required>
-        </div>
-        <div class="field padding-bottom--24">
-          Descripción
-          <input type="text" name="descripcion" [(ngModel)]="canal.descripcion" required>
-        </div>
-        <div class="field padding-bottom--24">
-          Portada
-          <input type="file" id="foto" (change)="onFileSelected($event)" accept="image/*" required>
-        </div>
-        <div class="field padding-bottom--24">
-          <button type="submit" class="boton">Crear</button>
-        </div>
-      </form>
-    </div>
+<div class="container">
+  <div class="header">
+    <h2>Crea tu canal</h2>
   </div>
+  <div class="form-container">
+    <form #dataform="ngForm" (ngSubmit)="crearCanal()">
+      <div class="form-group">
+        <label for="nombre">Nombre del canal</label>
+        <input type="text" id="nombre" name="nombre" [(ngModel)]="canal.nombre" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <input type="text" id="descripcion" name="descripcion" [(ngModel)]="canal.descripcion" class="form-control" required>
+      </div>
+      <div class="form-group photo-upload">
+        <label for="foto">Portada</label>
+        <input type="file" id="foto" (change)="onFileSelected($event)" accept="image/*" class="file-input" required>
+        <label for="foto" class="upload-button">
+          <i class="fas fa-upload"></i> Elegir archivo
+        </label>
+        <img [src]="canal.portadaPreview || 'assets/images/cover-default.png'" class="user-photo" *ngIf="canal.portadaPreview">
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn-submit">Crear</button>
+      </div>
+    </form>
+  </div>
+  
 </div>

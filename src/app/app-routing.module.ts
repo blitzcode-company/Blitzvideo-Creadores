@@ -5,7 +5,7 @@ import { CrearCanalComponent } from './componentes/crear-canal/crear-canal.compo
 import { SubirVideoComponent } from './componentes/subir-video/subir-video.component';
 import { MisvideosComponent } from './componentes/misvideos/misvideos.component';
 import { EditarvideoComponent } from './componentes/editarvideo/editarvideo.component';
-
+import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado.component';
 
 
 const routes: Routes = [
@@ -13,7 +13,8 @@ const routes: Routes = [
   { path: 'crearCanal', component: CrearCanalComponent},
   { path: 'subirVideo', component: SubirVideoComponent},
   { path: 'misVideos', component: MisvideosComponent},
-  { path: 'editarVideo/:id', component: EditarvideoComponent}
+  { path: 'editarVideo/:id', component: EditarvideoComponent},
+  { path: '**', component: NoEncontradoComponent }
 
 
 

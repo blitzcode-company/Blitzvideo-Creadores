@@ -8,6 +8,7 @@ import { FormBuilder } from '@angular/forms';
 import { Etiqueta } from '../../clases/etiqueta';
 import { Route, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { environment } from '../../../environments/environment.prod';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class SubirVideoComponent implements OnInit{
   usuario: any;
   canal:any;
   canals = new Canal();
+  canalNombre : any;
   canalId:any;
   etiquetas: Etiqueta[] = [];
   etiquetasSeleccionadas: Etiqueta[] = []; 
@@ -37,9 +39,10 @@ export class SubirVideoComponent implements OnInit{
 
   ngOnInit() {
     this.obtenerUsuario();
-    this.obtenerCanal();
     this.listarEtiquetas()
   }
+
+  serverIp = environment.serverIp
 
   
 
@@ -56,8 +59,7 @@ export class SubirVideoComponent implements OnInit{
       this.canal = res;
       if (res.canales && res.canales.length > 0) {
         this.canalId = res.canales[0].id;
-        console.log(this.canalId);
-      
+        this.canalNombre = res.canales[0].nombre      
       } else {
         console.error('El usuario no tiene canal hecho');
       }
@@ -65,20 +67,19 @@ export class SubirVideoComponent implements OnInit{
   }
   
   onVideoUpload(event: any) {
-    this.videos.video = event.target.files[0];
-    if (this.videos.video) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.videos.video = input.files[0];
       console.log('Video file selected:', this.videos.video);
     } else {
       console.error('No video file selected');
-    }  
+    }
   }
 
   listarEtiquetas() {
     this.videoService.listarEtiquetas().subscribe(
       res => {
         this.etiquetas = res;
-        this.videos.etiquetas = this.etiquetas;
-        console.log(this.videos.etiquetas)
       },
       error => {
         console.error('Error al obtener las etiquetas:', error);
@@ -99,19 +100,24 @@ export class SubirVideoComponent implements OnInit{
   subirVideo() {
     if (this.videos.video && this.canalId && this.videos.titulo && this.videos.descripcion) {
       let formData = new FormData();
-      formData.set('video', this.videos.video);
-      formData.set('titulo', this.videos.titulo);
-      formData.set('descripcion', this.videos.descripcion);
+      formData.append('video', this.videos.video);
+      formData.append('titulo', this.videos.titulo);
+      formData.append('descripcion', this.videos.descripcion);
+
+      if (this.videos.miniatura) {
+        formData.append('miniatura', this.videos.miniatura);
+      }
+
 
       this.etiquetasSeleccionadas.forEach((etiqueta, index) => {
-        formData.append(`etiquetas[${index}]`, etiqueta.id.toString()); 
+        formData.append(`etiquetas[${index}]`, etiqueta.id.toString());
       });
-      
+
       this.videoService.subirVideo(this.canalId, formData).subscribe(
         res => {
           console.log('Video subido con éxito', res);
           this.alerta.push('Video subido con éxito');
-
+          window.location.href = `${this.serverIp}3000/video/${res.id}`; 
         },
         error => {
           console.error('Error al subir el video', error);
@@ -122,7 +128,6 @@ export class SubirVideoComponent implements OnInit{
       this.alerta.push('Faltan datos requeridos para subir el video');
       console.error('Faltan datos requeridos para subir el video');
     }
-  
   }
 
 
@@ -138,4 +143,37 @@ export class SubirVideoComponent implements OnInit{
       console.error('Formulario no válido o archivo de video no seleccionado');
     }
   }
+
+  onMiniaturaUpload(event: any) {
+    this.videos.miniatura = event.target.files[0];
+    if (this.videos.miniatura) {
+      console.log('Miniatura file selected:', this.videos.miniatura);
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const previewMiniatura = document.getElementById('previewMiniatura') as HTMLImageElement;
+        if (previewMiniatura) {
+          previewMiniatura.src = e.target.result;
+        }
+      }
+      reader.readAsDataURL(this.videos.miniatura);
+    } else {
+      console.error('No miniatura file selected');
+    }
+  }
+
+  previewImage(event: any) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+            const previewMiniatura = document.getElementById('previewMiniatura') as HTMLImageElement;
+            if (previewMiniatura) {
+                previewMiniatura.src = e.target.result;
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+  }
+
 }

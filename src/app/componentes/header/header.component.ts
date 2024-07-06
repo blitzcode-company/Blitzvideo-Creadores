@@ -32,6 +32,7 @@ serverIp = environment.serverIp
   canals = new Canal();
   canalId:any;
   canalNombre:any
+  nombre: string = '';
 
 
   obtenerUsuario() {
@@ -44,6 +45,12 @@ serverIp = environment.serverIp
     this.api.mostrarUserLogueado().subscribe();
   }
 
+  buscarVideos(): void {
+    if (this.nombre.trim()) {
+      window.location.href = `${this.serverIp}3000/buscar/${this.nombre}`; 
+
+    }
+  }
 
   obtenerCanal() {
     this.api.obtenerCanalDelUsuario(this.usuario.id).subscribe((res: any) => {
@@ -61,7 +68,7 @@ serverIp = environment.serverIp
     localStorage.removeItem("accessToken");
     this.cookie.delete('accessToken');
     this.status.isLoggedIn = false;
-    window.location.href = `${this.serverIp}:3002/#/`; 
+    window.location.href = `${this.serverIp}3000/#/`; 
 
   }
 

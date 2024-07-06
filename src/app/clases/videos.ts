@@ -5,6 +5,7 @@ export class Videos {
     descripcion:any;
     etiquetas:any;
     video: File | undefined;
+    miniatura: File | undefined;
     
 }
     

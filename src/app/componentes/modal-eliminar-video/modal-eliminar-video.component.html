@@ -1,8 +1,8 @@
-<h1 mat-dialog-title>Confirmar eliminación</h1>
-<div mat-dialog-content>
+<h1 class="modal-title">Confirmar eliminación</h1>
+<div class="modal-body">
   <p>¿Estás seguro de que quieres eliminar este elemento?</p>
 </div>
-<div mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="false">Cancelar</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Aceptar</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+  <button type="button" class="btn btn-primary" (click)="onConfirm()">Aceptar</button>
 </div>

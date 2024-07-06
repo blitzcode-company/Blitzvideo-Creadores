@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 
 @Component({
@@ -9,6 +9,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 })
 export class ModalEliminarVideoComponent {
 
+  constructor(public dialogRef: MatDialogRef<ModalEliminarVideoComponent>) {}
 
+
+  onConfirm(): void {
+    this.dialogRef.close(true);
+  }
+
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
 
 }

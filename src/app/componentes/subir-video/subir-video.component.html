@@ -1,38 +1,89 @@
 <app-header></app-header>
-<div class="box-root padding-bottom--24 flex-flex flex-justifyContent--center">
-  <h2>Subir video</h2>
-</div>
-<div class="formbg-outer">
-  <div class="formbg">
-    <div class="formbg-inner padding-horizontal--48">
-      <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
-        <div class="field padding-bottom--24 alineado">
-          <input type="text" id="titulo" placeholder="Titulo del video" [(ngModel)]="videos.titulo" name="titulo"/>
-        </div>
-        <div class="field padding-bottom--24 alineado">
-          <textarea id="descripcion" placeholder="Descripcion" [(ngModel)]="videos.descripcion" name="descripcion"></textarea>     
-        </div>
-        <div class="field padding-bottom--24 alineado">
-          <input type="file" id="video" (change)="this.onVideoUpload($event)" >
-        </div>
-        <div class="field padding-bottom--24">
-          <button type="button" (click)="listarEtiquetas()">Seleccionar etiquetas</button>
-          <div class="etiquetas-lista">
-            <div class="etiqueta-row" *ngFor="let etiquetaRow of etiquetas | chunkPipe:5">
-              <div *ngFor="let etiqueta of etiquetaRow" class="etiqueta-container">
-                <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
-                <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div *ngFor="let alerta of alerta">
-          {{ alerta }}
-        </div>
-        <div class="field padding-bottom--24">
-          <button class="boton" type="submit">Subir video</button>
-        </div>
-      </form>
+<div class="containerPadre">
+    <div class="sidebar" *ngIf="canalNombre">
+        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="">
+        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="">
+        <h1>{{ canalNombre }}</h1>
+        <ul class="menu">
+            <hr>
+            <li class="menu-item" routerLink="/misVideos">Mis videos</li>
+            <li class="menu-item selected" routerLink="/subirVideo">Subir video</li>
+        </ul>
     </div>
-  </div>
+
+    <div class="formContainer">
+        <div class="formHeader">
+            <h2>Subir nuevo video</h2>
+        </div>
+        <div class="formContent">
+            <div class="formbg-inner padding-horizontal--48">
+                <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="field padding-bottom--24 alineado">
+                                <label for="miniatura">Miniatura del Video</label>
+                                <label for="miniatura" class="video-thumbnail-large text-center mb-3" style="cursor: pointer;">
+                                  <img id="previewMiniatura" class="miniatura" src="assets/images/video-default.png" alt="Miniatura del video">
+                                  <input type="file" name="miniatura" id="miniatura" class="form-control-file d-none" (change)="onMiniaturaUpload($event)" accept="image/*" />
+                                </label>
+                              </div>
+                            <div class="field padding-bottom--24 alineado">
+                                <label for="titulo">Título del Video</label>
+                                <input type="text" id="titulo" placeholder="Ingrese título del video" [(ngModel)]="videos.titulo" name="titulo" required class="custom-input">
+                            </div>
+
+                            <div class="field padding-bottom--24 alineado">
+                                <label for="descripcion">Descripción del Video</label>
+                                <textarea id="descripcion" placeholder="Ingrese descripción del video" [(ngModel)]="videos.descripcion" name="descripcion" required class="custom-textarea" rows="6"></textarea>
+                            </div>
+
+                            <div class="field padding-bottom--24 alineado">
+                                <label for="video">Video</label>
+                                <input type="file" id="video" (change)="onVideoUpload($event)" class="form-control-file" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="field padding-bottom--24 alineado">
+                                <label for="etiquetas">Etiquetas</label>
+                                <div class="etiquetas-lista">
+                                    <div class="etiqueta-row" *ngFor="let etiquetaRow of etiquetas | chunkPipe: 5">
+                                        <div *ngFor="let etiqueta of etiquetaRow" class="etiqueta-container">
+                                            <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
+                                            <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngFor="let alerta of alerta" class="alerta">
+                        {{ alerta }}
+                    </div>
+
+                    <div class="field padding-bottom--24 text-center">
+                        <button class="boton" type="submit">Subir Video</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div *ngIf="!canalNombre">
+    <p>No tienes acceso a este sitio</p>
+</div>
+
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewMiniatura').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

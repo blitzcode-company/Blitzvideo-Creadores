@@ -4,6 +4,6 @@ export class Canal {
     nombre:any;
     descripcion:any;
     portada: File | undefined;
-    
+    portadaPreview?: string;
     }
     

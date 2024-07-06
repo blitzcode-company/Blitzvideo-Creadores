@@ -38,15 +38,17 @@ obtenerUsuario() {
 }
 
 
-onFileSelected(event: any): void {
+onFileSelected(event: any) {
   const file = event.target.files[0];
   if (file) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.canal.portadaPreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
     this.canal.portada = file;
-  } else {
-    console.error('No se seleccionó un archivo para la portada.');
   }
 }
-
 
 crearCanal(): void {
   if (!this.canal.nombre || !this.canal.descripcion || !this.canal.portada) {
@@ -63,10 +65,11 @@ crearCanal(): void {
     console.log(`${key}:`, value);
   });
 
+
   this.canalService.crearCanal(this.usuario.id, formData).subscribe({
     next: () => {
       console.log('Canal creado correctamente');
-      this.router.navigate(['/']);
+      this.router.navigate(['/misVideos']);
     },
     error: (err) => {
       console.error('Error al crear el canal', err);

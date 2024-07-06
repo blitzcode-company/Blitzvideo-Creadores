@@ -6,6 +6,7 @@ import { Canal } from '../../clases/canal';
 import { CanalService } from '../../servicios/canal.service';
 import { ModalEliminarVideoComponent } from '../modal-eliminar-video/modal-eliminar-video.component';
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment.prod';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class MisvideosComponent implements OnInit{
   canals = new Canal();
   canalId:any;
   canalNombre:any
-
+  serverIp = environment.serverIp
 
   videos:any;
 
@@ -56,8 +57,9 @@ export class MisvideosComponent implements OnInit{
       if (result) { 
         this.videoService.eliminarVideo(idVideo)
           .subscribe(
-            (data) => {
-              console.log('Video eliminado correctamente', data);
+            (res) => {
+              console.log('Video eliminado correctamente');
+              this.mostrarTodosLosVideos();
             },
             (error) => {
               console.error('Error al eliminar el video', error);

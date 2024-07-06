@@ -5,7 +5,7 @@
       </a>
       <nav class="nav"></nav>
       <div class="search-box">
-        <input type="search" class="search-input" placeholder="Search..." aria-label="Search">
+        <input type="text" [(ngModel)]="nombre" placeholder="Buscar video" (keyup.enter)="buscarVideos()" class="search-input" aria-label="Search" >
       </div>
       <div class="dropdown" [class.open]="isDropdownOpen">
         <button class="dropdown-toggle" (click)="toggleDropdown($event)">
@@ -20,7 +20,7 @@
           <a *ngIf="status.isLoggedIn && canalNombre" routerLink="/subirVideo" class="dropdown-item">Subir video</a>
           <a *ngIf="status.isLoggedIn && !canalNombre" routerLink="/crearCanal" class="dropdown-item">Crear canal</a>
           <hr class="dropdown-divider">
-          <a *ngIf="status.isLoggedIn" routerLink="/#" (click)="logout()" class="dropdown-item">Cerrar sesión</a>
+          <a *ngIf="status.isLoggedIn" (click)="logout()" class="dropdown-item">Cerrar sesión</a>
           <a *ngIf="!status.isLoggedIn" [href]="serverIp +  '3002' + '/#/'" class="dropdown-item">Login</a>
           <a *ngIf="!status.isLoggedIn" [href]="serverIp +  '3002' + '/#/registro'" class="dropdown-item">Registro</a>
         </div>

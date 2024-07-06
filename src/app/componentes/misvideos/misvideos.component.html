@@ -7,19 +7,25 @@
         <ul class="menu">
             <hr>
             <li class="menu-item selected" routerLink="/misVideos">Mis videos</li>
-            <li class="menu-item">Editar canal</li>
             <li class="menu-item" routerLink="/subirVideo">Subir video</li>
-
         </ul>
     </div>
 
-    <div class="container">
+    <div class="container no-results">
+        <div *ngIf="videos.length === 0">
+            <p>No tienes videos subidos</p>
+        </div>
         <div class="fila" *ngFor="let chunk of videos | chunkPipe: 4">
             <div class="video" *ngFor="let video of chunk">
-                <a href="http://localhost:3000/#/video/{{ video.id }}">
-                <img class="miniatura" [src]="video.miniatura" width="290" height="160" alt="miniatura">
-                <h2>{{ video.titulo }}</h2>
-                <hr>
+                <a  [href]="serverIp +  '3000' + '/video/' + video.id">
+                    <img class="miniatura" [src]="video.miniatura" width="290" height="160" alt="miniatura">
+                    <div class="video-info">
+                        <h2>{{ video.titulo }}</h2>
+                        <hr>
+                        <p>{{ video.visitas_count }} vistas • {{ video.created_at | date:'short' }}</p>
+                    </div>
+                 
+
                 </a>
                 <br>
                 <div class="botones">
@@ -31,10 +37,6 @@
     </div>
 </div>
 
-
-
 <div *ngIf="!canalNombre">
-    <p>No tienes acceso a este sitio</p> 
+    <p>No tienes acceso a este sitio</p>
 </div>
-
-

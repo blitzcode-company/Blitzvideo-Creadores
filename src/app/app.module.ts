@@ -19,6 +19,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ModalEliminarVideoComponent } from './componentes/modal-eliminar-video/modal-eliminar-video.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado.component';
 
 
 
@@ -36,6 +37,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     SubirVideoComponent,
     ChunkPipe,
     ModalEliminarVideoComponent,
+    NoEncontradoComponent,
     
   ],
   imports: [
@@ -48,7 +50,6 @@ import { MatDialogModule } from '@angular/material/dialog';
   ],
   providers: [
     CookieService,
-    provideClientHydration(),
     provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
