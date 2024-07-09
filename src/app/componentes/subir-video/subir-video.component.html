@@ -21,13 +21,6 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="field padding-bottom--24 alineado">
-                                <label for="miniatura">Miniatura del Video</label>
-                                <label for="miniatura" class="video-thumbnail-large text-center mb-3" style="cursor: pointer;">
-                                  <img id="previewMiniatura" class="miniatura" src="assets/images/video-default.png" alt="Miniatura del video">
-                                  <input type="file" name="miniatura" id="miniatura" class="form-control-file d-none" (change)="onMiniaturaUpload($event)" accept="image/*" />
-                                </label>
-                              </div>
-                            <div class="field padding-bottom--24 alineado">
                                 <label for="titulo">Título del Video</label>
                                 <input type="text" id="titulo" placeholder="Ingrese título del video" [(ngModel)]="videos.titulo" name="titulo" required class="custom-input">
                             </div>
@@ -41,13 +34,16 @@
                                 <label for="video">Video</label>
                                 <input type="file" id="video" (change)="onVideoUpload($event)" class="form-control-file" required>
                             </div>
+                            <div class="field padding-bottom--24 ">
+                                <button class="boton" type="submit">Subir Video</button>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="field padding-bottom--24 alineado">
                                 <label for="etiquetas">Etiquetas</label>
                                 <div class="etiquetas-lista">
-                                    <div class="etiqueta-row" *ngFor="let etiquetaRow of etiquetas | chunkPipe: 5">
+                                    <div class="etiqueta-row" *ngFor="let etiquetaRow of etiquetas">
                                         <div *ngFor="let etiqueta of etiquetaRow" class="etiqueta-container">
                                             <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
                                             <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
@@ -62,9 +58,7 @@
                         {{ alerta }}
                     </div>
 
-                    <div class="field padding-bottom--24 text-center">
-                        <button class="boton" type="submit">Subir Video</button>
-                    </div>
+                    
                 </form>
             </div>
         </div>

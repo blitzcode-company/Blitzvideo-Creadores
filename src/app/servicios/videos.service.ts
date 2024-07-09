@@ -27,9 +27,7 @@ export class VideosService {
 
   listarEtiquetas(): Observable<Etiqueta[]> {
     const url = `${this.apiUrl}api/v1/etiquetas/`
-    const httpOptions = {
-    }
-    return this.httpClient.get<Etiqueta[]>(url, httpOptions);
+    return this.httpClient.get<Etiqueta[]>(url);
   }
 
   obtenerInformacionVideo(idVideo: any): Observable<any> {

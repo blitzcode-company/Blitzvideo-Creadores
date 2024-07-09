@@ -9,6 +9,7 @@ import { Etiqueta } from '../../clases/etiqueta';
 import { Route, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { environment } from '../../../environments/environment.prod';
+import { Title } from '@angular/platform-browser';
 
 
 @Component({
@@ -24,8 +25,8 @@ export class SubirVideoComponent implements OnInit{
   canals = new Canal();
   canalNombre : any;
   canalId:any;
-  etiquetas: Etiqueta[] = [];
-  etiquetasSeleccionadas: Etiqueta[] = []; 
+  etiquetas: Etiqueta[][] = [];
+  etiquetasSeleccionadas: Etiqueta[] = [];
   alerta: string[] = [];
 
 
@@ -34,8 +35,10 @@ export class SubirVideoComponent implements OnInit{
               private authService: AuthService,
               private fb: FormBuilder, 
               public router: Router,
-              public location: Location) {
-   }
+              public location: Location,
+              public title: Title) {
+                this.title.setTitle("Subir video - BlitzStudio")
+               }
 
   ngOnInit() {
     this.obtenerUsuario();
@@ -79,12 +82,23 @@ export class SubirVideoComponent implements OnInit{
   listarEtiquetas() {
     this.videoService.listarEtiquetas().subscribe(
       res => {
-        this.etiquetas = res;
+        this.etiquetas = this.formatearEtiquetas(res);
       },
       error => {
         console.error('Error al obtener las etiquetas:', error);
       }
     );
+  }
+
+  formatearEtiquetas(etiquetas: Etiqueta[]): Etiqueta[][] {
+    const filas: Etiqueta[][] = [];
+    const columnasPorFila = 1; 
+
+    for (let i = 0; i < etiquetas.length; i += columnasPorFila) {
+      filas.push(etiquetas.slice(i, i + columnasPorFila));
+    }
+
+    return filas;
   }
 
 

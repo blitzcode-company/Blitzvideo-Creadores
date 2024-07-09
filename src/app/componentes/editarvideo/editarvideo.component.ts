@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VideosService } from '../../servicios/videos.service';
 import { Videos } from '../../clases/videos';
 import { environment } from '../../../environments/environment.prod';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editarvideo',
@@ -12,17 +13,22 @@ import { environment } from '../../../environments/environment.prod';
 export class EditarvideoComponent implements OnInit {
   id: any;
   videos = new Videos();
-  video: any;
   alerta: string[] = [];
   miniaturaFile: File | null = null;
   videoFile: File | null = null;
   etiquetas: any[] = [];
   etiquetasSeleccionadas: number[] = [];  
-  serverIp = environment.serverIp 
+  serverIp = environment.serverIp;
+
   constructor(
     private route: ActivatedRoute,
     private videoService: VideosService,
-  ) {}
+    private title: Title
+  ) {
+
+    this.title.setTitle("Editar video - BlitzStudio")
+
+  }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
@@ -33,9 +39,6 @@ export class EditarvideoComponent implements OnInit {
   mostrarVideo(): void {
     this.videoService.obtenerInformacionVideo(this.id).subscribe(res => {
       this.videos = res;
-      this.video = this.videos;
-
-      // Actualizar etiquetas seleccionadas
       this.etiquetasSeleccionadas = this.videos.etiquetas.map((etiqueta: any) => etiqueta.id);
     });
   }
@@ -84,6 +87,16 @@ export class EditarvideoComponent implements OnInit {
     }
   }
 
+  triggerFileInput(elementId: string): void {
+    const inputElement = document.getElementById(elementId) as HTMLInputElement | null;
+    if (inputElement) {
+      inputElement.click();
+    } else {
+      console.error(`No se encontró el elemento con ID: ${elementId}`);
+    }
+  }
+
+
   editarVideo(): void {
     const formData = new FormData();
     if (this.videoFile) {
@@ -102,8 +115,7 @@ export class EditarvideoComponent implements OnInit {
     this.videoService.editarVideo(this.videos.id, formData).subscribe(
       res => {
         console.log('Video actualizado correctamente');
-        this.alerta.push('Video actualizado correctamente');
-        window.location.href = `${this.serverIp}3000/video/${this.videos.id}`; 
+        this.alerta.push(`Video actualizado correctamente. <a href="${this.serverIp}3000/video/${this.videos.id}" target="_blank">Haz clic aquí para verlo</a>`);
       },
       error => {
         console.error('Error al actualizar el video', error);

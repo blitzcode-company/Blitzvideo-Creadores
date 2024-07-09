@@ -16,7 +16,7 @@
       <div class="form-group photo-upload">
         <label for="foto">Portada</label>
         <input type="file" id="foto" (change)="onFileSelected($event)" accept="image/*" class="file-input" required>
-        <label for="foto" class="upload-button">
+        <label for="foto" class="upload-button botonsubir">
           <i class="fas fa-upload"></i> Elegir archivo
         </label>
         <img [src]="canal.portadaPreview || 'assets/images/cover-default.png'" class="user-photo" *ngIf="canal.portadaPreview">

@@ -7,6 +7,7 @@ import { CanalService } from '../../servicios/canal.service';
 import { ModalEliminarVideoComponent } from '../modal-eliminar-video/modal-eliminar-video.component';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment.prod';
+import { Title } from '@angular/platform-browser';
 
 
 @Component({
@@ -29,7 +30,9 @@ export class MisvideosComponent implements OnInit{
     private authService: AuthService, 
     public status:StatusService, 
     private canalService: CanalService,
-    public dialog: MatDialog){
+    public dialog: MatDialog,
+  private title: Title){
+    this.title.setTitle("Mis videos - BlitzStudio");
 
     }
 

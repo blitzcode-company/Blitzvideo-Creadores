@@ -7,12 +7,9 @@
     <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)" enctype="multipart/form-data">
       <div class="form-group">
         <label for="miniatura">Miniatura del Video</label>
-        <div class="thumbnail-wrapper">
+        <div class="thumbnail-wrapper" (click)="triggerFileInput('miniatura')">
           <img id="previewMiniatura" [src]="videos.miniatura ? videos.miniatura : 'assets/images/video-default.png'" alt="Miniatura del video" class="thumbnail">
           <input type="file" name="miniatura" id="miniatura" class="file-input d-none" (change)="previewImage($event)">
-          <label for="miniatura" class="upload-button">
-            <i class="fa fa-upload"></i> Cambiar Miniatura
-          </label>
         </div>
       </div>
 
@@ -27,7 +24,7 @@
       </div>
 
       <div class="form-group">
-        <label for="video">Presiona aqui para cambiar el video</label>
+        <label for="video">Presiona aquí para cambiar el video</label>
         <input type="file" id="video" (change)="onVideoUpload($event)" class="file-input">
       </div>
 
@@ -46,13 +43,12 @@
           </div>
         </div>
       </div>
-
       <div class="form-group">
         <button class="btn-submit" type="submit">Actualizar</button>
       </div>
     </form>
     <div *ngIf="alerta.length" class="alert-container">
-      <div *ngFor="let mensaje of alerta" class="alert alert-info">{{ mensaje }}</div>
+      <div *ngFor="let mensaje of alerta" class="alert alert-info" [innerHTML]="mensaje"></div>
     </div>
   </div>
 </div>

@@ -1,14 +1,14 @@
-/* Estilos para el contenedor principal */
 .container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 100px auto;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos para el header */
 .header {
   text-align: center;
   margin-bottom: 20px;
@@ -20,12 +20,15 @@
   margin: 0;
 }
 
-/* Estilos para el contenedor del formulario */
 .form-container {
   padding: 20px;
 }
 
-/* Estilos para cada grupo de formulario */
+.photo-upload .botonsubir {
+  color: white;
+
+}
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -37,7 +40,6 @@
   color: #495057;
 }
 
-/* Estilos para los campos del formulario */
 .form-control {
   width: 100%;
   padding: 12px;
@@ -47,7 +49,6 @@
   background-color: #fff;
 }
 
-/* Estilos para el botón de envío */
 .btn-submit {
   display: inline-block;
   padding: 12px 24px;
@@ -66,7 +67,6 @@
   background-color: #0056b3;
 }
 
-/* Estilos para los mensajes de alerta */
 .alert-container {
   margin-top: 20px;
 }
@@ -83,7 +83,6 @@
   border: 1px solid #bee5eb;
 }
 
-/* Estilos para la carga de fotos */
 .photo-upload {
   display: flex;
   flex-direction: column;
@@ -105,7 +104,7 @@
 .upload-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #28a745;
+  background-color: #025dbe;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -115,9 +114,10 @@
 }
 
 .upload-button:hover {
-  background-color: #218838;
+  background-color:#004da0;
 }
 
 .upload-button i {
   margin-right: 5px;
+
 }

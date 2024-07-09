@@ -31,18 +31,46 @@
 }
 
 
+
+.sidebar {
+  width: 250px; 
+  height: 100%; 
+  max-height: 100vh;
+  box-sizing: border-box; 
+
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+}
+
+.fotoPerfilDefault, .fotoPerfil {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  display: block; 
+}
+
 .sidebar h1 {
   font-size: 24px;
   margin-bottom: 20px;
   word-wrap: break-word; 
   overflow-wrap: break-word; 
 }
+
 .menu {
   list-style-type: none;
+  height: auto;
+  max-height: 800px; 
+  overflow-y: auto; 
+  height: 800px;
   padding: 0;
 }
 
 .menu-item {
+  
   padding: 10px;
   cursor: pointer;
   color: #333;
@@ -53,6 +81,7 @@
   background-color: #007bff;
   color: white;
 }
+
 
 .video-thumbnail img {
   width: 100%;
@@ -65,6 +94,7 @@
 .formContainer {
   flex: 1;
   padding: 20px;
+  margin: 30px auto;
 }
 
 .formHeader {
