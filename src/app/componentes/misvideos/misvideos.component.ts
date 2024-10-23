@@ -24,7 +24,7 @@ export class MisvideosComponent implements OnInit{
   canalNombre:any
   serverIp = environment.serverIp
 
-  videos:any;
+  videos: any[] = [];
 
   constructor(private videoService:VideosService, 
     private authService: AuthService, 
@@ -88,7 +88,7 @@ export class MisvideosComponent implements OnInit{
   
   mostrarTodosLosVideos() {
     this.canalService.listarVideosDeCanal(this.canalId).subscribe(res => {
-      this.videos = res;
+      this.videos = Array.isArray(res) ? res : [];
     });
   }
 

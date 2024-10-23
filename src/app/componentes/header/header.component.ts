@@ -38,10 +38,12 @@ serverIp = environment.serverIp
   obtenerUsuario() {
     this.api.usuario$.subscribe(user => {
       this.usuario = user;
-      this.obtenerCanal();
-
   
+      if (this.usuario) {
+        this.obtenerCanal();
+      } 
     });
+  
     this.api.mostrarUserLogueado().subscribe();
   }
 
@@ -52,16 +54,27 @@ serverIp = environment.serverIp
     }
   }
 
-  obtenerCanal() {
-    this.api.obtenerCanalDelUsuario(this.usuario.id).subscribe((res: any) => {
-      this.canal = res;
-      if (res.canales && res.canales.length > 0) {
-        this.canalId = res.canales[0].id;
-        this.canalNombre = res.canales[0].nombre;
-      } else {
-        console.error('El usuario no tiene canal hecho');
-      }
-    });
+  obtenerCanal(): void {
+    if (this.usuario && this.usuario.id) {
+      this.api.obtenerCanalDelUsuario(this.usuario.id).subscribe(
+        (res: any) => {
+          this.canal = res;
+  
+          if (res.canales && res.canales.length > 0) {
+            this.canalId = res.canales[0].id;
+            this.canalNombre = res.canales[0].nombre;
+          } else {
+            this.canalId = null;
+            console.error('El usuario no tiene canal creado');
+          }
+        },
+        (error) => {
+          console.error('Error al obtener el canal:', error);
+        }
+      );
+    } else {
+      this.canalId = null;
+    }
   }
 
   logout() {

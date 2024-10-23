@@ -38,16 +38,23 @@ export class HomeComponent implements OnInit {
 
 
   obtenerCanal() {
-    this.api.obtenerCanalDelUsuario(this.usuario.id).subscribe((res: any) => {
-      this.canal = res;
-      if (res.canales && res.canales.length > 0) {
-        this.canalId = res.canales[0].id;
-        this.canalNombre = res.canales[0].nombre;
-      } else {
-        console.error('El usuario no tiene canal hecho');
-      }
-    });
+    if (this.usuario && this.usuario.id) {
+      this.api.obtenerCanalDelUsuario(this.usuario.id).subscribe(
+        (res: any) => {
+          this.canal = res;
+          if (res && res.canales && Array.isArray(res.canales) && res.canales.length > 0) {
+            this.canalId = res.canales[0].id;
+            this.canalNombre = res.canales[0].nombre;
+          } else {
+            console.error('El usuario no tiene canal creado o no se encontró información de canales.');
+          }
+        },
+        (error) => {
+          console.error('Error al obtener el canal:', error);
+        }
+      );
+    } else {
+      console.warn('No se puede obtener el canal: el usuario no está logueado o no tiene un ID.');
+    }
   }
-
-
 }

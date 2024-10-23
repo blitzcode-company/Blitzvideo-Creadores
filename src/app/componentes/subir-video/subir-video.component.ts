@@ -52,7 +52,6 @@ export class SubirVideoComponent implements OnInit{
   obtenerUsuario() {
     this.authService.mostrarUserLogueado().subscribe((res) => {
       this.usuario = res;
-      console.log(res);
       this.obtenerCanal();
     });
   }
