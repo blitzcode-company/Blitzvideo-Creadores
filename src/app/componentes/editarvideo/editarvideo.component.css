@@ -1,6 +1,4 @@
-/* Agrega estos estilos en tu archivo CSS o SCSS */
 
-/* Estilos generales del contenedor */
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -10,7 +8,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos del encabezado */
 .header {
   text-align: center;
   margin-bottom: 20px;
@@ -22,17 +19,14 @@
   margin: 0;
 }
 
-/* Estilos del formulario */
 .form-container {
   padding: 20px;
 }
 
-/* Estilos de los grupos de campos */
 .form-group {
   margin-bottom: 20px;
 }
 
-/* Estilos para las etiquetas y campos de entrada */
 .form-group label {
   display: block;
   font-size: 16px;
@@ -49,7 +43,6 @@
   background-color: #fff;
 }
 
-/* Estilos para los botones */
 .btn-submit {
   display: inline-block;
   padding: 12px 24px;
@@ -68,7 +61,6 @@
   background-color: #0056b3;
 }
 
-/* Estilos para los mensajes de alerta */
 .alert-container {
   margin-top: 20px;
 }
@@ -85,7 +77,6 @@
   border: 1px solid #bee5eb;
 }
 
-/* Estilos para la miniatura del video */
 .thumbnail-wrapper {
   position: relative;
   display: inline-block;
@@ -152,4 +143,16 @@
 .alert a {
   color: #007bff;
   text-decoration: underline;
+}
+
+.video {
+  cursor: pointer; 
+  color: #007bff; 
+  text-decoration: none;
+  transition: color 0.2s ease; 
+}
+
+.video:hover {
+  color: #0056b3;
+  text-decoration: underline; 
 }

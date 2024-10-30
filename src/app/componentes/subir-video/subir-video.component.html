@@ -4,11 +4,9 @@
         <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="">
         <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="">
         <h1>{{ canalNombre }}</h1>
-        <ul class="menu">
             <hr>
-            <li class="menu-item" routerLink="/misVideos">Mis videos</li>
-            <li class="menu-item selected" routerLink="/subirVideo">Subir video</li>
-        </ul>
+            <a class="menu-item" routerLink="/misVideos">Mis videos</a>
+            <a class="menu-item selected" routerLink="/subirVideo">Subir video</a>
     </div>
 
     <div class="formContainer">
@@ -19,7 +17,7 @@
             <div class="formbg-inner padding-horizontal--48">
                 <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="field padding-bottom--24 alineado">
                                 <label for="titulo">Título del Video</label>
                                 <input type="text" id="titulo" placeholder="Ingrese título del video" [(ngModel)]="videos.titulo" name="titulo" required class="custom-input">
@@ -29,9 +27,21 @@
                                 <label for="descripcion">Descripción del Video</label>
                                 <textarea id="descripcion" placeholder="Ingrese descripción del video" [(ngModel)]="videos.descripcion" name="descripcion" required class="custom-textarea" rows="6"></textarea>
                             </div>
-
+                            <div class="field padding-bottom--24 alineado">
+                                <label for="etiquetas">Etiquetas</label>
+                                <br>
+                                <mat-form-field appearance="fill">
+                                    <mat-label >Etiquetas</mat-label>
+                                    <mat-select [(value)]="etiquetasSeleccionadas" multiple>
+                                      <mat-option *ngFor="let etiqueta of etiquetasPlanas" [value]="etiqueta">
+                                        {{ etiqueta.nombre }}
+                                      </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                            </div>
                             <div class="field padding-bottom--24 alineado">
                                 <label for="video">Video</label>
+                                <br>
                                 <input type="file" id="video" (change)="onVideoUpload($event)" class="form-control-file" required>
                             </div>
                             <div class="field padding-bottom--24 ">
@@ -39,19 +49,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="field padding-bottom--24 alineado">
-                                <label for="etiquetas">Etiquetas</label>
-                                <div class="etiquetas-lista">
-                                    <div class="etiqueta-row" *ngFor="let etiquetaRow of etiquetas">
-                                        <div *ngFor="let etiqueta of etiquetaRow" class="etiqueta-container">
-                                            <label [for]="etiqueta.id">{{ etiqueta.nombre }}</label>
-                                            <input type="checkbox" [id]="etiqueta.id" (change)="onEtiquetaSeleccionada(etiqueta)" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                           
                     </div>
 
                     <div *ngFor="let alerta of alerta" class="alerta">

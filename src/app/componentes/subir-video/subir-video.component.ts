@@ -6,48 +6,45 @@ import { Videos } from '../../clases/videos';
 import { Canal } from '../../clases/canal';
 import { FormBuilder } from '@angular/forms';
 import { Etiqueta } from '../../clases/etiqueta';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { environment } from '../../../environments/environment.prod';
 import { Title } from '@angular/platform-browser';
 
-
 @Component({
   selector: 'app-subir-video',
   templateUrl: './subir-video.component.html',
-  styleUrl: './subir-video.component.css'
+  styleUrls: ['./subir-video.component.css'] 
 })
-export class SubirVideoComponent implements OnInit{
+export class SubirVideoComponent implements OnInit {
   
   videos = new Videos();
   usuario: any;
-  canal:any;
-  canals = new Canal();
-  canalNombre : any;
-  canalId:any;
+  canal: any;
+  canalNombre: any;
+  canalId: any;
   etiquetas: Etiqueta[][] = [];
   etiquetasSeleccionadas: Etiqueta[] = [];
   alerta: string[] = [];
+  etiquetasPlanas: Etiqueta[] = [];
 
-
-
-  constructor(private videoService: VideosService, 
-              private authService: AuthService,
-              private fb: FormBuilder, 
-              public router: Router,
-              public location: Location,
-              public title: Title) {
-                this.title.setTitle("Subir video - BlitzStudio")
-               }
+  constructor(
+    private videoService: VideosService, 
+    private authService: AuthService,
+    private fb: FormBuilder, 
+    public router: Router,
+    public location: Location,
+    public title: Title
+  ) {
+    this.title.setTitle("Subir video - BlitzStudio");
+  }
 
   ngOnInit() {
     this.obtenerUsuario();
-    this.listarEtiquetas()
+    this.listarEtiquetas();
   }
 
-  serverIp = environment.serverIp
-
-  
+  serverIp = environment.serverIp;
 
   obtenerUsuario() {
     this.authService.mostrarUserLogueado().subscribe((res) => {
@@ -61,9 +58,9 @@ export class SubirVideoComponent implements OnInit{
       this.canal = res;
       if (res.canales && res.canales.length > 0) {
         this.canalId = res.canales[0].id;
-        this.canalNombre = res.canales[0].nombre      
+        this.canalNombre = res.canales[0].nombre;      
       } else {
-        console.error('El usuario no tiene canal hecho');
+        console.error('El usuario no tiene canal creado');
       }
     });
   }
@@ -72,16 +69,16 @@ export class SubirVideoComponent implements OnInit{
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       this.videos.video = input.files[0];
-      console.log('Video file selected:', this.videos.video);
+      console.log('Archivo de video seleccionado:', this.videos.video);
     } else {
-      console.error('No video file selected');
+      console.error('No se ha seleccionado ningún archivo de video');
     }
   }
 
   listarEtiquetas() {
     this.videoService.listarEtiquetas().subscribe(
       res => {
-        this.etiquetas = this.formatearEtiquetas(res);
+        this.etiquetasPlanas = res;
       },
       error => {
         console.error('Error al obtener las etiquetas:', error);
@@ -100,14 +97,16 @@ export class SubirVideoComponent implements OnInit{
     return filas;
   }
 
+  
 
-  onEtiquetaSeleccionada(etiqueta: Etiqueta) {
-    const index = this.etiquetasSeleccionadas.findIndex(e => e.id === etiqueta.id);
-    if (index === -1) {
-      this.etiquetasSeleccionadas.push(etiqueta);
-    } else {
-      this.etiquetasSeleccionadas.splice(index, 1);
-    }
+  onEtiquetaSeleccionada(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedOptions = Array.from(selectElement.selectedOptions) as HTMLOptionElement[];
+
+    this.etiquetasSeleccionadas = selectedOptions.map(option => {
+      const id = Number(option.value);
+      return this.etiquetasPlanas.find(etiqueta => etiqueta.id === id);
+    }).filter(Boolean) as Etiqueta[];
   }
 
   subirVideo() {
@@ -121,10 +120,26 @@ export class SubirVideoComponent implements OnInit{
         formData.append('miniatura', this.videos.miniatura);
       }
 
+      console.log('Etiquetas seleccionadas:', this.etiquetasSeleccionadas);
 
-      this.etiquetasSeleccionadas.forEach((etiqueta, index) => {
-        formData.append(`etiquetas[${index}]`, etiqueta.id.toString());
+      this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(etiqueta => {
+          const isValid = etiqueta && etiqueta.id !== undefined;
+          if (!isValid) {
+              console.warn('Etiqueta no válida detectada:', etiqueta);
+          }
+          return isValid;
       });
+      console.log('Etiquetas seleccionadas después de filtrar:', this.etiquetasSeleccionadas);
+
+      if (this.etiquetasSeleccionadas.length > 0) {
+          this.etiquetasSeleccionadas.forEach((etiqueta, index) => {
+              formData.append(`etiquetas[${index}]`, etiqueta.id.toString());
+          });
+      } else {
+          console.error('No hay etiquetas válidas seleccionadas para subir el video');
+          this.alerta.push('No hay etiquetas válidas seleccionadas para subir el video');
+          return; 
+      }
 
       this.videoService.subirVideo(this.canalId, formData).subscribe(
         res => {
@@ -143,14 +158,11 @@ export class SubirVideoComponent implements OnInit{
     }
   }
 
-
   onSubmit(form: NgForm) {
     if (form.valid && this.videos.video) {
       this.alerta.push('Formulario válido, enviando video...');
       console.log('Formulario válido, enviando video...');
       this.subirVideo();
-    
-
     } else {
       this.alerta.push('Formulario no válido o archivo de video no seleccionado');
       console.error('Formulario no válido o archivo de video no seleccionado');
@@ -160,8 +172,7 @@ export class SubirVideoComponent implements OnInit{
   onMiniaturaUpload(event: any) {
     this.videos.miniatura = event.target.files[0];
     if (this.videos.miniatura) {
-      console.log('Miniatura file selected:', this.videos.miniatura);
-
+      console.log('Archivo de miniatura seleccionado:', this.videos.miniatura);
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const previewMiniatura = document.getElementById('previewMiniatura') as HTMLImageElement;
@@ -171,7 +182,7 @@ export class SubirVideoComponent implements OnInit{
       }
       reader.readAsDataURL(this.videos.miniatura);
     } else {
-      console.error('No miniatura file selected');
+      console.error('No se ha seleccionado ningún archivo de miniatura');
     }
   }
 
@@ -188,5 +199,4 @@ export class SubirVideoComponent implements OnInit{
         reader.readAsDataURL(input.files[0]);
     }
   }
-
 }

@@ -19,14 +19,27 @@
 
 
 .sidebar {
-  width: 250px; 
-  height: 100%; 
-  max-height: 100vh;
-  box-sizing: border-box; 
+  background-color: #fff  ;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  min-height: 100vh;
+  border-right: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  padding: 20px;
-  background-color: #f4f4f4;
-  border-right: 1px solid #ddd;
+  padding: 15px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #495057;
+  min-width: 225px;
+
+  margin-bottom: 10px;
+  border-width: 0 0 1px;
+  transition: background-color 0.3s;
 }
 
 .fotoPerfilDefault, .fotoPerfil {
@@ -46,27 +59,10 @@
   overflow-wrap: break-word; 
 }
 
-.menu {
-  list-style-type: none;
-  height: auto;
-  max-height: 800px; 
-  overflow-y: auto; 
-  height: 800px;
-  padding: 0;
+.sidebar a:hover {
+  background-color: #ddd;
 }
 
-.menu-item {
-  
-  padding: 10px;
-  cursor: pointer;
-  color: #333;
-  transition: background-color 0.3s ease;
-}
-
-.menu-item.selected, .menu-item:hover {
-  background-color: #007bff;
-  color: white;
-}
 
 .container {
   flex: 1;

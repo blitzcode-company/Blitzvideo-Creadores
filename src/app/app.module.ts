@@ -20,6 +20,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ModalEliminarVideoComponent } from './componentes/modal-eliminar-video/modal-eliminar-video.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado.component';
+import { MatSelectModule } from '@angular/material/select'; 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -42,6 +44,8 @@ import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    MatSelectModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,

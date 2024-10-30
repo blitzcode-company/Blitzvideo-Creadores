@@ -4,11 +4,9 @@
         <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="">
         <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="">
         <h1>{{ canalNombre }}</h1>
-        <ul class="menu">
             <hr>
-            <li class="menu-item selected" routerLink="/misVideos">Mis videos</li>
-            <li class="menu-item" routerLink="/subirVideo">Subir video</li>
-        </ul>
+            <a class="menu-item selected" routerLink="/misVideos">Mis videos</a>
+            <a class="menu-item" routerLink="/subirVideo">Subir video</a>
     </div>
 
     <div class="container no-results">

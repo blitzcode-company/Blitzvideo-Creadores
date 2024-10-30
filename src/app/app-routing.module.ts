@@ -6,14 +6,14 @@ import { SubirVideoComponent } from './componentes/subir-video/subir-video.compo
 import { MisvideosComponent } from './componentes/misvideos/misvideos.component';
 import { EditarvideoComponent } from './componentes/editarvideo/editarvideo.component';
 import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado.component';
-
+import { autenticacionGuard } from './guards/autenticacion.guard';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent},
-  { path: 'crearCanal', component: CrearCanalComponent},
-  { path: 'subirVideo', component: SubirVideoComponent},
-  { path: 'misVideos', component: MisvideosComponent},
-  { path: 'editarVideo/:id', component: EditarvideoComponent},
+  { path: '', component: HomeComponent, canActivate: [autenticacionGuard]},
+  { path: 'crearCanal', component: CrearCanalComponent, canActivate: [autenticacionGuard]},
+  { path: 'subirVideo', component: SubirVideoComponent, canActivate: [autenticacionGuard]},
+  { path: 'misVideos', component: MisvideosComponent, canActivate: [autenticacionGuard]},
+  { path: 'editarVideo/:id', component: EditarvideoComponent, canActivate: [autenticacionGuard]},
   { path: '**', component: NoEncontradoComponent }
 
 

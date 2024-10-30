@@ -4,13 +4,11 @@
 
     <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="">
     <h1>{{ canalNombre }}</h1>
-    <ul class="menu">
         <hr>
-        <li class="menu-item" routerLink="/misVideos">Mis videos</li>
-        <li class="menu-item">Editar canal</li>
-        <li class="menu-item" routerLink="/subirVideo">Subir video</li>
+        <a class="menu-item" routerLink="/misVideos">Mis videos</a>
+        <a class="menu-item">Editar canal</a>
+        <a class="menu-item" routerLink="/subirVideo">Subir video</a>
 
-    </ul>
 </div>
 <div *ngIf="!canalNombre">
     <p>No tienes un canal asociado, <a href="/#/crearCanal">Haz click aqui para crear uno</a></p> 
