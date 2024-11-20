@@ -42,9 +42,9 @@ export class HomeComponent implements OnInit {
       this.api.obtenerCanalDelUsuario(this.usuario.id).subscribe(
         (res: any) => {
           this.canal = res;
-          if (res && res.canales && Array.isArray(res.canales) && res.canales.length > 0) {
-            this.canalId = res.canales[0].id;
-            this.canalNombre = res.canales[0].nombre;
+          if (res.canales) {
+            this.canalId = res.canales.id;
+            this.canalNombre = res.canales.nombre;
           } else {
             console.error('El usuario no tiene canal creado o no se encontró información de canales.');
           }
