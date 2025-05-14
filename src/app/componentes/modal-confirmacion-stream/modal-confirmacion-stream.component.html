@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Ya existe una transmisión</h2>
+<mat-dialog-content>
+  <p>Este canal ya tiene una transmisión creada. ¿Querés eliminarla y crear una nueva?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="confirmar()">Sí, reemplazar</button>
+</mat-dialog-actions>

@@ -1,0 +1,29 @@
+<app-header></app-header>
+
+<div class="custom-form-container">
+    <h2 class="form-title">Crear nueva transmisión</h2>
+  
+    <form [formGroup]="streamForm" (ngSubmit)="crearStream()" enctype="multipart/form-data">
+      <mat-form-field appearance="fill" class="custom-form-field">
+        <mat-label>Título del stream</mat-label>
+        <input matInput formControlName="titulo" />
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="custom-form-field">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="4"></textarea>
+      </mat-form-field>
+  
+      <div class="custom-upload">
+        <label class="upload-label">Miniatura del stream</label>
+        <input type="file" (change)="onFileSelected($event)" />
+      </div>
+  
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="streamForm.invalid">
+          Crear stream
+        </button>
+      </div>
+    </form>
+  </div>
+  

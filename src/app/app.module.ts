@@ -19,9 +19,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ModalEliminarVideoComponent } from './componentes/modal-eliminar-video/modal-eliminar-video.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado.component';
 import { MatSelectModule } from '@angular/material/select'; 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CrearStreamComponent } from './componentes/crear-stream/crear-stream.component';
+import { ModalConfirmacionStreamComponent } from './componentes/modal-confirmacion-stream/modal-confirmacion-stream.component';
+import { MonitorearStreamComponent } from './componentes/monitorear-stream/monitorear-stream.component';
 
 
 
@@ -40,6 +47,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ChunkPipe,
     ModalEliminarVideoComponent,
     NoEncontradoComponent,
+    CrearStreamComponent,
+    ModalConfirmacionStreamComponent,
+    MonitorearStreamComponent,
     
   ],
   imports: [
@@ -50,6 +60,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormsModule,
     HttpClientModule,
     NgbModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
     MatDialogModule
   ],
   providers: [

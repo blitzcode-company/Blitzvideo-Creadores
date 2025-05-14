@@ -1,0 +1,92 @@
+/* Contenedor principal con fondo azul oscuro personalizado */
+.custom-form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 32px;
+    background-color: #042234;
+    color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Título */
+  .form-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  
+  /* Campos del formulario */
+  .custom-form-field {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+    background-color: #06344d;
+    border-radius: 6px;
+  }
+  
+  ::ng-deep .mat-input-element {
+    color: #ffffff;
+  }
+  
+  ::ng-deep .mat-form-field-label {
+    color: #cccccc !important;
+  }
+  
+  /* Sección de miniatura */
+  .custom-upload {
+    margin-bottom: 20px;
+  }
+  
+  .upload-label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #ddd;
+  }
+  
+  .custom-upload input[type="file"] {
+    background-color: #084b6f;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #0c4f75;
+    color: #ffffff;
+    width: 100%;
+  }
+  
+  /* Botón */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  button[mat-raised-button] {
+    background-color: #1e88e5;
+    color: white;
+    font-weight: bold;
+  }
+  
+  button[mat-raised-button]:hover {
+    background-color: #1565c0;
+  }
+  
+  button[mat-raised-button][disabled] {
+    background-color: #999;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .custom-form-container {
+      padding: 20px;
+      margin: 20px;
+    }
+  
+    .form-title {
+      font-size: 20px;
+    }
+  }
+  

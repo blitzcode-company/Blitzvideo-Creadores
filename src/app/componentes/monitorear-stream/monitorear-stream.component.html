@@ -1,0 +1,27 @@
+<app-header></app-header>
+
+
+<div class="contenedor" *ngIf="!cargando && stream">
+  <h2>Monitorear transmisión</h2>
+  <div class="estado">
+    <span [ngClass]="stream.activo === 1 ? 'activo' : 'inactivo'">
+      {{ stream.activo === 1 ? '🟢 En vivo' : '🔴 Esperando transmisión' }}
+    </span>
+  </div>
+
+  <div class="video-preview">
+    <video #videoPlayer width="100%" height="400" controls *ngIf="stream.activo === 1"></video>
+  
+ 
+  <div *ngIf="stream.activo !== 1" class="esperando">
+    <p>Inicia la transmisión desde tu software de streaming (OBS, etc.)</p>
+  </div>
+  </div>
+
+  <div class="detalles">
+    <p><strong>RTMP Server:</strong> {{ stream.rtmp_server }}</p>
+    <p><strong>Stream Key:</strong> {{ stream.stream_key }}</p>
+    <p><strong>Título:</strong> {{ stream.titulo }}</p>
+    <p><strong>Descripción:</strong> {{ stream.descripcion }}</p>
+  </div>
+</div>

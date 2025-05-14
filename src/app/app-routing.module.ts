@@ -7,12 +7,16 @@ import { MisvideosComponent } from './componentes/misvideos/misvideos.component'
 import { EditarvideoComponent } from './componentes/editarvideo/editarvideo.component';
 import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado.component';
 import { autenticacionGuard } from './guards/autenticacion.guard';
+import { CrearStreamComponent } from './componentes/crear-stream/crear-stream.component';
+import { MonitorearStreamComponent } from './componentes/monitorear-stream/monitorear-stream.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [autenticacionGuard]},
   { path: 'crearCanal', component: CrearCanalComponent, canActivate: [autenticacionGuard]},
+  { path: 'crearStream', component: CrearStreamComponent, canActivate: [autenticacionGuard]},
   { path: 'subirVideo', component: SubirVideoComponent, canActivate: [autenticacionGuard]},
   { path: 'misVideos', component: MisvideosComponent, canActivate: [autenticacionGuard]},
+  { path: 'monitorear-stream/:id', component: MonitorearStreamComponent, canActivate: [autenticacionGuard]},
   { path: 'editarVideo/:id', component: EditarvideoComponent, canActivate: [autenticacionGuard]},
   { path: '**', component: NoEncontradoComponent }
 
