@@ -1,45 +1,226 @@
-.contenedor {
-    background-color: #f0f4f7;
-    padding: 24px;
-    border-radius: 12px;
-    max-width: 800px;
-    margin: auto;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  
-  h2 {
-    color: #042234;
-    margin-bottom: 16px;
-  }
-  
-  .estado {
-    margin-bottom: 16px;
-  }
-  
-  .estado .activo {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .estado .inactivo {
-    color: red;
-    font-weight: bold;
-  }
-  
-  .video-preview {
-    margin-bottom: 24px;
-  }
-  
-  .esperando {
-    padding: 32px;
-    text-align: center;
-    background-color: #e9f1f6;
-    border-radius: 8px;
-    border: 1px dashed #6ca0c3;
-  }
-  
-  .detalles p {
-    margin: 8px 0;
-    color: #333;
-  }
-  
+.stream-dashboard {
+  max-width: 1400px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stream-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stream-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #042234;
+}
+
+.stream-header .activo {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.stream-header .inactivo {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.dashboard-container {
+  display: flex;
+  gap: 16px;
+}
+
+/* Video grande central */
+.video-wrapper {
+  flex: 2;
+  position: relative;
+}
+
+.video-wrapper video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  object-fit: contain;
+  background-color: black;
+}
+
+.esperando {
+  padding: 40px;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px dashed #6ca0c3;
+  font-size: 16px;
+  color: #606060;
+}
+
+/* Panel derecho */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 600px;
+}
+
+/* Métricas rápidas */
+.metrics-panel {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  background-color: #f0f4f7;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #606060;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #042234;
+}
+
+/* Chat profesional */
+.monitor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.monitor-panel h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #042234;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.chat-message {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.chat-message.my-message {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #32b1f9;
+}
+
+.message-bubble {
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  max-width: 80%;
+  font-size: 13px;
+  color: #333;
+}
+
+.chat-message.my-message .message-bubble {
+  background-color: #32b1f9;
+  color: white;
+}
+
+.message-bubble .username {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.message-bubble .timestamp {
+  font-size: 11px;
+  color: #909090;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.chat-input-container {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.chat-input-container input {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.chat-input-container button {
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #32b1f9;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.chat-input-container button:hover {
+  background-color: #0282e5;
+}
+
+/* Scroll estilo profesional */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #32b1f9;
+  border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background-color: #e0e0e0;
+}
+
+/* Descripción del stream */
+.descripcion-wrapper {
+  margin-top: 16px;
+}
+
+.descripcion-wrapper .descripcion {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #dee2e6;
+  font-size: 14px;
+  color: #333;
+}

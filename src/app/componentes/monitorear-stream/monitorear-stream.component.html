@@ -1,27 +1,66 @@
 <app-header></app-header>
 
+<div class="stream-dashboard" *ngIf="!cargando && stream">
 
-<div class="contenedor" *ngIf="!cargando && stream">
-  <h2>Monitorear transmisión</h2>
-  <div class="estado">
+  <div class="stream-header">
+    <h2>{{ stream.titulo }}</h2>
     <span [ngClass]="stream.activo === 1 ? 'activo' : 'inactivo'">
       {{ stream.activo === 1 ? '🟢 En vivo' : '🔴 Esperando transmisión' }}
     </span>
   </div>
 
-  <div class="video-preview">
-    <video #videoPlayer width="100%" height="400" controls *ngIf="stream.activo === 1"></video>
+  <div class="dashboard-container">
+    <div class="video-wrapper">
+      <video #videoPlayer controls *ngIf="stream.activo === 1"></video>
+      <div *ngIf="stream.activo !== 1" class="esperando">
+        <p>La transmisión aún no ha comenzado.</p>
+      </div>
+    </div>
+
+    <div class="right-panel">
+
+      <div class="metrics-panel">
+        <div class="metric">
+          <span class="metric-label">Viewers</span>
+          <span class="metric-value">{{ stream.viewers || 0 }}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Comentarios</span>
+          <span class="metric-value">{{ chatMessagesList.length }}</span>
+        </div>
   
- 
-  <div *ngIf="stream.activo !== 1" class="esperando">
-    <p>Inicia la transmisión desde tu software de streaming (OBS, etc.)</p>
-  </div>
+      </div>
+
+      <div class="monitor-panel">
+        <h3>Chat de monitoreo</h3>
+        <div #chatMessages class="chat-messages">
+          <div *ngFor="let msg of chatMessagesList" class="chat-message" [ngClass]="{'my-message': msg.userId === userId}">
+            <img 
+              [src]="msg.user_photo" 
+              alt="{{ msg.user }}" 
+              class="avatar"
+              (error)="onImageError($event)" />
+            <div class="message-bubble">
+              <span class="username">{{ msg.user }}</span>
+              <span class="text">{{ msg.text }}</span>
+              <span class="timestamp">{{ msg.created_at | date:'HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-container">
+          <form (submit)="enviarMensaje(); $event.preventDefault()" class="chat-input-form">
+            <input [(ngModel)]="mensaje" name="mensaje" class="chat-input" placeholder="Escribe un mensaje..." required>
+            <button type="submit" class="chat-send-btn">Enviar</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <div class="detalles">
-    <p><strong>RTMP Server:</strong> {{ stream.rtmp_server }}</p>
-    <p><strong>Stream Key:</strong> {{ stream.stream_key }}</p>
-    <p><strong>Título:</strong> {{ stream.titulo }}</p>
-    <p><strong>Descripción:</strong> {{ stream.descripcion }}</p>
+  <!-- Descripción del stream -->
+  <div class="descripcion-wrapper">
+    <p class="descripcion">{{ stream.descripcion }}</p>
   </div>
 </div>

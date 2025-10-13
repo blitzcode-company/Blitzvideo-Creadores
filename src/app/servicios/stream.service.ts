@@ -40,6 +40,20 @@ export class StreamService {
     return this.httpClient.get<any>(url, httpOptions);
   }
 
+  obtenerStats(streamId: number) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + this.cookie.get('accessToken')
+      }),
+    
+  };
+
+  const url = `${this.apiUrl}api/v1/streams/${streamId}/stats`;
+  return this.httpClient.get<any>(url, httpOptions);
+
+  }
+
   eliminarStream(canalId: number) {
     const httpOptions = {
       headers: new HttpHeaders({
