@@ -1,30 +1,65 @@
 <app-header></app-header>
-<div class="container">
-  <div class="header">
-    <h2>Crea tu canal</h2>
+<div class="form-wrapper-canal">
+  <div class="form-container-canal">
+    <div class="form-header">
+      <h2><mat-icon>account_circle</mat-icon> Crea tu canal</h2>
+    </div>
+    
+    <div class="form-content-canal">
+      <form #dataform="ngForm" (ngSubmit)="crearCanal()">
+        
+        <!-- NOMBRE -->
+        <div class="form-group-canal">
+          <mat-form-field appearance="outline" class="canal-field">
+            <mat-label>Nombre del canal</mat-label>
+            <input matInput [(ngModel)]="canal.nombre" name="nombre" required>
+          </mat-form-field>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="form-group-canal">
+          <mat-form-field appearance="outline" class="canal-field">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput [(ngModel)]="canal.descripcion" name="descripcion" rows="3" required></textarea>
+          </mat-form-field>
+        </div>
+
+        <!-- PORTADA -->
+        <div class="upload-section-canal">
+          <label class="upload-label-canal">
+            <mat-icon>photo_camera</mat-icon>
+            Portada del canal (1200x675 recomendada)
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" required class="hidden-file">
+          </label>
+          <img *ngIf="canal.portadaPreview" [src]="canal.portadaPreview" class="cover-preview-canal">
+          <img *ngIf="!canal.portadaPreview" src="assets/images/cover-default.png" class="cover-preview-canal">
+        </div>
+
+        <!-- PROGRESS -->
+        <mat-progress-bar *ngIf="uploadProgress > 0" 
+                          mode="determinate" 
+                          [value]="uploadProgress"
+                          class="canal-progress"></mat-progress-bar>
+
+        <!-- BOTÓN -->
+        <div class="form-actions-canal">
+          <button mat-raised-button 
+                  color="primary" 
+                  type="submit" 
+                  [disabled]="dataform.invalid || uploading"
+                  class="canal-submit-btn">
+            <mat-icon>check</mat-icon>
+            {{ uploading ? 'Creando... ' + uploadProgress + '%' : 'Crear canal' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- ALERTAS -->
+      <div *ngFor="let alerta of alerta" 
+           class="canal-alert" 
+           [ngClass]="{'success': alerta.type === 'success', 'error': alerta.type === 'error'}">
+        {{ alerta.message }}
+      </div>
+    </div>
   </div>
-  <div class="form-container">
-    <form #dataform="ngForm" (ngSubmit)="crearCanal()">
-      <div class="form-group">
-        <label for="nombre">Nombre del canal</label>
-        <input type="text" id="nombre" name="nombre" [(ngModel)]="canal.nombre" class="form-control" required>
-      </div>
-      <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <input type="text" id="descripcion" name="descripcion" [(ngModel)]="canal.descripcion" class="form-control" required>
-      </div>
-      <div class="form-group photo-upload">
-        <label for="foto">Portada</label>
-        <input type="file" id="foto" (change)="onFileSelected($event)" accept="image/*" class="file-input" required>
-        <label for="foto" class="upload-button botonsubir">
-          <i class="fas fa-upload"></i> Elegir archivo
-        </label>
-        <img [src]="canal.portadaPreview || 'assets/images/cover-default.png'" class="user-photo" *ngIf="canal.portadaPreview">
-      </div>
-      <div class="form-group">
-        <button type="submit" class="btn-submit">Crear</button>
-      </div>
-    </form>
-  </div>
-  
 </div>

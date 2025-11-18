@@ -1,81 +1,116 @@
 <app-header></app-header>
-<div class="containerPadre">
+<div class="containerHome">
+  <div class="sidebar-container">
     <div class="sidebar" *ngIf="canalNombre">
-        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="">
-        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="">
-        <h1>{{ canalNombre }}</h1>
-            <hr>
-            <a class="menu-item" routerLink="/misVideos">Mis videos</a>
-            <a class="menu-item selected" routerLink="/subirVideo">Subir video</a>
+      <div class="profile-section">
+        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
+        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
+        <h1 class="channel-name">{{ canalNombre }}</h1>
+      </div>
+      <hr class="lineaSideBar">
+      <nav class="menu-nav">
+        <a class="menu-item" routerLink="/misVideos" routerLinkActive="active">
+          <mat-icon>video_library</mat-icon>
+          <span>Mis videos</span>
+        </a>
+        <a class="menu-item active" routerLink="/subirVideo">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Subir video</span>
+        </a>
+        <a class="menu-item" routerLink="/crearStream">
+          <mat-icon>live_tv</mat-icon>
+          <span>Crear stream</span>
+        </a>
+      </nav>
     </div>
+  </div>
 
-    <div class="formContainer">
-        <div class="formHeader">
-            <h2>Subir nuevo video</h2>
+  <div class="content-wrapper">
+    <div class="form-container">
+      <div class="form-header">
+        <h2><mat-icon>cloud_upload</mat-icon> Subir nuevo video</h2>
+      </div>
+      
+      <div class="form-content">
+        <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
+          
+          <div class="form-group">
+            <label>Título del video</label>
+            <input type="text" 
+                   [(ngModel)]="videos.titulo" 
+                   name="titulo" 
+                   required 
+                   placeholder="Escribe un título que capte la atención"
+                   class="input">
+            <div class="char-counter">{{ videos.titulo?.length || 0 }}/100</div>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="videos.descripcion" 
+                      name="descripcion" 
+                      required 
+                      placeholder="Dinos más sobre tu video..."
+                      class="textarea"></textarea>
+          </div>
+
+          <div class="upload-section">
+            <label class="upload-label">
+              <mat-icon>photo_camera</mat-icon>
+              Miniatura (1280x720 recomendada)
+              <input type="file" (change)="onThumbnailUpload($event)" accept="image/*" class="hidden-file">
+            </label>
+            <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" class="thumbnail-preview">
+          </div>
+
+          <div class="form-group">
+            <label>Etiquetas</label>
+            <mat-form-field appearance="outline" class="select-full">
+              <mat-select [(ngModel)]="etiquetasSeleccionadas" name="etiquetas" multiple>
+                <mat-option *ngFor="let etiqueta of etiquetasPlanas" [value]="etiqueta">
+                  {{ etiqueta.nombre }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="upload-section">
+            <label class="upload-label video-label">
+              <mat-icon>videocam</mat-icon>
+              Archivo de video 
+              <input type="file" (change)="onVideoUpload($event)" accept="video/*" required class="hidden-file">
+            </label>
+            <video *ngIf="videoPreview" [src]="videoPreview" controls class="video-preview"></video>
+          </div>
+
+          <mat-progress-bar *ngIf="uploadProgress > 0" 
+                            mode="determinate" 
+                            [value]="uploadProgress"
+                            class="progress"></mat-progress-bar>
+
+          <button mat-raised-button 
+                  color="primary" 
+                  type="submit" 
+                  [disabled]="dataform.invalid || uploading"
+                  class="upload-btn">
+            <mat-icon>cloud_upload</mat-icon>
+            {{ uploading ? 'Subiendo... ' + uploadProgress + '%' : 'Subir video' }}
+          </button>
+        </form>
+
+        <div *ngFor="let alerta of alerta" 
+             class="alert" 
+             [ngClass]="{'success': alerta.type === 'success', 'error': alerta.type === 'error'}">
+          {{ alerta.message }}
         </div>
-        <div class="formContent">
-            <div class="formbg-inner padding-horizontal--48">
-                <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="field padding-bottom--24 alineado">
-                                <label for="titulo">Título del Video</label>
-                                <input type="text" id="titulo" placeholder="Ingrese título del video" [(ngModel)]="videos.titulo" name="titulo" required class="custom-input">
-                            </div>
-
-                            <div class="field padding-bottom--24 alineado">
-                                <label for="descripcion">Descripción del Video</label>
-                                <textarea id="descripcion" placeholder="Ingrese descripción del video" [(ngModel)]="videos.descripcion" name="descripcion" required class="custom-textarea" rows="6"></textarea>
-                            </div>
-                            <div class="field padding-bottom--24 alineado">
-                                <label for="etiquetas">Etiquetas</label>
-                                <br>
-                                <mat-form-field appearance="fill">
-                                    <mat-label >Etiquetas</mat-label>
-                                    <mat-select [(value)]="etiquetasSeleccionadas" multiple>
-                                      <mat-option *ngFor="let etiqueta of etiquetasPlanas" [value]="etiqueta">
-                                        {{ etiqueta.nombre }}
-                                      </mat-option>
-                                    </mat-select>
-                                  </mat-form-field>
-                            </div>
-                            <div class="field padding-bottom--24 alineado">
-                                <label for="video">Video</label>
-                                <br>
-                                <input type="file" id="video" (change)="onVideoUpload($event)" class="form-control-file" required>
-                            </div>
-                            <div class="field padding-bottom--24 ">
-                                <button class="boton" type="submit">Subir Video</button>
-                            </div>
-                        </div>
-
-                           
-                    </div>
-
-                    <div *ngFor="let alerta of alerta" class="alerta">
-                        {{ alerta }}
-                    </div>
-
-                    
-                </form>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 </div>
 
-<div *ngIf="!canalNombre">
-    <p>No tienes acceso a este sitio</p>
+<div *ngIf="!canalNombre" class="no-access">
+  <mat-icon>lock</mat-icon>
+  <h2>No tienes canal</h2>
+  <p>Crea un canal para subir videos</p>
+  <a mat-button [routerLink]="['/crearCanal']">Crear canal</a>
 </div>
-
-<script>
-    function previewImage(event) {
-        const input = event.target;
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('previewMiniatura').src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script>

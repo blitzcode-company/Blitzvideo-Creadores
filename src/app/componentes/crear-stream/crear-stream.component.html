@@ -1,29 +1,93 @@
 <app-header></app-header>
-
-<div class="custom-form-container">
-    <h2 class="form-title">Crear nueva transmisión</h2>
-  
-    <form [formGroup]="streamForm" (ngSubmit)="crearStream()" enctype="multipart/form-data">
-      <mat-form-field appearance="fill" class="custom-form-field">
-        <mat-label>Título del stream</mat-label>
-        <input matInput formControlName="titulo" />
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="custom-form-field">
-        <mat-label>Descripción</mat-label>
-        <textarea matInput formControlName="descripcion" rows="4"></textarea>
-      </mat-form-field>
-  
-      <div class="custom-upload">
-        <label class="upload-label">Miniatura del stream</label>
-        <input type="file" (change)="onFileSelected($event)" />
+<div class="containerHome">
+  <!-- TU SIDEBAR COLLAPSIBLE -->
+  <div class="sidebar-container">
+    <div class="sidebar" *ngIf="canalNombre">
+      <div class="profile-section">
+        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
+        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
+        <h1 class="channel-name">{{ canalNombre }}</h1>
       </div>
-  
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="streamForm.invalid">
-          Crear stream
-        </button>
-      </div>
-    </form>
+      <hr class="lineaSideBar">
+      <nav class="menu-nav">
+        <a class="menu-item" routerLink="/misVideos">
+          <mat-icon>video_library</mat-icon>
+          <span>Mis videos</span>
+        </a>
+        <a class="menu-item" routerLink="/subirVideo">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Subir video</span>
+        </a>
+        <a class="menu-item active" routerLink="/crearStream">
+          <mat-icon>live_tv</mat-icon>
+          <span>Crear stream</span>
+        </a>
+      </nav>
+    </div>
   </div>
-  
+
+  <!-- FORM STREAM YOUTUBE -->
+  <div class="content-wrapper">
+    <div class="form-container-stream">
+      <div class="form-header">
+        <h2><mat-icon>live_tv</mat-icon> Crear nueva transmisión</h2>
+      </div>
+      
+      <div class="form-content-stream">
+        <form [formGroup]="streamForm" (ngSubmit)="crearStream()">
+          
+          <!-- TÍTULO -->
+          <div class="form-group-stream">
+            <mat-form-field appearance="outline" class="stream-field">
+              <mat-label>Título del stream</mat-label>
+              <input matInput formControlName="titulo" required>
+            </mat-form-field>
+          </div>
+
+          <!-- DESCRIPCIÓN -->
+          <div class="form-group-stream">
+            <mat-form-field appearance="outline" class="stream-field">
+              <mat-label>Descripción</mat-label>
+              <textarea matInput formControlName="descripcion" rows="4" required></textarea>
+            </mat-form-field>
+          </div>
+
+          <!-- MINIATURA -->
+          <div class="upload-section-stream">
+            <label class="upload-label-stream">
+              <mat-icon>photo_camera</mat-icon>
+              Miniatura del stream (1280x720 recomendada)
+              <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-file">
+            </label>
+            <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" class="thumbnail-preview-stream">
+          </div>
+
+          <!-- PROGRESS -->
+          <mat-progress-bar *ngIf="uploadProgress > 0" 
+                            mode="determinate" 
+                            [value]="uploadProgress"
+                            class="stream-progress"></mat-progress-bar>
+
+          <!-- BOTÓN -->
+          <div class="form-actions-stream">
+            <button mat-raised-button 
+                    color="primary" 
+                    type="submit" 
+                    [disabled]="streamForm.invalid || uploading">
+              <mat-icon>live_tv</mat-icon>
+              {{ uploading ? 'Creando... ' + uploadProgress + '%' : 'Crear stream' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NO ACCESS -->
+<div *ngIf="!canalNombre" class="no-access-youtube">
+  <mat-icon>lock</mat-icon>
+  <h2>No tienes canal</h2>
+  <p>Crea un canal para transmitir</p>
+  <a mat-button [routerLink]="['/crearCanal']">Crear canal</a>
+</div>

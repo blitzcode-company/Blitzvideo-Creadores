@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../servicios/auth.service';
 import { NgForm } from '@angular/forms';
 import { Canal } from '../../clases/canal';
-
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-crear-canal',
@@ -14,7 +14,13 @@ import { Canal } from '../../clases/canal';
 export class CrearCanalComponent {
   constructor(private canalService: CanalService, 
               private authService: AuthService,
-              private router:Router){}
+              private router:Router,
+              private title: Title){
+                this.title.setTitle("Crear canal - BlitzStudio");
+
+
+
+              }
 
 usuario:any;
 canal = new Canal();
@@ -22,7 +28,9 @@ imagenSeleccionada: File | null = null;
 imagenUrl:any;
 
 portada: File | undefined = undefined;
-
+alerta: { message: string; type: 'success' | 'error' }[] = [];
+uploadProgress: number = 0;
+uploading: boolean = false;
 
 
 ngOnInit() {
@@ -40,13 +48,11 @@ obtenerUsuario() {
 
 onFileSelected(event: any) {
   const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.canal.portadaPreview = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  if (file && file.type.startsWith('image/')) {
     this.canal.portada = file;
+    const reader = new FileReader();
+    reader.onload = (e) => this.canal.portadaPreview = e.target?.result as string;
+    reader.readAsDataURL(file);
   }
 }
 
@@ -65,6 +71,8 @@ crearCanal(): void {
     console.log(`${key}:`, value);
   });
 
+
+  
 
   this.canalService.crearCanal(this.usuario.id, formData).subscribe({
     next: () => {

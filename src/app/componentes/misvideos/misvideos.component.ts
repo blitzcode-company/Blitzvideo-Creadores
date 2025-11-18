@@ -41,6 +41,11 @@ export class MisvideosComponent implements OnInit{
     this.mostrarTodosLosVideos();
   }
 
+  onImageError(event: any) {
+    event.target.src = 'assets/images/video-default.png';
+  }
+
+
   obtenerUsuario() {
     this.authService.usuario$.subscribe(user => {
       this.usuario = user;
@@ -86,10 +91,24 @@ export class MisvideosComponent implements OnInit{
   }
   
   
-  mostrarTodosLosVideos() {
-    this.canalService.listarVideosDeCanal(this.canalId).subscribe(res => {
-      this.videos = Array.isArray(res) ? res : [];
-    });
+
+  convertirDuracion(segundos: number): string {
+    const minutos = Math.floor(segundos / 60);
+    const segundosRestantes = segundos % 60;
+    const segundosFormateados = segundosRestantes < 10 ? '0' + segundosRestantes : segundosRestantes;
+    return `${minutos}:${segundosFormateados}`;
   }
+
+
+  mostrarTodosLosVideos() {
+  this.canalService.listarVideosDeCanal(this.canalId).subscribe(res => {
+    this.videos = Array.isArray(res) ? res : [];
+    this.videos.forEach(video => {
+      if (video.duracion) {
+        video.duracion = this.convertirDuracion(video.duracion);
+      }
+    });
+  });
+}
 
 }

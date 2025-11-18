@@ -22,6 +22,9 @@ export class CrearStreamComponent implements OnInit {
   usuario: any;
   canal: any;
   canalNombre: any;
+  thumbnailPreview: string | null = null;
+  uploadProgress: number = 0;
+  uploading: boolean = false;
 
   ngOnInit() {
     this.obtenerUsuario();
@@ -47,9 +50,14 @@ export class CrearStreamComponent implements OnInit {
   }
 
   onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.streamForm.patchValue({ miniatura: file });
+      const reader = new FileReader();
+      reader.onload = (e) => this.thumbnailPreview = e.target?.result as string;
+      reader.readAsDataURL(file);
+    }
   }
-
  
   obtenerUsuario() {
     this.authService.mostrarUserLogueado().subscribe((res) => {
@@ -110,4 +118,5 @@ export class CrearStreamComponent implements OnInit {
     });
   }
 
+  
 }

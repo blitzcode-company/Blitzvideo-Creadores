@@ -1,23 +1,71 @@
-<header class="navbar navbar-expand-lg header">
-  <div class="container-fluid">
-      <a [href]="serverIp + '3000' + '/#/'">
-        <img class="logo" src="assets/images/logo.png" alt="Logo de blitzvideo">
+<header class="navbar navbar-expand-lg fixed-top bg-header shadow-sm">
+  <div class="container-fluid d-flex align-items-center navbar-container">
+    <div class="navbar-left">
+      <button class="btn text-white me-2  d-md-block d-none">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      
+      <a class="navbar-brand d-flex align-items-center" [href]="serverIp + '3000' + '/#/'">
+        <img 
+          class="logo-navbar"
+          [src]="usuario?.premium ? 'assets/images/logopremium.png' : 'assets/images/logo.png'" 
+          alt="Logo">
       </a>
-      <nav class="nav"></nav>
-      <div class="search-box">
-        <input type="text" [(ngModel)]="nombre" placeholder="Buscar video" (keyup.enter)="buscarVideos()" class="search-input" aria-label="Search" >
-      </div>
-      <div class="dropdown" [class.open]="isDropdownOpen">
-        <button class="dropdown-toggle" (click)="toggleDropdown($event)">
-          <div class="dropdown-content">
-            <a *ngIf="status.isLoggedIn && canalNombre" routerLink="/miCanal" class="dropdown-item canal">{{ canalNombre }}</a>
-            <img *ngIf="status.isLoggedIn && usuario?.foto" [src]="usuario.foto" alt="User Photo" width="32" height="32" class="avatar">
-            <img *ngIf="status.isLoggedIn && !usuario?.foto" src="assets/images/user.png" alt="Default User"  height="32" class="avatar">
-            <img *ngIf="!status.isLoggedIn" src="assets/images/user.png" alt="Default User" height="32" class="avatar">
+    </div>
+
+    <div class="search-container d-none d-md-flex">
+      <form class="search-form" (submit)="buscarVideos()">
+        <div class="search-wrapper position-relative">
+          <mat-icon class="search-icon" [class.hide]="nombre.length > 0">search</mat-icon>
+    
+          <input 
+            [(ngModel)]="nombre"
+            name="busqueda"
+            type="text"
+            class="search-input"
+            [placeholder]="nombre.length > 0 ? '' : 'Buscar video'"
+            aria-label="Buscar video"
+            (input)="filtrarHistorial()"
+            autocomplete="off">
+          
+          <div class="historial-dropdown" *ngIf="nombre.length > 0 && historialFiltrado.length > 0" [@fadeIn]>
+            <div class="historial-header">
+              <mat-icon class="me-2">history</mat-icon>
+              Búsquedas recientes
+            </div>
+            <ul class="historial-list">
+              <li *ngFor="let busqueda of historialFiltrado" 
+                  class="historial-item"
+                  (click)="seleccionarBusqueda(busqueda)">
+                <mat-icon class="me-2">search</mat-icon>
+                {{ busqueda }}
+                <button type="button" class="btn-clear" (click)="eliminarBusqueda(busqueda); $event.stopPropagation()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </li>
+            </ul>
+            <div class="historial-footer">
+              <button type="button" class="btn-clear-all" (click)="limpiarHistorial()">
+                <mat-icon>delete_sweep</mat-icon>
+                Limpiar todo
+              </button>
+            </div>
           </div>
+        </div>
+      </form>
+    </div>
+
+      <div class="dropdown mx-1" [class.open]="isDropdownOpen">
+        <button class="btn d-flex align-items-center text-white" (click)="toggleDropdown($event)">
+          <span *ngIf="usuario?.name" class="me-2 d-none d-lg-inline">{{ canalNombre }}</span>
+          <img *ngIf="usuario?.foto" [src]="usuario.foto" class="avatar" alt="Foto perfil">
+          <img *ngIf="!usuario?.foto" src="assets/images/user.png" class="avatar" alt="Perfil">
+          <mat-icon class="ms-1" style="font-size: 18px;">keyboard_arrow_down</mat-icon>
         </button>
-        <div class="dropdown-menu">
-          <a *ngIf="status.isLoggedIn && canalNombre" routerLink="/subirVideo" class="dropdown-item">Subir video</a>
+
+        <div class="dropdown-menu dropdown-menu-end" [class.show]="isDropdownOpen">
+          <a *ngIf="status.isLoggedIn && canalNombre" [href]="serverIp + '3000' + '/#/'" class="dropdown-item">Volver a BlitzVideo</a>
           <a *ngIf="status.isLoggedIn && !canalNombre" routerLink="/crearCanal" class="dropdown-item">Crear canal</a>
           <hr class="dropdown-divider">
           <a *ngIf="status.isLoggedIn" (click)="logout()" class="dropdown-item">Cerrar sesión</a>

@@ -29,8 +29,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CrearStreamComponent } from './componentes/crear-stream/crear-stream.component';
 import { ModalConfirmacionStreamComponent } from './componentes/modal-confirmacion-stream/modal-confirmacion-stream.component';
 import { MonitorearStreamComponent } from './componentes/monitorear-stream/monitorear-stream.component';
-
-
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { TiempoPipe } from './pipes/tiempo.pipe';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { MonitorearStreamComponent } from './componentes/monitorear-stream/monit
     CrearStreamComponent,
     ModalConfirmacionStreamComponent,
     MonitorearStreamComponent,
+    TiempoPipe,
     
   ],
   imports: [
@@ -60,7 +62,9 @@ import { MonitorearStreamComponent } from './componentes/monitorear-stream/monit
     FormsModule,
     HttpClientModule,
     NgbModule,
+    MatIconModule,
     MatFormFieldModule,
+    MatProgressBarModule,
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,

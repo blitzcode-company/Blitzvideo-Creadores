@@ -33,7 +33,9 @@ serverIp = environment.serverIp
   canalId:any;
   canalNombre:any
   nombre: string = '';
-
+  historialFiltrado: string[] = [];
+  historialBusquedas: string[] = [];
+  maxHistorial = 5;
 
   obtenerUsuario() {
     this.api.usuario$.subscribe(user => {
@@ -47,12 +49,77 @@ serverIp = environment.serverIp
     this.api.mostrarUserLogueado().subscribe();
   }
 
-  buscarVideos(): void {
-    if (this.nombre.trim()) {
-      window.location.href = `${this.serverIp}3000/buscar/${this.nombre}`; 
-
+  cargarHistorialBusquedas() {
+    const historial = localStorage.getItem('historialBusquedas');
+    if (historial) {
+      this.historialBusquedas = JSON.parse(historial).slice(-this.maxHistorial);
     }
   }
+  
+  guardarBusqueda(nombre: string) {
+    if (!nombre || nombre.trim() === '') return;
+    
+    this.historialBusquedas = [nombre, ...this.historialBusquedas.filter(b => b !== nombre)];
+    
+    this.historialBusquedas = this.historialBusquedas.slice(0, this.maxHistorial);
+    
+    localStorage.setItem('historialBusquedas', JSON.stringify(this.historialBusquedas));
+  }
+
+  filtrarHistorial() {
+    if (!this.nombre) {
+      this.historialFiltrado = [];
+      return;
+    }
+    const termino = this.nombre.toLowerCase();
+    this.historialFiltrado = this.historialBusquedas.filter(busqueda => 
+      busqueda.toLowerCase().includes(termino)
+    ).slice(0, 5);
+  }
+  
+  seleccionarBusqueda(busqueda: string) {
+    this.nombre = busqueda;
+    this.historialFiltrado = [];
+    this.buscarVideos();
+  }
+  
+  eliminarBusqueda(busqueda: string) {
+    this.historialBusquedas = this.historialBusquedas.filter(b => b !== busqueda);
+    localStorage.setItem('historialBusquedas', JSON.stringify(this.historialBusquedas));
+    this.filtrarHistorial();
+  }
+  
+  limpiarHistorial() {
+    this.historialBusquedas = [];
+    localStorage.removeItem('historialBusquedas');
+    this.historialFiltrado = [];
+  }
+  
+
+  buscarVideos() {
+    if (this.nombre?.trim()) {
+      this.guardarBusqueda(this.nombre.trim());
+      window.location.href = `${this.serverIp}3000/buscar/${this.nombre}`, { 
+        queryParams: { q: this.nombre.trim() } 
+      };
+    }
+    if (this.mobileSearchActive) this.toggleMobileSearch();
+  }
+
+  
+  onSearchInput() {
+    this.cargarHistorialBusquedas();
+  }
+  
+  mobileSearchActive = false;
+
+  toggleMobileSearch() {
+    this.mobileSearchActive = !this.mobileSearchActive;
+    if (this.mobileSearchActive) {
+      setTimeout(() => this.cargarHistorialBusquedas(), 100);
+    }
+  }
+
 
   obtenerCanal(): void {
     if (this.usuario && this.usuario.id) {

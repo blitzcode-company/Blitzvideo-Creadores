@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Videos } from '../clases/videos';
 import { Etiqueta } from '../clases/etiqueta';
@@ -96,7 +96,19 @@ export class VideosService {
   }
 
 
-
+  subirVideoConProgress(idCanal: any, video: FormData): Observable<any> {
+    const url = `${this.apiUrl}api/v1/videos/canal/${idCanal}`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + this.cookie.get('accessToken')
+      })
+    };
+    return this.httpClient.post(url, video, { 
+      ...httpOptions, 
+      reportProgress: true, 
+      observe: 'events' 
+    });
+  }
 
 }
 
