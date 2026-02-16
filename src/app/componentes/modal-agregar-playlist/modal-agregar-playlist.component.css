@@ -1,0 +1,343 @@
+.modal-container {
+  padding: 0;
+  max-width: 550px;
+  overflow: hidden;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 24px;
+  background: linear-gradient(135deg, #0d4b71 0%, #0a3a56 100%);
+  color: white !important; 
+  font-size: 22px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(13, 75, 113, 0.3);
+}
+
+h2 mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  animation: iconPulse 2s ease-in-out infinite;
+}
+.botonAgregar {
+  color: white;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+mat-dialog-content {
+  padding: 24px 24px 0 24px;
+  max-height: 550px;
+  overflow-y: auto;
+}
+
+mat-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+mat-dialog-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb {
+  background: #0d4b71;
+  border-radius: 10px;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: #0a3a56;
+}
+
+.subtitle {
+  margin: 0 0 20px 0;
+  color: #555;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subtitle::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  background: #0d4b71;
+  border-radius: 2px;
+}
+
+.crear-nueva-section {
+  margin-bottom: 20px;
+}
+
+.btn-crear-nueva {
+  width: 100%;
+  height: 48px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #0d4b71 0%, #0a3a56 100%);
+  color: white;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(13, 75, 113, 0.3);
+}
+
+.btn-crear-nueva:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 75, 113, 0.4);
+}
+
+.btn-crear-nueva mat-icon {
+  transition: transform 0.3s ease;
+}
+
+.btn-crear-nueva:hover mat-icon {
+  transform: rotate(90deg);
+}
+
+.form-crear {
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%);
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #0d4b71;
+  box-shadow: 0 4px 12px rgba(13, 75, 113, 0.1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.form-crear form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-width mat-form-field {
+  font-size: 14px;
+}
+
+.checkbox-acceso {
+  margin-left: 5px;
+  color: #0d4b71;
+  font-weight: 500;
+}
+
+.form-crear button[type="submit"] {
+  background: #0d4b71;
+  color: white;
+  font-weight: 600;
+  height: 44px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.form-crear button[type="submit"]:hover:not(:disabled) {
+  background: #0a3a56;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 75, 113, 0.3);
+}
+
+.divider {
+  margin: 24px 0;
+  border-color: rgba(13, 75, 113, 0.2);
+}
+
+.playlists-container {
+  margin-top: 20px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #0d4b71;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(135deg, #0d4b71 0%, #0a3a56 100%);
+  border-radius: 2px;
+}
+
+.no-playlists {
+  text-align: center;
+  padding: 48px 20px;
+  color: #666;
+  background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 2px dashed #0d4b71;
+}
+
+.no-playlists mat-icon {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 12px;
+  color: #0d4b71;
+  opacity: 0.5;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.no-playlists p {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.playlist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+}
+
+.playlist-item:hover {
+  background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
+  border-color: #0d4b71;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(13, 75, 113, 0.15);
+}
+
+.playlist-item.selected {
+  background: linear-gradient(135deg, #e6f2ff 0%, #d1e8ff 100%);
+  border-color: #0d4b71;
+  border-width: 3px;
+  box-shadow: 0 4px 16px rgba(13, 75, 113, 0.25);
+  transform: translateX(4px);
+}
+
+.playlist-item.selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #0d4b71;
+  border-radius: 12px 0 0 12px;
+}
+
+.playlist-item {
+  position: relative;
+}
+
+.playlist-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.playlist-name {
+  font-weight: 600;
+  color: #0d4b71;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+.playlist-item.selected .playlist-name {
+  color: #0a3a56;
+}
+
+.playlist-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.small-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #0d4b71;
+}
+
+mat-dialog-actions {
+  padding: 20px 24px;
+  border-top: 2px solid rgba(13, 75, 113, 0.1);
+  margin: 0;
+  background: linear-gradient(to bottom, #fafbfc 0%, #f5f7f9 100%);
+}
+
+mat-dialog-actions button {
+  margin-left: 10px;
+  font-weight: 600;
+  height: 44px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+mat-dialog-actions button[mat-raised-button] {
+  background: linear-gradient(135deg, #0d4b71 0%, #0a3a56 100%);
+  box-shadow: 0 4px 12px rgba(13, 75, 113, 0.3);
+}
+
+mat-dialog-actions button[mat-raised-button]:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 75, 113, 0.4);
+}
+
+mat-dialog-actions button[mat-raised-button]:disabled {
+  opacity: 0.5;
+}
+
+mat-dialog-actions button[mat-button] {
+  color: #0d4b71;
+}
+
+mat-dialog-actions button[mat-button]:hover {
+  background: rgba(13, 75, 113, 0.1);
+}

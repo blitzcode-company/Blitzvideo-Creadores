@@ -1,5 +1,5 @@
 <app-header></app-header>
-<div class="containerHome">
+<div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async">
   <div class="sidebar-container">
     <div class="sidebar" *ngIf="canalNombre">
       <div class="profile-section">
@@ -25,92 +25,117 @@
     </div>
   </div>
 
-  <div class="content-wrapper">
-    <div class="form-container">
-      <div class="form-header">
-        <h2><mat-icon>cloud_upload</mat-icon> Subir nuevo video</h2>
-      </div>
-      
-      <div class="form-content">
-        <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)">
-          
-          <div class="form-group">
-            <label>Título del video</label>
-            <input type="text" 
-                   [(ngModel)]="videos.titulo" 
-                   name="titulo" 
-                   required 
-                   placeholder="Escribe un título que capte la atención"
-                   class="input">
-            <div class="char-counter">{{ videos.titulo?.length || 0 }}/100</div>
-          </div>
+<div class="content-wrapper">
+    <div class="upload-page">
 
-          <div class="form-group">
-            <label>Descripción</label>
-            <textarea [(ngModel)]="videos.descripcion" 
+      <div class="upload-header">
+  
+        <h1>Subir video</h1>
+        <div class="flex-grow"></div>
+      </div>
+
+      <div *ngFor="let a of alerta" class="alert-banner" [ngClass]="a.type">
+        {{ a.message }}
+        <button mat-icon-button (click)="cerrarAlerta(a)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="video-upload-zone"
+           appDragDrop
+           (fileDropped)="onVideoUpload($event)"
+           [class.has-video]="!!videoFile"
+           [class.uploading]="uploading">
+
+        <div class="drop-prompt" *ngIf="!videoFile && !uploading">
+          <mat-icon class="big-icon">cloud_upload</mat-icon>
+          <h2>Arrastra tu video aquí</h2>
+          <p>o haz clic para seleccionar</p>
+          <input #videoFileInput type="file" accept="video/*" (change)="onVideoUpload($event)" class="hidden-input" style="display: none;">
+          <button mat-raised-button color="primary" class="select-btn" (click)="videoFileInput.click()">
+            Seleccionar archivo
+          </button>
+        </div>
+
+        <div class="video-preview-container" *ngIf="videoFile && !uploading">
+          <video [src]="videoPreview" controls class="video-element"></video>
+          <div class="video-info">
+            <div class="file-name">{{ videoFile.name }}</div>
+            <div class="file-size">{{ formatBytes(videoFile.size) }}</div>
+          </div>
+          <button mat-icon-button class="remove-btn" (click)="removeVideo()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="uploading-overlay" *ngIf="uploading">
+          <mat-progress-spinner diameter="80" mode="determinate" [value]="uploadProgress"></mat-progress-spinner>
+          <h3>Subiendo... {{ uploadProgress }}%</h3>
+          <p>No cierres esta pestaña</p>
+        </div>
+      </div>
+
+      <div class="details-card" *ngIf="videoFile && !uploading">
+        <form #uploadForm="ngForm" (ngSubmit)="onSubmit(uploadForm)">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título</mat-label>
+            <input matInput [(ngModel)]="titulo" name="titulo" required maxlength="100">
+            <mat-hint align="end">{{ titulo.length }}/100</mat-hint>
+            <mat-error *ngIf="uploadForm.controls['titulo']?.hasError('required')">
+              El título es obligatorio
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput 
+                      [(ngModel)]="descripcion" 
                       name="descripcion" 
                       required 
-                      placeholder="Dinos más sobre tu video..."
-                      class="textarea"></textarea>
-          </div>
+                      rows="5"
+                      placeholder="Cuéntales a los espectadores de qué trata tu video...">
+            </textarea>
+            <mat-error *ngIf="uploadForm.controls['descripcion']?.hasError('required')">
+              La descripción es obligatoria
+            </mat-error>
+          </mat-form-field>
 
-          <div class="upload-section">
-            <label class="upload-label">
-              <mat-icon>photo_camera</mat-icon>
-              Miniatura (1280x720 recomendada)
-              <input type="file" (change)="onThumbnailUpload($event)" accept="image/*" class="hidden-file">
+          <div class="thumbnail-section">
+            <p>Miniatura <span class="optional">(opcional)</span></p>
+            <label class="thumbnail-upload-box" [class.has-thumb]="!!thumbnailPreview">
+              <input type="file" accept="image/*" (change)="onThumbnailUpload($event)" hidden>
+              <div class="placeholder" *ngIf="!thumbnailPreview">
+                <mat-icon>add_photo_alternate</mat-icon>
+                <span>Subir miniatura personalizada</span>
+              </div>
+              <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" class="thumb-preview">
+              <div class="overlay" *ngIf="thumbnailPreview">
+                <mat-icon>edit</mat-icon>
+                <span>Cambiar</span>
+              </div>
             </label>
-            <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" class="thumbnail-preview">
+            <small>Si no subes una, el sistema generará una automáticamente</small>
           </div>
 
-          <div class="form-group">
-            <label>Etiquetas</label>
-            <mat-form-field appearance="outline" class="select-full">
-              <mat-select [(ngModel)]="etiquetasSeleccionadas" name="etiquetas" multiple>
-                <mat-option *ngFor="let etiqueta of etiquetasPlanas" [value]="etiqueta">
-                  {{ etiqueta.nombre }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Etiquetas</mat-label>
+            <mat-select [(ngModel)]="etiquetasSeleccionadas" name="etiquetas" multiple placeholder="Selecciona etiquetas">
+              <mat-option *ngFor="let e of etiquetasPlanas" [value]="e.id">
+                {{ e.nombre }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="action-buttons">
+            <button mat-button type="button" (click)="removeVideo()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!uploadForm.valid || uploading">
+              <mat-icon>publish</mat-icon>
+              Publicar video
+            </button>
           </div>
-
-          <div class="upload-section">
-            <label class="upload-label video-label">
-              <mat-icon>videocam</mat-icon>
-              Archivo de video 
-              <input type="file" (change)="onVideoUpload($event)" accept="video/*" required class="hidden-file">
-            </label>
-            <video *ngIf="videoPreview" [src]="videoPreview" controls class="video-preview"></video>
-          </div>
-
-          <mat-progress-bar *ngIf="uploadProgress > 0" 
-                            mode="determinate" 
-                            [value]="uploadProgress"
-                            class="progress"></mat-progress-bar>
-
-          <button mat-raised-button 
-                  color="primary" 
-                  type="submit" 
-                  [disabled]="dataform.invalid || uploading"
-                  class="upload-btn">
-            <mat-icon>cloud_upload</mat-icon>
-            {{ uploading ? 'Subiendo... ' + uploadProgress + '%' : 'Subir video' }}
-          </button>
         </form>
-
-        <div *ngFor="let alerta of alerta" 
-             class="alert" 
-             [ngClass]="{'success': alerta.type === 'success', 'error': alerta.type === 'error'}">
-          {{ alerta.message }}
-        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div *ngIf="!canalNombre" class="no-access">
-  <mat-icon>lock</mat-icon>
-  <h2>No tienes canal</h2>
-  <p>Crea un canal para subir videos</p>
-  <a mat-button [routerLink]="['/crearCanal']">Crear canal</a>
 </div>

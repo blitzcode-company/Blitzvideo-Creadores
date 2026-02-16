@@ -1,5 +1,6 @@
 .form-wrapper-canal {
-  min-height: calc(100vh - 75px);
+  min-height: calc(100vh - 60px);
+  margin-top: 60px;
   display: flex;
   align-items: center;
   justify-content: center;

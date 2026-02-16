@@ -8,7 +8,6 @@
     <div class="form-content-canal">
       <form #dataform="ngForm" (ngSubmit)="crearCanal()">
         
-        <!-- NOMBRE -->
         <div class="form-group-canal">
           <mat-form-field appearance="outline" class="canal-field">
             <mat-label>Nombre del canal</mat-label>
@@ -16,7 +15,6 @@
           </mat-form-field>
         </div>
 
-        <!-- DESCRIPCIÓN -->
         <div class="form-group-canal">
           <mat-form-field appearance="outline" class="canal-field">
             <mat-label>Descripción</mat-label>
@@ -24,7 +22,6 @@
           </mat-form-field>
         </div>
 
-        <!-- PORTADA -->
         <div class="upload-section-canal">
           <label class="upload-label-canal">
             <mat-icon>photo_camera</mat-icon>
@@ -35,13 +32,11 @@
           <img *ngIf="!canal.portadaPreview" src="assets/images/cover-default.png" class="cover-preview-canal">
         </div>
 
-        <!-- PROGRESS -->
         <mat-progress-bar *ngIf="uploadProgress > 0" 
                           mode="determinate" 
                           [value]="uploadProgress"
                           class="canal-progress"></mat-progress-bar>
 
-        <!-- BOTÓN -->
         <div class="form-actions-canal">
           <button mat-raised-button 
                   color="primary" 
@@ -54,7 +49,6 @@
         </div>
       </form>
 
-      <!-- ALERTAS -->
       <div *ngFor="let alerta of alerta" 
            class="canal-alert" 
            [ngClass]="{'success': alerta.type === 'success', 'error': alerta.type === 'error'}">

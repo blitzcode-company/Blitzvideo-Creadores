@@ -1,7 +1,7 @@
 <header class="navbar navbar-expand-lg fixed-top bg-header shadow-sm">
   <div class="container-fluid d-flex align-items-center navbar-container">
-    <div class="navbar-left">
-      <button class="btn text-white me-2  d-md-block d-none">
+     <div class="navbar-left">
+      <button class="btn text-white me-2  d-md-block d-none menu-btn-left" (click)="toggleSidebar()">
         <mat-icon>menu</mat-icon>
       </button>
 
@@ -9,52 +9,12 @@
       <a class="navbar-brand d-flex align-items-center" [href]="serverIp + '3000' + '/#/'">
         <img 
           class="logo-navbar"
-          [src]="usuario?.premium ? 'assets/images/logopremium.png' : 'assets/images/logo.png'" 
+          [src]="usuario?.premium ? 'assets/images/logopremium.svg' : 'assets/images/logo.png'" 
           alt="Logo">
       </a>
     </div>
 
-    <div class="search-container d-none d-md-flex">
-      <form class="search-form" (submit)="buscarVideos()">
-        <div class="search-wrapper position-relative">
-          <mat-icon class="search-icon" [class.hide]="nombre.length > 0">search</mat-icon>
     
-          <input 
-            [(ngModel)]="nombre"
-            name="busqueda"
-            type="text"
-            class="search-input"
-            [placeholder]="nombre.length > 0 ? '' : 'Buscar video'"
-            aria-label="Buscar video"
-            (input)="filtrarHistorial()"
-            autocomplete="off">
-          
-          <div class="historial-dropdown" *ngIf="nombre.length > 0 && historialFiltrado.length > 0" [@fadeIn]>
-            <div class="historial-header">
-              <mat-icon class="me-2">history</mat-icon>
-              Búsquedas recientes
-            </div>
-            <ul class="historial-list">
-              <li *ngFor="let busqueda of historialFiltrado" 
-                  class="historial-item"
-                  (click)="seleccionarBusqueda(busqueda)">
-                <mat-icon class="me-2">search</mat-icon>
-                {{ busqueda }}
-                <button type="button" class="btn-clear" (click)="eliminarBusqueda(busqueda); $event.stopPropagation()">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </li>
-            </ul>
-            <div class="historial-footer">
-              <button type="button" class="btn-clear-all" (click)="limpiarHistorial()">
-                <mat-icon>delete_sweep</mat-icon>
-                Limpiar todo
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
 
       <div class="dropdown mx-1" [class.open]="isDropdownOpen">
         <button class="btn d-flex align-items-center text-white" (click)="toggleDropdown($event)">

@@ -1,10 +1,24 @@
-
-<h1 class="modal-title">Confirmar eliminación<hr>
-</h1>
-<div class="modal-body">
-  <p>¿Estás seguro de que quieres eliminar este elemento?</p>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
-  <button type="button" class="btn btn-primary" (click)="onConfirm()">Aceptar</button>
+<div class="modal-container">
+  <div class="modal-header">
+    <mat-icon class="warning-icon">warning</mat-icon>
+    <h1 class="modal-title">Confirmar eliminación</h1>
+  </div>
+  
+  <div class="modal-body">
+    <mat-icon class="delete-icon">delete_forever</mat-icon>
+    <p class="modal-message" *ngIf="!esMultiple">¿Estás seguro de que quieres eliminar este video?</p>
+    <p class="modal-message" *ngIf="esMultiple">¿Estás seguro de que quieres eliminar {{ cantidadVideos }} video{{ cantidadVideos !== 1 ? 's' : '' }}?</p>
+    <p class="modal-warning">Esta acción no se puede deshacer.</p>
+  </div>
+  
+  <div class="modal-footer">
+    <button mat-button class="btn-cancel" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+      Cancelar
+    </button>
+    <button mat-raised-button class="btn-delete" (click)="onConfirm()">
+      <mat-icon>delete</mat-icon>
+      Eliminar
+    </button>
+  </div>
 </div>

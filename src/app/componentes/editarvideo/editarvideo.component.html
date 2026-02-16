@@ -1,54 +1,121 @@
 <app-header></app-header>
-<div class="container">
-  <div class="header">
-    <h2>Edita tu video</h2>
+
+<div class="edit-container">
+  <div class="edit-header">
+    <button mat-icon-button routerLink="/misVideos" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Editar video</h1>
   </div>
-  <div class="form-container">
-    <form #dataform="ngForm" (ngSubmit)="onSubmit(dataform)" enctype="multipart/form-data">
-      <div class="form-group">
-        <label for="miniatura">Miniatura del Video</label>
-        <div class="thumbnail-wrapper" (click)="triggerFileInput('miniatura')">
-          <img id="previewMiniatura" [src]="videos.miniatura ? videos.miniatura : 'assets/images/video-default.png'" alt="Miniatura del video" class="thumbnail">
-          <input type="file" name="miniatura" id="miniatura" class="file-input d-none" (change)="previewImage($event)">
-        </div>
-      </div>
 
-      <div class="form-group">
-        <label for="titulo">Editar el título</label>
-        <input type="text" id="titulo" [(ngModel)]="videos.titulo" name="titulo" class="form-control" required>
-      </div>
+  <div *ngFor="let a of alerta" class="alert-banner" [ngClass]="a.type">
+    <span [innerHTML]="a.message"></span>
+    <button mat-icon-button (click)="cerrarAlerta(a)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-      <div class="form-group">
-        <label for="descripcion">Editar la descripción</label>
-        <input type="text" id="descripcion" [(ngModel)]="videos.descripcion" name="descripcion" class="form-control" required>
-      </div>
+  <div class="edit-content" *ngIf="video">
+    <form #editForm="ngForm" (ngSubmit)="onSubmit()">
 
-      <div class="form-group">
-        <label class="video" for="video">Presiona aquí para cambiar el video</label>
-        <input type="file" id="video" (change)="onVideoUpload($event)" class="file-input">
-      </div>
-
-      <div class="form-group">
-        <label for="etiquetas">Etiquetas</label>
-        <div class="checkbox-group">
-          <div *ngFor="let etiqueta of etiquetas" class="checkbox-item">
-            <input 
-              type="checkbox" 
-              [id]="'etiqueta_' + etiqueta.id" 
-              [value]="etiqueta.id"
-              [checked]="etiquetasSeleccionadas.includes(etiqueta.id)"
-              (change)="onEtiquetaChange($event)"
-              class="form-check-input">
-            <label class="form-check-label" [for]="'etiqueta_' + etiqueta.id">{{ etiqueta.nombre }}</label>
+      <div class="video-preview-section">
+        <div class="thumbnail-box" (click)="triggerFileInput()">
+          <img [src]="miniaturaPreview || video.miniatura || 'assets/images/video-default.png'" 
+               alt="Miniatura" class="thumbnail-img">
+          <div class="overlay">
+            <mat-icon>photo_camera</mat-icon>
+            <span>Cambiar miniatura</span>
           </div>
+          <input type="file" #fileInput accept="image/*" (change)="onMiniaturaChange($event)" hidden>
+        </div>
+
+        <div class="video-info">
+          <h2>{{ video.titulo }}</h2>
+          <p class="upload-date">Subido el {{ video.created_at | date:'dd MMM yyyy, HH:mm' }}</p>
         </div>
       </div>
-      <div class="form-group">
-        <button class="btn-submit" type="submit">Actualizar</button>
+
+      <div class="form-grid">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título</mat-label>
+          <input matInput [(ngModel)]="video.titulo" name="titulo" required maxlength="100">
+          <mat-hint align="end">{{ video.titulo?.length || 0 }}/100</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput [(ngModel)]="video.descripcion" name="descripcion" rows="6"></textarea>
+        </mat-form-field>
+
+        <div class="visibility-section">
+  <label class="section-title">Visibilidad</label>
+
+  <mat-radio-group 
+    [(ngModel)]="video.acceso" 
+    name="acceso"
+    class="visibility-radio-group">
+    
+    <mat-radio-button value="publico" color="primary">
+      <div class="option">
+        <strong>Público</strong>
+        <small>Cualquiera puede ver este video</small>
+      </div>
+    </mat-radio-button>
+
+    <mat-radio-button value="privado" color="primary">
+      <div class="option">
+        <strong>Privado</strong>
+        <small>Solo tú puedes ver este video</small>
+      </div>
+    </mat-radio-button>
+  </mat-radio-group>
+</div>
+
+    <div class="form-group tags-section">
+      <label class="section-title">Etiquetas</label>
+
+      <div class="checkbox-group">
+        <div *ngFor="let etiqueta of etiquetas" class="checkbox-item">
+          <mat-checkbox
+            [id]="'etiqueta_' + etiqueta.id"
+            [value]="etiqueta.id.toString()"
+
+            [checked]="etiquetasSeleccionadas.includes(etiqueta.id)"
+            (change)="onEtiquetaChange($event)">
+            {{ etiqueta.nombre }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+   
+    </div>
+
+        <div class="replace-video-section">
+          <label class="section-title">Reemplazar video (opcional)</label>
+          <button type="button" mat-stroked-button (click)="videoInput.click()">
+            <mat-icon>video_library</mat-icon>
+            Seleccionar nuevo video
+          </button>
+          <input #videoInput type="file" accept="video/*" (change)="onVideoChange($event)" hidden>
+        <small *ngIf="nuevoVideoFile" class="file-selected success">
+        <mat-icon fontSet="material-icons-outlined" style="font-size:16px;vertical-align:middle">check_circle</mat-icon>
+        {{ nuevoVideoFile.name }} ({{ formatBytes(nuevoVideoFile.size) }})
+      </small>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button mat-button type="button" routerLink="/misVideos">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" 
+                [disabled]="!editForm.valid || guardando">
+          <mat-icon *ngIf="guardando">
+            <mat-spinner diameter="20"></mat-spinner>
+          </mat-icon>
+          <span *ngIf="!guardando">Guardar cambios</span>
+          <span *ngIf="guardando">Guardando...</span>
+        </button>
       </div>
     </form>
-    <div *ngIf="alerta.length" class="alert-container">
-      <div *ngFor="let mensaje of alerta" class="alert alert-info" [innerHTML]="mensaje"></div>
-    </div>
   </div>
 </div>

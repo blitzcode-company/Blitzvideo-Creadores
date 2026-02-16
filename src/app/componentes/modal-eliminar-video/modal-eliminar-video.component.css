@@ -1,17 +1,140 @@
-.modal-title {
-    font-size: 40px;
-        padding: 1rem;
+.modal-container {
+  padding: 0;
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+}
 
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.warning-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  animation: warningPulse 2s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% {
+    transform: scale(1);
   }
-  
-  .modal-body {
-    padding: 1rem;
+  50% {
+    transform: scale(1.15);
   }
-  
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 1rem;
-    border-top: 1px solid #e9ecef;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.modal-body {
+  padding: 32px 24px;
+  text-align: center;
+  background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
+}
+
+.delete-icon {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  color: #d32f2f;
+  margin: 0 auto 16px;
+  display: block;
+  opacity: 0.8;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
   }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.modal-message {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.modal-warning {
+  font-size: 14px;
+  color: #d32f2f;
+  margin: 0;
+  font-weight: 600;
+  background: #ffebee;
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 2px solid rgba(13, 75, 113, 0.1);
+  background: linear-gradient(to bottom, #fafbfc 0%, #f5f7f9 100%);
+}
+
+.btn-cancel {
+  height: 44px;
+  padding: 0 24px;
+  font-weight: 600;
+  color: #0d4b71;
+  border: 2px solid #0d4b71;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: #0d4b71;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 75, 113, 0.3);
+}
+
+.btn-cancel mat-icon {
+  margin-right: 6px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.btn-delete {
+  height: 44px;
+  padding: 0 24px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+  color: white !important;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+}
+
+.btn-delete mat-icon {
+  margin-right: 6px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}

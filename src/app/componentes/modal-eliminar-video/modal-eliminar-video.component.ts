@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 
 @Component({
@@ -9,8 +9,18 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 })
 export class ModalEliminarVideoComponent {
 
-  constructor(public dialogRef: MatDialogRef<ModalEliminarVideoComponent>) {}
+  constructor(
+    public dialogRef: MatDialogRef<ModalEliminarVideoComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
+  get esMultiple(): boolean {
+    return this.data?.multiple === true;
+  }
+
+  get cantidadVideos(): number {
+    return this.data?.count || 1;
+  }
 
   onConfirm(): void {
     this.dialogRef.close(true);

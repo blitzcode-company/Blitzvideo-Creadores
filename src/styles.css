@@ -16,3 +16,32 @@ body {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* Estilos para snackbar de éxito */
+.success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.success-snackbar .mat-simple-snack-bar-content {
+    color: white !important;
+}
+
+/* Estilos para snackbar de advertencia */
+.warning-snackbar {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
+
+.warning-snackbar .mat-simple-snack-bar-content {
+    color: white !important;
+}
+
+/* Estilos para snackbar de error */
+.error-snackbar {
+    background-color: #f44336 !important;
+    color: white !important;
+}
+
+.error-snackbar .mat-simple-snack-bar-content {
+    color: white !important;
+}

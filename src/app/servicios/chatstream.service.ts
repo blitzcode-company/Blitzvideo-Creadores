@@ -5,15 +5,29 @@ import { CookieService } from 'ngx-cookie-service';
 import { Observable, Subject } from 'rxjs';
 import Pusher, { Channel } from 'pusher-js';
 
+
+export interface ChatMessage {
+  id: number;
+  user: string;
+  user_photo: string | null;
+  text: string;
+  created_at: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
+
+
+
 export class ChatstreamService {
   private apiUrl = environment.apiUrl;
   private pusher: Pusher;
   private channel: Channel | null = null;
-  private listeningStreamId: string | null = null;
+  private listeningStreamId: number | null = null;
 
+   
   private messagesSubject = new Subject<{
     id: number;
     user: string;
@@ -44,12 +58,12 @@ export class ChatstreamService {
     });
   }
 
-  cargarMensaje(streamId: string): Observable<any> {
+  cargarMensaje(streamId:number): Observable<any> {
     const url = `${this.apiUrl}api/v1/streams/chat/mensajes/${streamId}`;
     return this.http.get(url);
   }
 
-  mandarMensaje(streamId: string, message: string, usuario_id: number): Observable<any> {
+  mandarMensaje(streamId: number, message: string, usuario_id: number): Observable<any> {
     const url = `${this.apiUrl}api/v1/streams/chat/enviar`;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -64,7 +78,7 @@ export class ChatstreamService {
     return this.http.post(url, body, httpOptions);
   }
 
-  startListening(streamId: string): Observable<any> {
+  startListening(streamId: number): Observable<any> {
     if (this.listeningStreamId === streamId) {
       return this.messagesSubject.asObservable();
     }

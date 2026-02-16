@@ -1,0 +1,82 @@
+<div class="modal-container">
+  <h2 mat-dialog-title>
+    <mat-icon>playlist_add</mat-icon>
+    Guardar en lista de reproducción
+  </h2>
+
+  <mat-dialog-content>
+    <p class="subtitle">{{ data.videoIds.length }} video{{ data.videoIds.length !== 1 ? 's' : '' }} seleccionado{{ data.videoIds.length !== 1 ? 's' : '' }}</p>
+
+    <div class="crear-nueva-section">
+      <button mat-raised-button color="accent" (click)="toggleFormCrear()" class="btn-crear-nueva">
+        <mat-icon>{{ mostrarFormCrear ? 'close' : 'add' }}</mat-icon>
+        {{ mostrarFormCrear ? 'Cancelar' : 'Crear nueva lista' }}
+      </button>
+    </div>
+
+    <div class="form-crear" *ngIf="mostrarFormCrear">
+      <form [formGroup]="crearPlaylistForm" (ngSubmit)="crearNuevaPlaylist()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de la lista</mat-label>
+          <input matInput formControlName="nombre" placeholder="Mi lista de reproducción">
+          <mat-error *ngIf="crearPlaylistForm.get('nombre')?.hasError('required')">
+            El nombre es obligatorio
+          </mat-error>
+          <mat-error *ngIf="crearPlaylistForm.get('nombre')?.hasError('minlength')">
+            Mínimo 3 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="acceso" class="checkbox-acceso">
+          Hacer pública
+        </mat-checkbox>
+
+        <button mat-raised-button color="primary" type="submit" 
+                [disabled]="crearPlaylistForm.invalid">
+          <mat-icon>check</mat-icon>
+          Crear lista
+        </button>
+      </form>
+    </div>
+
+    <mat-divider class="divider"></mat-divider>
+
+    <div class="playlists-container">
+      <h3 class="section-title">Tus listas de reproducción</h3>
+
+      <div *ngIf="playlists.length === 0" class="no-playlists">
+        <mat-icon>playlist_play</mat-icon>
+        <p>No tienes listas de reproducción aún</p>
+      </div>
+
+      <div class="playlist-list" *ngIf="playlists.length > 0">
+        <div class="playlist-item" 
+             *ngFor="let playlist of playlists"
+             (click)="togglePlaylist(playlist.id)"
+             [class.selected]="isPlaylistSeleccionada(playlist.id)">
+          <mat-checkbox [checked]="isPlaylistSeleccionada(playlist.id)"
+                        (click)="$event.stopPropagation()"
+                        (change)="togglePlaylist(playlist.id)">
+          </mat-checkbox>
+          <div class="playlist-info">
+            <span class="playlist-name">{{ playlist.nombre }}</span>
+            <span class="playlist-meta">
+              <mat-icon class="small-icon">{{ playlist.acceso ? 'public' : 'lock' }}</mat-icon>
+              {{ playlist.videos_count || 0 }} videos
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()">Cancelar</button>
+    <button class="botonAgregar" mat-raised-button color="primary" 
+            (click)="agregarVideos()"
+            [disabled]="playlistsSeleccionadas.size === 0">
+      <mat-icon>check</mat-icon>
+      Agregar a {{ playlistsSeleccionadas.size }} lista{{ playlistsSeleccionadas.size !== 1 ? 's' : '' }}
+    </button>
+  </mat-dialog-actions>
+</div>

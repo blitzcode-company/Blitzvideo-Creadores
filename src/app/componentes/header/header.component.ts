@@ -5,6 +5,7 @@ import { StatusService } from '../../servicios/status.service';
 import { CookieService } from 'ngx-cookie-service';
 import { Canal } from '../../clases/canal';
 import { environment } from '../../../environments/environment.prod';
+import { SidebarService } from '../../servicios/sidebar.service';
 
 
 @Component({
@@ -17,7 +18,8 @@ export class HeaderComponent implements OnInit{
   constructor(private api:AuthService, 
               private router:Router, 
               public status:StatusService,
-              public cookie:CookieService){}      
+              public cookie:CookieService,
+              private sidebarService:SidebarService){}      
 
               ngOnInit() {
                 this.obtenerUsuario();
@@ -157,6 +159,10 @@ serverIp = environment.serverIp
   toggleDropdown(event: Event) {
     event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  toggleSidebar(): void {
+    this.sidebarService.toggleSidebar();
   }
 
   @HostListener('document:click', ['$event'])

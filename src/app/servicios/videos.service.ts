@@ -73,6 +73,17 @@ export class VideosService {
     return this.httpClient.delete(url, httpOptions);
   }
 
+  eliminarMultiplesVideos(videoIds: number[]): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+          'Content-Type' : 'application/json',
+          'Authorization' : 'Bearer ' + this.cookie.get('accessToken')
+      })
+    }
+    const url = `${this.apiUrl}api/v1/videos/eliminar-multiples`;
+    return this.httpClient.post(url, { video_ids: videoIds }, httpOptions);
+  }
+
   editarVideo(idVideo: any, video:FormData): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({

@@ -26,14 +26,18 @@
     "@material/typography": "^14.0.0",
     "@ng-bootstrap/ng-bootstrap": "^17.0.0",
     "@popperjs/core": "^2.11.8",
+    "@videojs/http-streaming": "^3.17.2",
     "bootstrap": "^5.3.2",
     "express": "^4.18.2",
     "hls.js": "^1.6.2",
+    "laravel-echo": "^2.2.6",
+    "moment": "^2.30.1",
     "ngx-cookie-service": "^18.0.0",
     "ngx-modal-dialog": "^4.0.0",
     "pusher-js": "^8.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "video.js": "^8.23.4",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {

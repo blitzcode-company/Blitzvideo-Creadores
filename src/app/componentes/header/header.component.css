@@ -1,6 +1,6 @@
 .bg-header {
   background-color: #042234;
-  height: 75px;
+  height: 60px;
   z-index: 1050;
   position: fixed;
   top: 0;
@@ -23,22 +23,45 @@
 .navbar-left {
   display: flex;
   align-items: center;
+  gap: 12px;
   flex-shrink: 0;
 }
 
-.navbar .btn {
-  padding: 4px 8px;
-  font-size: 1rem;
-  line-height: 1;
+.menu-btn-left {
+  position: absolute;
+  left: 0px;              
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-btn-left {
+  margin-left: -25px !important; 
+  padding: 0 12px !important;
+  min-width: auto !important;
+}
+.navbar-left {
+  position: relative;   
+  padding-left: 26px;    
+  gap: 8px;
 }
 
 
 .logo-navbar {
-  height: 55px;
+  height: 45px;
+  width: auto;
+  object-fit: contain;
 }
-
 .nav {
-  display: none; /* ← VACÍO = OK */
+  display: none; 
 }
 
 .search-container {
@@ -188,7 +211,6 @@
   border: none !important;
 }
 
-/* 🎯 MÓVIL COMPLETO */
 @media (max-width: 768px) {
   .search-box {
     display: none !important;

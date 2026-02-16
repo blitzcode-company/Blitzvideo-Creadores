@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { VideosService } from '../../servicios/videos.service';
 import { AuthService } from '../../servicios/auth.service';
@@ -9,6 +9,9 @@ import { Location } from '@angular/common';
 import { environment } from '../../../environments/environment.prod';
 import { Title } from '@angular/platform-browser';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { SidebarService } from '../../servicios/sidebar.service';
+import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-subir-video',
@@ -17,7 +20,6 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 })
 export class SubirVideoComponent implements OnInit {
   
-  videos = new Videos();
   usuario: any;
   canal: any;
   canalNombre: any;
@@ -25,6 +27,13 @@ export class SubirVideoComponent implements OnInit {
   etiquetasSeleccionadas: Etiqueta[] = [];
   alerta: { message: string; type: 'success' | 'error' }[] = [];
   etiquetasPlanas: Etiqueta[] = [];
+  sidebarCollapsed$!: Observable<boolean>;
+
+  titulo: string = '';
+  descripcion: string = '';
+  videoFile: File | null = null;
+  thumbnailFile: File | null = null;
+
 
   videoPreview: string | null = null;
   thumbnailPreview: string | null = null;
@@ -38,12 +47,14 @@ export class SubirVideoComponent implements OnInit {
     private authService: AuthService,
     public router: Router,
     public location: Location,
-    public title: Title
+    public title: Title,
+    private sidebarService: SidebarService
   ) {
     this.title.setTitle("Subir video - BlitzStudio");
   }
 
   ngOnInit() {
+    this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
     this.obtenerUsuario();
     this.listarEtiquetas();
   }
@@ -55,6 +66,8 @@ export class SubirVideoComponent implements OnInit {
     });
   }
 
+
+  
   obtenerCanal() {
     this.authService.obtenerCanalDelUsuario(this.usuario.id).subscribe((res: any) => {
       this.canal = res;
@@ -68,33 +81,65 @@ export class SubirVideoComponent implements OnInit {
     });
   }
 
-  onVideoUpload(event: any) {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('video/')) {
-      this.videos.video = file;
-      const reader = new FileReader();
-      reader.onload = (e) => this.videoPreview = e.target?.result as string;
-      reader.readAsDataURL(file);
-      this.alerta = [];
-    } else {
-      this.alerta.push({ message: 'Video inválido o muy grande (max 100MB)', type: 'error' });
-      event.target.value = '';
-    }
+@Output() fileDropped = new EventEmitter<File>();
+
+  @HostListener('dragover', ['$event']) onDragOver(evt: DragEvent) {
+    evt.preventDefault();
+    evt.stopPropagation();
   }
 
-  onThumbnailUpload(event: any) {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      this.videos.miniatura = file;
-      const reader = new FileReader();
-      reader.onload = (e) => this.thumbnailPreview = e.target?.result as string;
-      reader.readAsDataURL(file);
-    } else {
-      this.alerta.push({ message: 'Solo imágenes permitidas', type: 'error' });
-      event.target.value = '';
-    }
+  @HostListener('dragleave', ['$event']) onDragLeave(evt: DragEvent) {
+    evt.preventDefault();
+    evt.stopPropagation();
   }
 
+  @HostListener('drop', ['$event']) onDrop(evt: DragEvent) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    const file = evt.dataTransfer?.files[0];
+    if (file) this.fileDropped.emit(file);
+  }
+
+onVideoUpload(event: any) {
+    const file: File = event.target?.files?.[0] || event;
+    if (!file || !file.type.startsWith('video/')) {
+      this.alerta.push({ message: 'Por favor selecciona un archivo de video válido', type: 'error' });
+      return;
+    }
+
+    this.videoFile = file;
+    const reader = new FileReader();
+    reader.onload = () => this.videoPreview = reader.result as string;
+    reader.readAsDataURL(file);
+    this.alerta = [];
+  }
+formatBytes(bytes: number): string {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  removeVideo() {
+    this.videoFile = this.videoPreview = null;
+    this.thumbnailFile = this.thumbnailPreview = null;
+    this.titulo = this.descripcion = '';
+    this.etiquetasSeleccionadas = [];
+  }
+
+onThumbnailUpload(event: any) {
+    const file = event.target.files[0];
+    if (!file || !file.type.startsWith('image/')) {
+      this.alerta.push({ message: 'Selecciona una imagen válida', type: 'error' });
+      return;
+    }
+
+    this.thumbnailFile = file;
+    const reader = new FileReader();
+    reader.onload = () => this.thumbnailPreview = reader.result as string;
+    reader.readAsDataURL(file);
+  }
   listarEtiquetas() {
     this.videoService.listarEtiquetas().subscribe({
       next: (res) => this.etiquetasPlanas = res,
@@ -114,27 +159,29 @@ export class SubirVideoComponent implements OnInit {
     }).filter(Boolean) as Etiqueta[];
   }
 
-  onSubmit(form: NgForm) {
-    if (form.valid && this.videos.video && this.canalId) {
-      this.uploading = true;
-      this.uploadProgress = 0;
-      this.subirVideo();
-    } else {
-      this.alerta.push({ message: 'Completa todos los campos', type: 'error' });
+onSubmit(form: NgForm) {
+    if (!form.valid || !this.videoFile || !this.canalId) {
+      this.alerta.push({ message: 'Completa el título y selecciona un video', type: 'error' });
+      return;
     }
-  }
 
-  subirVideo() {
+    this.uploading = true;
+    this.uploadProgress = 0;
+
     const formData = new FormData();
-    formData.append('video', this.videos.video!);
-    formData.append('titulo', this.videos.titulo);
-    formData.append('descripcion', this.videos.descripcion);
-    
-    if (this.videos.miniatura) formData.append('miniatura', this.videos.miniatura);
-    
-    const validas = this.etiquetasSeleccionadas.filter(e => e && e.id);
-    validas.forEach((etiqueta, index) => {
-      formData.append(`etiquetas[${index}]`, etiqueta.id.toString());
+    formData.append('video', this.videoFile, this.videoFile.name);
+    formData.append('titulo', this.titulo.trim());
+    formData.append('descripcion', this.descripcion.trim());
+
+    // Miniatura opcional
+    if (this.thumbnailFile) {
+      formData.append('miniatura', this.thumbnailFile, this.thumbnailFile.name);
+    }
+
+    // Etiquetas → solo IDs (tu backend espera etiquetas[] o etiquetas[0], etc.)
+    this.etiquetasSeleccionadas.forEach((id, i) => {
+      formData.append(`etiquetas[${i}]`, id.toString());
+      // o si tu backend espera etiquetas[] → formData.append('etiquetas[]', id.toString());
     });
 
     this.videoService.subirVideoConProgress(this.canalId, formData).subscribe({
@@ -142,16 +189,24 @@ export class SubirVideoComponent implements OnInit {
         if (event.type === HttpEventType.UploadProgress) {
           this.uploadProgress = Math.round(100 * event.loaded / (event.total || 1));
         } else if (event instanceof HttpResponse) {
-          this.alerta.push({ message: '¡Video subido exitosamente!', type: 'success' });
-          setTimeout(() => window.location.href = `${this.serverIp}3000/video/${event.body.id}`, 1500);
+          this.alerta = [];
+          this.alerta.push({ message: '¡Video subido con éxito!', type: 'success' });
+          setTimeout(() => {
+            window.location.href = `${this.serverIp}3000/video/${event.body.id}`;
+          }, 1500);
         }
       },
-      error: (error) => {
-        console.error('Upload error:', error);
-        this.alerta.push({ message: 'Error al subir video', type: 'error' });
+      error: (err) => {
+        console.error('Error subida:', err);
+        this.alerta.push({ message: 'Error al subir el video', type: 'error' });
         this.uploading = false;
         this.uploadProgress = 0;
       }
     });
   }
+ 
+
+  cerrarAlerta(alerta: any) {
+  this.alerta = this.alerta.filter(a => a !== alerta);
+}
 }

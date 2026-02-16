@@ -7,6 +7,8 @@ import { ModalConfirmacionStreamComponent } from '../modal-confirmacion-stream/m
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
+import { SidebarService } from '../../servicios/sidebar.service';
 
 
 @Component({
@@ -25,9 +27,12 @@ export class CrearStreamComponent implements OnInit {
   thumbnailPreview: string | null = null;
   uploadProgress: number = 0;
   uploading: boolean = false;
-
+    sidebarCollapsed$!: Observable<boolean>;
+  
   ngOnInit() {
     this.obtenerUsuario();
+        this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+
   }
 
   constructor(
@@ -36,7 +41,7 @@ export class CrearStreamComponent implements OnInit {
     private dialog: MatDialog,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-
+    private sidebarService: SidebarService,
     private router: Router,
     private title: Title
   ) {
@@ -50,12 +55,16 @@ export class CrearStreamComponent implements OnInit {
   }
 
   onFileSelected(event: any) {
-    const file = event.target.files[0];
+    const file: File = event.target.files[0];
+    
     if (file && file.type.startsWith('image/')) {
-      this.streamForm.patchValue({ miniatura: file });
+      this.selectedFile = file;
+
       const reader = new FileReader();
       reader.onload = (e) => this.thumbnailPreview = e.target?.result as string;
       reader.readAsDataURL(file);
+    } else {
+      this.snackBar.open('Solo se permiten imágenes', 'Cerrar', { duration: 3000 });
     }
   }
  
@@ -80,19 +89,31 @@ export class CrearStreamComponent implements OnInit {
 
   crearStream() {
     if (!this.canalId) {
-      console.error('No se ha encontrado el canal del usuario');
+        this.snackBar.open('No se encontró tu canal', 'Cerrar', { duration: 4000 });
+        return;
+      }
+
+    if (this.streamForm.invalid) {
+      this.snackBar.open('Completá el título', 'Cerrar', { duration: 4000 });
       return;
     }
     
     let formData = new FormData();
     formData.append('titulo', this.streamForm.value.titulo);
     formData.append('descripcion', this.streamForm.value.descripcion || '');
+
     if (this.selectedFile) {
-      formData.append('miniatura', this.selectedFile);
+      formData.append('miniatura', this.selectedFile, this.selectedFile.name);
     }
+
+    this.uploading = true;
+    this.uploadProgress = 0;
+
 
     this.streamService.crearTransmision(formData, this.canalId).subscribe({
       next: (res: any) => {
+        this.uploading = false;
+
         if (res.stream === true) {
           const dialogRef = this.dialog.open(ModalConfirmacionStreamComponent, {
             data: { transmision: res.transmision }
@@ -108,13 +129,15 @@ export class CrearStreamComponent implements OnInit {
 
         } else {
           const nuevaTransmision = res.transmision;
-          this.router.navigate(['/monitorear-stream', nuevaTransmision.id]); 
+          this.snackBar.open('¡Stream creado con éxito!', 'Genial', { duration: 3000 });
+          this.router.navigate(['/monitorear-stream', nuevaTransmision.id]);
         }
       },
-      error: err => {
-        console.error(err);
-
-      }
+      error: (err) => {
+      this.uploading = false;
+      console.error('Error al crear stream:', err);
+      this.snackBar.open('Error al crear el stream', 'Cerrar', { duration: 5000 });
+    }
     });
   }
 

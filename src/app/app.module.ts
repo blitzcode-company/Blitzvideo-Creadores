@@ -32,6 +32,13 @@ import { MonitorearStreamComponent } from './componentes/monitorear-stream/monit
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TiempoPipe } from './pipes/tiempo.pipe';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips'; 
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
+import { ModalAgregarPlaylistComponent } from './componentes/modal-agregar-playlist/modal-agregar-playlist.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +54,7 @@ import { TiempoPipe } from './pipes/tiempo.pipe';
     SubirVideoComponent,
     ChunkPipe,
     ModalEliminarVideoComponent,
+    ModalAgregarPlaylistComponent,
     NoEncontradoComponent,
     CrearStreamComponent,
     ModalConfirmacionStreamComponent,
@@ -67,8 +75,14 @@ import { TiempoPipe } from './pipes/tiempo.pipe';
     MatProgressBarModule,
     MatInputModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatDividerModule,
+    MatRadioModule,
+    MatSnackBarModule,
   ],
   providers: [
     CookieService,
