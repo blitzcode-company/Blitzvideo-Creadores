@@ -56,6 +56,19 @@ onFileSelected(event: any) {
   }
 }
 
+removePortada(event: Event) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  this.canal.portada = undefined;
+  this.canal.portadaPreview = undefined;
+  
+  const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
+  }
+}
+
 crearCanal(): void {
   if (!this.canal.nombre || !this.canal.descripcion || !this.canal.portada) {
     console.error('Nombre, Descripción o Portada faltan.');

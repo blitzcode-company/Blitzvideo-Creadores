@@ -21,57 +21,155 @@
           <mat-icon>live_tv</mat-icon>
           <span>Crear stream</span>
         </a>
+           <a class="menu-item" routerLink="/estadisticas">
+          <mat-icon>bar_chart</mat-icon>
+          <span>Estadisticas</span>
+        </a>
       </nav>
     </div>
   </div>
 
   <div class="content-wrapper">
-    <div class="form-container-stream">
-      <div class="form-header">
-        <h2><mat-icon>live_tv</mat-icon> Crear nueva transmisión</h2>
+    <div class="stream-creation-container">
+      <div class="creation-header">
+        <div class="header-content">
+          <h1 class="page-title">
+            <mat-icon class="title-icon">live_tv</mat-icon>
+            Crear nueva transmisión
+          </h1>
+          <p class="page-subtitle">Configura los detalles de tu transmisión en vivo</p>
+        </div>
       </div>
-      
-      <div class="form-content-stream">
-        <form [formGroup]="streamForm" (ngSubmit)="crearStream()">
-          
-          <div class="form-group-stream">
-            <mat-form-field appearance="outline" class="stream-field">
-              <mat-label>Título del stream</mat-label>
-              <input matInput formControlName="titulo" required>
-            </mat-form-field>
-          </div>
 
-          <div class="form-group-stream">
-            <mat-form-field appearance="outline" class="stream-field">
-              <mat-label>Descripción</mat-label>
-              <textarea matInput formControlName="descripcion" rows="4" required></textarea>
-            </mat-form-field>
-          </div>
+      <form [formGroup]="streamForm" (ngSubmit)="crearStream()" class="stream-form">
+        
+        <div class="form-main">
+          <section class="form-section">
+            <div class="section-header">
+              <h2>Información básica</h2>
+              <span class="required-indicator">* Campos obligatorios</span>
+            </div>
 
-          <div class="upload-section-stream">
-            <label class="upload-label-stream">
-              <mat-icon>photo_camera</mat-icon>
-              Miniatura del stream (1280x720 recomendada)
-              <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-file">
-            </label>
-            <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" class="thumbnail-preview-stream">
-          </div>
+            <div class="form-field-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Título del stream</mat-label>
+                <input matInput formControlName="titulo" placeholder="Ej: Mi transmisión en vivo" required maxlength="100">
+                <mat-hint align="end">{{ streamForm.get('titulo')?.value?.length || 0 }}/100</mat-hint>
+                <mat-error *ngIf="streamForm.get('titulo')?.hasError('required')">
+                  El título es obligatorio
+                </mat-error>
+              </mat-form-field>
+            </div>
 
-          <mat-progress-bar *ngIf="uploadProgress > 0" 
-                            mode="determinate" 
-                            [value]="uploadProgress"
-                            class="stream-progress"></mat-progress-bar>
+            <div class="form-field-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descripción</mat-label>
+                <textarea matInput 
+                          formControlName="descripcion" 
+                          placeholder="Describe tu transmisión..." 
+                          rows="5"
+                          maxlength="5000"
+                          required></textarea>
+                <mat-hint align="end">{{ streamForm.get('descripcion')?.value?.length || 0 }}/5000</mat-hint>
+                <mat-error *ngIf="streamForm.get('descripcion')?.hasError('required')">
+                  La descripción es obligatoria
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </section>
 
-          <div class="form-actions-stream">
-            <button mat-raised-button 
-                    color="primary" 
-                    type="submit" 
-                    [disabled]="streamForm.invalid || uploading">
-              <mat-icon>live_tv</mat-icon>
-              {{ uploading ? 'Creando... ' + uploadProgress + '%' : 'Crear stream' }}
-            </button>
+          <section class="form-section">
+            <div class="section-header">
+              <h2>Miniatura</h2>
+              <span class="optional-badge">Opcional</span>
+            </div>
+
+            <div class="thumbnail-upload-area">
+              <label class="file-input-wrapper">
+                <input type="file" 
+                       (change)="onFileSelected($event)" 
+                       accept="image/*" 
+                       class="hidden-file"
+                       #fileInput>
+                
+                <div class="upload-prompt" [class.has-image]="thumbnailPreview">
+                  <div class="upload-icon-container">
+                    <mat-icon class="upload-icon">image</mat-icon>
+                  </div>
+                  <div class="upload-text">
+                    <h3>Sube una miniatura</h3>
+                    <p>Tamaño recomendado: 1280x720 píxeles</p>
+                    <p class="upload-hint">Formatos: JPEG, PNG, WebP</p>
+                  </div>
+                </div>
+
+                <div *ngIf="thumbnailPreview" class="thumbnail-preview">
+                  <img [src]="thumbnailPreview" alt="Vista previa de miniatura">
+                  <button mat-icon-button 
+                          class="remove-thumbnail"
+                          (click)="removeThumbnail($event)"
+                          type="button">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </label>
+
+              <mat-progress-bar *ngIf="uploadProgress > 0 && uploadProgress < 100" 
+                                mode="determinate" 
+                                [value]="uploadProgress"
+                                class="upload-progress">
+              </mat-progress-bar>
+            </div>
+          </section>
+        </div>
+
+        <aside class="form-sidebar">
+          <div class="preview-card">
+            <h3 class="preview-title">Vista previa</h3>
+            
+            <div class="preview-content">
+              <div class="preview-thumbnail">
+                <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" alt="Miniatura">
+                <div *ngIf="!thumbnailPreview" class="placeholder-thumbnail">
+                  <mat-icon>image_not_supported</mat-icon>
+                </div>
+              </div>
+
+              <div class="preview-info">
+                <h4 class="preview-stream-title">
+                  {{ streamForm.get('titulo')?.value || 'Tu título aquí' }}
+                </h4>
+                <p class="preview-channel">{{ canalNombre }}</p>
+                <p class="preview-description">
+                  {{ (streamForm.get('descripcion')?.value || 'Tu descripción aquí').substring(0, 100) }}{{ (streamForm.get('descripcion')?.value || '').length > 100 ? '...' : '' }}
+                </p>
+              </div>
+            </div>
+
+            <div class="preview-footer">
+              <mat-chip-set>
+                <mat-chip>
+                  <mat-icon>live_tv</mat-icon>
+                  EN VIVO
+                </mat-chip>
+              </mat-chip-set>
+            </div>
           </div>
-        </form>
+        </aside>
+      </form>
+
+      <div class="form-actions">
+
+        
+        <button mat-raised-button 
+                color="primary" 
+                (click)="crearStream()"
+                [disabled]="streamForm.invalid || uploading"
+                class="create-btn">
+          <mat-icon *ngIf="!uploading">live_tv</mat-icon>
+          <mat-spinner *ngIf="uploading" diameter="20" class="button-spinner"></mat-spinner>
+          {{ uploading ? 'Creando... ' + uploadProgress + '%' : 'Crear transmisión' }}
+        </button>
       </div>
     </div>
   </div>

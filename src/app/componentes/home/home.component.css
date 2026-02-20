@@ -1,26 +1,57 @@
 .sidebar {
-    background-color: #fff  ;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
-    min-width: 250px;
-    min-height: 100vh;
+    width: 250px;
+    height: 100vh;
     border-right: 1px solid #dee2e6;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
-    padding: 15px;
+    position: fixed;
+    z-index: 100;
+    padding: 20px 0;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    transition: width 0.3s ease;
   }
 
   .sidebar a {
-    display: block;
-    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #333;
+    font-weight: 500;
+    font-size: 1rem;
     text-decoration: none;
-    color: #495057;
-    min-width: 225px;
-  
-    margin-bottom: 10px;
-    border-width: 0 0 1px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    position: relative;
   }
+
+  .sidebar a:hover { 
+    background-color: #f0f0f0; 
+    color: #007bff; 
+  }
+
+  .sidebar a.active { 
+    background-color: #e7f1ff;
+    color: #17445f;
+    font-weight: 600;
+    border-left: 4px solid #0056b3; 
+    padding-left: 12px; 
+  }
+
+  .sidebar a mat-icon {
+    min-width: 24px;
+    font-size: 24px;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+.profile-section {
+    text-align: center;
+    padding: 0 20px 20px;
+    transition: padding 0.3s ease;
+}
 
 .logo {
     font-size: 24px;
@@ -28,11 +59,10 @@
     margin-bottom: 30px;
 }
 
-
 .menu {
     list-style: none;
     width: 100%;
-    padding:0;
+    padding: 0;
 }
 
 .menu-item {
@@ -55,19 +85,223 @@
 }
 
 .fotoPerfil {
-    margin-top: 40px;
-    width: 200px;
-    height: 200px;
-    border-radius: 100px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
     object-fit: cover;
-
-
+    border: 3px solid #007bff;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
 }
-.fotoPerfilDefault {
-    margin-top: 40px;
-    width: 250px;
-    height: 150px;
-    border-radius: 100px;
-    object-fit: cover;
 
+.fotoPerfilDefault {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #007bff;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.channel-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.lineaSideBar {
+  border: 0;
+  border-top: 1px solid rgba(0,0,0,0.1); 
+  margin: 15px 0;
+  height: 0; 
+}
+
+.menu-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dark theme styles */
+:host-context(.dark-theme) .sidebar {
+  background-color: rgba(15, 15, 15, 0.75);
+  border-right-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:host-context(.dark-theme) .sidebar a {
+  color: #e0e0e0;
+}
+
+:host-context(.dark-theme) .sidebar a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #64b5f6;
+}
+
+:host-context(.dark-theme) .sidebar a.active {
+  background-color: rgba(100, 181, 246, 0.15);
+  color: #64b5f6;
+  border-left-color: #64b5f6;
+}
+
+:host-context(.dark-theme) .profile-section {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+:host-context(.dark-theme) .fotoPerfilDefault,
+:host-context(.dark-theme) .fotoPerfil {
+  border-color: #64b5f6;
+}
+
+:host-context(.dark-theme) .channel-name {
+  color: #e0e0e0;
+}
+
+:host-context(.dark-theme) .content {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+:host-context(.dark-theme) .lineaSideBar {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark theme responsive styles (tablet/mobile) */
+@media (max-width: 992px) {
+  :host-context(.dark-theme) .sidebar {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+    background-color: rgba(15, 15, 15, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  :host-context(.dark-theme) .sidebar a.active {
+    border-bottom-color: #64b5f6;
+    border-left: none;
+    background-color: rgba(100, 181, 246, 0.15);
+  }
+}
+
+/* Responsive design - Tablet and below (992px breakpoint) */
+@media (max-width: 992px) {
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    width: 100%;
+    height: 60px;
+    min-width: auto;
+    max-width: 100%;
+    z-index: 1000;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 !important;
+    margin-left: 0 !important;
+    border-right: none;
+    border-bottom: 1px solid #dee2e6;
+    border-left: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background-color: #fff;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    flex-wrap: nowrap;
+  }
+
+  .sidebar a,
+  .menu-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 4px !important;
+    gap: 4px !important;
+    text-align: center;
+    border-left: none !important;
+    border-bottom: none !important;
+    height: 60px;
+    width: auto;
+    margin: 0;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar a:hover,
+  .menu-item:hover {
+    background-color: #f0f0f0;
+    color: #007bff;
+  }
+
+  .sidebar a.active,
+  .menu-item.active {
+    background-color: #f0f0f0;
+    border-bottom: 3px solid #0056b3;
+    border-left: none;
+    padding-left: 4px !important;
+  }
+
+  .sidebar a span,
+  .menu-item span {
+    display: block;
+    font-size: 12px;
+    line-height: 1.2;
+    color: inherit;
+    margin-top: 2px;
+    margin-left: 0;
+  }
+
+  .sidebar a mat-icon,
+  .menu-item mat-icon {
+    font-size: 24px;
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    margin: 0 !important;
+  }
+
+  .profile-section {
+    display: none !important;
+  }
+
+  .lineaSideBar {
+    display: none !important;
+  }
+
+  .menu-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    gap: 0;
+  }
+
+  .content {
+    margin-bottom: 60px;
+  }
+}
+
+/* Mobile view - Extra small screens (576px breakpoint) */
+@media (max-width: 576px) {
+  .sidebar a span {
+    font-size: 11px;
+  }
+
+  .sidebar a mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
 }

@@ -1,0 +1,139 @@
+<app-header></app-header>
+
+<div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async">
+<div class="sidebar-container">
+    <div class="sidebar" *ngIf="canalNombre">
+      <div class="profile-section">
+        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
+        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
+        <h1 class="channel-name">{{ canalNombre }}</h1>
+      </div>
+      <hr class="lineaSideBar">
+      <nav class="menu-nav">
+        <a class="menu-item" routerLink="/misVideos">
+          <mat-icon>video_library</mat-icon>
+          <span>Mis videos</span>
+        </a>
+        <a class="menu-item" routerLink="/subirVideo">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Subir video</span>
+        </a>
+        <a class="menu-item" routerLink="/crearStream">
+          <mat-icon>live_tv</mat-icon>
+          <span>Crear stream</span>
+        </a>
+           <a class="menu-item active" routerLink="/estadisticas">
+          <mat-icon>bar_chart</mat-icon>
+          <span>Estadisticas</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="header-video">
+      <div class="video-info">
+        <img *ngIf="video.miniatura" [src]="video.miniatura" alt="Thumbnail" class="thumbnail">
+        <div class="info-text">
+          <h1>{{ video.titulo }}</h1>
+          <p class="duracion">Duración: {{ formatearDuracion(video.duracion) }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="periodo-selector">
+      <div class="periodo-buttons">
+        <button 
+          *ngFor="let periodo of periodos"
+          [class.activo]="periodoSeleccionado === periodo"
+          (click)="cambiarPeriodo(periodo)"
+          class="periodo-btn">
+          {{ periodo | titlecase }}
+        </button>
+      </div>
+    </div>
+
+    <div class="metricas-container">
+      <div class="metrica-card">
+        <div class="metrica-header">
+          <mat-icon class="metrica-icono">visibility</mat-icon>
+          <span class="metrica-label">Vistas</span>
+        </div>
+        <p class="metrica-valor">{{ formatearNumero(estadisticas.vistas) }}</p>
+      </div>
+
+      <div class="metrica-card">
+        <div class="metrica-header">
+          <mat-icon class="metrica-icono">schedule</mat-icon>
+          <span class="metrica-label">Tiempo Promedio</span>
+        </div>
+        <p class="metrica-valor">{{ formatearDuracion(estadisticas.tiempoPromedio) }}</p>
+      </div>
+
+      <div class="metrica-card">
+        <div class="metrica-header">
+          <mat-icon class="metrica-icono">check_circle</mat-icon>
+          <span class="metrica-label">Tasa Completitud</span>
+        </div>
+        <p class="metrica-valor">{{ estadisticas.tasaCompletitud | number: '1.0-0' }}%</p>
+      </div>
+
+      <div class="metrica-card">
+        <div class="metrica-header">
+          <mat-icon class="metrica-icono">comment</mat-icon>
+          <span class="metrica-label">Comentarios</span>
+        </div>
+        <p class="metrica-valor">{{ formatearNumero(estadisticas.comentarios) }}</p>
+      </div>
+    </div>
+
+    <div class="section-puntuaciones">
+      <h2>Puntuaciones y Valoraciones</h2>
+      
+      <div class="puntuaciones-resumen">
+        <div class="resumen-card">
+          <div class="resumen-icono">
+            <img src="assets/images/3.svg" alt="Promedio" class="rating-svg-large">
+          </div>
+          <div class="resumen-datos">
+            <h3>Promedio de Puntuación</h3>
+            <p class="promedio-valor">{{ estadisticas.promedioPuntuacion | number: '1.0-1' }}/5</p>
+            <p class="promedio-subtitulo">{{ formatearNumero(estadisticas.totalPuntuaciones) }} valoraciones</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="distribucion-container" *ngIf="estadisticas.totalPuntuaciones > 0">
+        <h3>Distribución de Puntuaciones</h3>
+        <div class="rating-distribution">
+          <div class="rating-row" *ngFor="let rating of [5,4,3,2,1]">
+            <div class="rating-item-header">
+              <img [src]="getRatingEmoji(rating)" [alt]="rating + ' stars'" class="rating-svg-medium">
+              <span class="rating-label">{{ rating }} estrellas</span>
+            </div>
+            <div class="rating-bar-container">
+              <div class="rating-bar">
+                <div class="rating-fill" [style.width.%]="obtenerPorcentajeRating(rating)"></div>
+              </div>
+              <span class="rating-count">{{ estadisticas.puntuacionesPorRating[rating] }} ({{ obtenerPorcentajeRating(rating) | number: '1.0-0' }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="estadisticas.totalPuntuaciones === 0" class="sin-datos">
+        <p>Este video aún no tiene puntuaciones</p>
+      </div>
+    </div>
+
+    
+
+    <div *ngIf="cargando" class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+  </div>
+</div>

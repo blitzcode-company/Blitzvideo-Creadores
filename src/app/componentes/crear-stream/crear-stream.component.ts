@@ -67,6 +67,19 @@ export class CrearStreamComponent implements OnInit {
       this.snackBar.open('Solo se permiten imágenes', 'Cerrar', { duration: 3000 });
     }
   }
+
+  removeThumbnail(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.selectedFile = null;
+    this.thumbnailPreview = null;
+    
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
  
   obtenerUsuario() {
     this.authService.mostrarUserLogueado().subscribe((res) => {

@@ -1,0 +1,256 @@
+<app-header></app-header>
+
+<div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async"> 
+
+<div class="sidebar-container">
+    <div class="sidebar" *ngIf="canalNombre">
+      <div class="profile-section">
+        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
+        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
+        <h1 class="channel-name">{{ canalNombre }}</h1>
+      </div>
+      <hr class="lineaSideBar">
+      <nav class="menu-nav">
+        <a class="menu-item" routerLink="/misVideos">
+          <mat-icon>video_library</mat-icon>
+          <span>Mis videos</span>
+        </a>
+        <a class="menu-item" routerLink="/subirVideo">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Subir video</span>
+        </a>
+        <a class="menu-item" routerLink="/crearStream">
+          <mat-icon>live_tv</mat-icon>
+          <span>Crear stream</span>
+        </a>
+        <a class="menu-item active" routerLink="/estadisticas">
+          <mat-icon>bar_chart</mat-icon>
+          <span>Estadisticas</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+<div class="content-wrapper">
+    <div class="estadisticas-container">
+    <div class="estadisticas-header">
+        <h1>Estadísticas de mi Canal</h1>
+        <p class="descripcion">Analiza el rendimiento de tu contenido y el comportamiento de tu audiencia</p>
+    </div>
+
+    <div class="periodo-selector">
+        <div class="periodo-buttons">
+        <button 
+            *ngFor="let periodo of periodos"
+            class="periodo-btn"
+            [class.activo]="periodoSeleccionado === periodo"
+            (click)="cambiarPeriodo(periodo)">
+            {{ periodo | uppercase }}
+        </button>
+        </div>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+        <mat-icon>error</mat-icon>
+        {{ error }}
+    </div>
+
+    <div class="metricas-principales" *ngIf="!cargandoResumen">
+        <div class="metrica-card">
+        <div class="metrica-icono">
+            <mat-icon>visibility</mat-icon>
+        </div>
+        <div class="metrica-contenido">
+            <h3>Vistas Totales</h3>
+            <p class="metrica-valor">{{ formatearNumero(resumen.totalVistas || 0) }}</p>
+            <span class="metrica-subtitulo">En todo el tiempo</span>
+        </div>
+        </div>
+
+        <div class="metrica-card">
+        <div class="metrica-icono">
+            <mat-icon>people</mat-icon>
+        </div>
+        <div class="metrica-contenido">
+            <h3>Suscriptores</h3>
+            <p class="metrica-valor">{{ formatearNumero(resumen.totalSuscriptores || 0) }}</p>
+            <span class="metrica-subtitulo">+{{ datosAudiencia.nuevosSuscriptores || 0 }} este {{ periodoSeleccionado }}</span>
+        </div>
+        </div>
+
+        <div class="metrica-card">
+        <div class="metrica-icono">
+            <mat-icon>videocam</mat-icon>
+        </div>
+        <div class="metrica-contenido">
+            <h3>Videos Subidos</h3>
+            <p class="metrica-valor">{{ resumen.videosSubidos || 0 }}</p>
+            <span class="metrica-subtitulo">Videos totales</span>
+        </div>
+        </div>
+
+        <div class="metrica-card">
+        <div class="metrica-icono">
+            <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="metrica-contenido">
+            <h3>Tasa de Completitud</h3>
+            <p class="metrica-valor">{{ (resumen.tasa_completitud || 0) | number: '1.0-0' }}%</p>
+            <span class="metrica-subtitulo">Promedio de reproducción</span>
+        </div>
+        </div>
+    </div>
+
+    <div class="metricas-principales skeleton-loader" *ngIf="cargandoResumen">
+        <div class="metrica-card skeleton"></div>
+        <div class="metrica-card skeleton"></div>
+        <div class="metrica-card skeleton"></div>
+        <div class="metrica-card skeleton"></div>
+    </div>
+
+    <section class="seccion-videos">
+        <div class="seccion-header">
+        <h2>Videos con Mejor Rendimiento</h2>
+        <p class="seccion-descripcion">Los videos que más visualizaciones han generado en {{ periodoSeleccionado }}</p>
+        </div>
+
+        <div class="videos-grid" *ngIf="!cargandoVideos && videosConMejorRendimiento.length > 0">
+        <div class="video-card" *ngFor="let video of videosConMejorRendimiento; let i = index">
+          <a class="video-link" [title]="video.titulo">
+            <div class="miniatura-container">
+              <img
+                class="miniatura"
+                [src]="video.miniatura || 'assets/images/video-default.png'"
+                alt="Miniatura del video"
+                (error)="onImageError($event)"
+                loading="lazy"
+              >
+              <div class="video-rank">#{{ i + 1 }}</div>
+            </div>
+
+            <div class="video-info">
+              <a [href]="serverIp + '3000/video/' + video.id" target="_blank" class="video-title-link">
+                <h3 class="titulo-video">{{ video.titulo }}</h3>
+              </a>
+              <p class="meta">
+                {{ formatearNumero(video.vistas || 0) }} vistas • {{ formatearDuracion(video.duracion || 0) }}
+              </p>
+              <hr>
+              <div class="canalNombre">
+                <span class="engagement-item">
+                  <img [src]="getRatingEmoji(video.promedioPuntuacion || 0)" alt="Rating" class="rating-svg-small">
+                  {{ (video.promedioPuntuacion || 0) | number: '1.0-1' }}/5
+                </span>
+                •
+                <span class="engagement-item">
+                  <mat-icon class="small-icon">comment</mat-icon>
+                  {{ video.comentarios || 0 }}
+                </span>
+              </div>
+              <button class="ver-estadisticas-btn" [routerLink]="['/estadisticas-video', video.id]" mat-raised-button color="primary">
+                Ver Estadísticas
+              </button>
+            </div>
+          </a>
+        </div>
+        </div>
+
+        <div class="videos-grid skeleton-loader" *ngIf="cargandoVideos">
+        <div class="video-card skeleton" *ngFor="let item of [1,2,3,4,5,6]"></div>
+        </div>
+
+        <div class="sin-datos" *ngIf="!cargandoVideos && videosConMejorRendimiento.length === 0">
+        <mat-icon>video_library</mat-icon>
+        <p>No hay datos de videos disponibles en este período</p>
+        </div>
+    </section>
+
+    <section class="seccion-engagement">
+        <div class="seccion-header">
+        <h2>⭐ Puntuaciones y Comentarios</h2>
+        </div>
+
+        <div class="engagement-grid">
+        <div class="engagement-card">
+            <div class="engagement-icono">
+            <img src="assets/images/3.svg" alt="Puntuación" class="rating-svg">
+            </div>
+            <h3>Promedio de Puntuación</h3>
+            <p class="engagement-numero">{{ (engagement.promedioPuntuacion || 0) | number: '1.0-1' }}/5</p>
+            <p class="engagement-subtitulo">{{ formatearNumero(engagement.totalPuntuaciones || 0) }} valoraciones</p>
+        </div>
+
+        <div class="engagement-card">
+            <div class="engagement-icono">
+            <img src="assets/images/5.svg" alt="Excelentes" class="rating-svg">
+            </div>
+            <h3>Excelentes (5)</h3>
+            <p class="engagement-numero">{{ formatearNumero(engagement.puntuacionesPorRating?.[5] || 0) }}</p>
+            <p class="engagement-subtitulo">{{ engagement.puntuacionesPorRating ? ((engagement.puntuacionesPorRating[5] / (engagement.totalPuntuaciones || 1)) * 100 | number: '1.0-0') : 0 }}%</p>
+        </div>
+
+        <div class="engagement-card">
+            <div class="engagement-icono">
+            <img src="assets/images/2.svg" alt="Regulares" class="rating-svg">
+            </div>
+            <h3>Regulares (2-3)</h3>
+            <p class="engagement-numero">{{ formatearNumero((engagement.puntuacionesPorRating?.[2] || 0) + (engagement.puntuacionesPorRating?.[3] || 0)) }}</p>
+            <p class="engagement-subtitulo">{{ engagement.puntuacionesPorRating ? (((engagement.puntuacionesPorRating[2] + engagement.puntuacionesPorRating[3]) / (engagement.totalPuntuaciones || 1)) * 100 | number: '1.0-0') : 0 }}%</p>
+        </div>
+
+        <div class="engagement-card">
+            <div class="engagement-icono">
+            <mat-icon>comment</mat-icon>
+            </div>
+            <h3>Comentarios</h3>
+            <p class="engagement-numero">{{ formatearNumero(engagement.comentarios || 0) }}</p>
+            <p class="engagement-subtitulo">{{ formatearNumero(engagement.comentariosRecientes || 0) }} recientes</p>
+        </div>
+        </div>
+
+        <div class="puntuaciones-desglose" *ngIf="engagement.puntuacionesPorRating">
+            <h3>Distribución de Puntuaciones</h3>
+            <div class="rating-bar-container">
+            <div class="rating-item" *ngFor="let rating of [5,4,3,2,1]">
+                <div class="rating-label">
+                <img [src]="getRatingEmoji(rating)" [alt]="rating + ' stars'" class="rating-svg-small">
+                <span class="rating-numero">{{ rating }}</span>
+                </div>
+                <div class="rating-bar">
+                <div class="rating-fill" 
+                    [style.width.%]="(engagement.puntuacionesPorRating[rating] / (engagement.totalPuntuaciones || 1)) * 100">
+                </div>
+                </div>
+                <span class="rating-count">{{ engagement.puntuacionesPorRating[rating] }}</span>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="seccion-audiencia">
+        <div class="seccion-header">
+        <h2>Crecimiento de Audiencia</h2>
+        </div>
+
+        <div class="audiencia-stats">
+        <div class="audiencia-card">
+            <h3>Nuevos Suscriptores</h3>
+            <p class="stat-valor">+{{ formatearNumero(datosAudiencia.nuevosSuscriptores || 0) }}</p>
+            <p class="stat-cambio positivo">↑ {{ (datosAudiencia.tasaCrecimiento || 0) | number: '1.0-1' }}%</p>
+        </div>
+
+        <div class="audiencia-card">
+            <h3>Suscriptores Perdidos</h3>
+            <p class="stat-valor">{{ formatearNumero(datosAudiencia.suscriptoresPeridos || 0) }}</p>
+            <p class="stat-cambio negativo">↓ Baja tasa de pérdida</p>
+        </div>
+
+        <div class="audiencia-card">
+            <h3>Tasa de Retención</h3>
+            <p class="stat-valor">{{ (datosAudiencia.tasaRetencion || 0) | number: '1.0-1' }}%</p>
+            <p class="stat-cambio positivo">↑ Mejora</p>
+        </div>
+        </div>
+    </section>
+    </div>
+    </div>
+</div>

@@ -39,6 +39,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ModalAgregarPlaylistComponent } from './componentes/modal-agregar-playlist/modal-agregar-playlist.component';
+import { EstadisticasComponent } from './componentes/estadisticas/estadisticas.component';
+import { EstadisticasVideoComponent } from './componentes/estadisticas-video/estadisticas-video.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,8 @@ import { ModalAgregarPlaylistComponent } from './componentes/modal-agregar-playl
     ModalConfirmacionStreamComponent,
     MonitorearStreamComponent,
     TiempoPipe,
-    
+    EstadisticasComponent,
+    EstadisticasVideoComponent,
   ],
   imports: [
     BrowserModule,

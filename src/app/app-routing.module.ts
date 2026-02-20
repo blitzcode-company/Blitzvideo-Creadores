@@ -9,6 +9,8 @@ import { NoEncontradoComponent } from './componentes/no-encontrado/no-encontrado
 import { autenticacionGuard } from './guards/autenticacion.guard';
 import { CrearStreamComponent } from './componentes/crear-stream/crear-stream.component';
 import { MonitorearStreamComponent } from './componentes/monitorear-stream/monitorear-stream.component';
+import { EstadisticasComponent } from './componentes/estadisticas/estadisticas.component';
+import { EstadisticasVideoComponent } from './componentes/estadisticas-video/estadisticas-video.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [autenticacionGuard]},
@@ -16,12 +18,11 @@ const routes: Routes = [
   { path: 'crearStream', component: CrearStreamComponent, canActivate: [autenticacionGuard]},
   { path: 'subirVideo', component: SubirVideoComponent, canActivate: [autenticacionGuard]},
   { path: 'misVideos', component: MisvideosComponent, canActivate: [autenticacionGuard]},
+  { path: 'estadisticas', component: EstadisticasComponent, canActivate: [autenticacionGuard]},
+  { path: 'estadisticas-video/:videoId', component: EstadisticasVideoComponent, canActivate: [autenticacionGuard]},
   { path: 'monitorear-stream/:id', component: MonitorearStreamComponent, canActivate: [autenticacionGuard]},
   { path: 'editarVideo/:id', component: EditarvideoComponent, canActivate: [autenticacionGuard]},
   { path: '**', component: NoEncontradoComponent }
-
-
-
 ];
 
 @NgModule({

@@ -1,59 +1,144 @@
 <app-header></app-header>
-<div class="form-wrapper-canal">
-  <div class="form-container-canal">
-    <div class="form-header">
-      <h2><mat-icon>account_circle</mat-icon> Crea tu canal</h2>
+<div class="containerHome"> 
+
+<div class="canal-creation-container">
+  <div class="creation-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon class="title-icon">account_circle</mat-icon>
+        Crea tu canal
+      </h1>
+      <p class="page-subtitle">Establece la identidad de tu canal con nombre, descripción y portada</p>
     </div>
+  </div>
+
+  <form #dataform="ngForm" (ngSubmit)="crearCanal()" class="canal-form">
     
-    <div class="form-content-canal">
-      <form #dataform="ngForm" (ngSubmit)="crearCanal()">
-        
-        <div class="form-group-canal">
-          <mat-form-field appearance="outline" class="canal-field">
+    <div class="form-main">
+      <section class="form-section">
+        <div class="section-header">
+          <h2>Información del canal</h2>
+          <span class="required-indicator">* Campos obligatorios</span>
+        </div>
+
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre del canal</mat-label>
-            <input matInput [(ngModel)]="canal.nombre" name="nombre" required>
+            <input matInput 
+                   [(ngModel)]="canal.nombre" 
+                   name="nombre" 
+                   placeholder="Ej: Mi Canal Increíble" 
+                   required 
+                   maxlength="100">
+            <mat-hint align="end">{{ canal.nombre?.length || 0 }}/100</mat-hint>
+            <mat-error *ngIf="dataform.controls['nombre']?.hasError('required')">
+              El nombre del canal es obligatorio
+            </mat-error>
           </mat-form-field>
         </div>
 
-        <div class="form-group-canal">
-          <mat-form-field appearance="outline" class="canal-field">
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Descripción</mat-label>
-            <textarea matInput [(ngModel)]="canal.descripcion" name="descripcion" rows="3" required></textarea>
+            <textarea matInput 
+                      [(ngModel)]="canal.descripcion" 
+                      name="descripcion" 
+                      placeholder="Describe el contenido de tu canal..." 
+                      rows="5"
+                      maxlength="5000"
+                      required></textarea>
+            <mat-hint align="end">{{ canal.descripcion?.length || 0 }}/5000</mat-hint>
+            <mat-error *ngIf="dataform.controls['descripcion']?.hasError('required')">
+              La descripción es obligatoria
+            </mat-error>
           </mat-form-field>
         </div>
+      </section>
 
-        <div class="upload-section-canal">
-          <label class="upload-label-canal">
-            <mat-icon>photo_camera</mat-icon>
-            Portada del canal (1200x675 recomendada)
-            <input type="file" (change)="onFileSelected($event)" accept="image/*" required class="hidden-file">
+      <section class="form-section">
+        <div class="section-header">
+          <h2>Portada del canal</h2>
+          <span class="optional-badge">Opcional</span>
+        </div>
+
+        <div class="thumbnail-upload-area">
+          <label class="file-input-wrapper">
+            <div class="upload-prompt" *ngIf="!canal.portadaPreview">
+              <div class="upload-icon-container">
+                <mat-icon class="upload-icon">image</mat-icon>
+              </div>
+              <div class="upload-text">
+                <h3>Sube una portada</h3>
+                <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+                <p class="upload-hint">JPG, PNG o WebP • Recomendado 1200x675px</p>
+              </div>
+            </div>
+            <input type="file" 
+                   (change)="onFileSelected($event)" 
+                   accept="image/*" 
+                   class="hidden-file">
           </label>
-          <img *ngIf="canal.portadaPreview" [src]="canal.portadaPreview" class="cover-preview-canal">
-          <img *ngIf="!canal.portadaPreview" src="assets/images/cover-default.png" class="cover-preview-canal">
+
+          <div *ngIf="canal.portadaPreview" class="cover-preview">
+            <img [src]="canal.portadaPreview" alt="Vista previa de portada">
+            <button mat-icon-button 
+                    class="remove-cover"
+                    (click)="removePortada($event)"
+                    type="button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
         </div>
 
         <mat-progress-bar *ngIf="uploadProgress > 0" 
                           mode="determinate" 
                           [value]="uploadProgress"
-                          class="canal-progress"></mat-progress-bar>
-
-        <div class="form-actions-canal">
-          <button mat-raised-button 
-                  color="primary" 
-                  type="submit" 
-                  [disabled]="dataform.invalid || uploading"
-                  class="canal-submit-btn">
-            <mat-icon>check</mat-icon>
-            {{ uploading ? 'Creando... ' + uploadProgress + '%' : 'Crear canal' }}
-          </button>
-        </div>
-      </form>
-
-      <div *ngFor="let alerta of alerta" 
-           class="canal-alert" 
-           [ngClass]="{'success': alerta.type === 'success', 'error': alerta.type === 'error'}">
-        {{ alerta.message }}
-      </div>
+                          class="upload-progress"></mat-progress-bar>
+      </section>
     </div>
+
+    <aside class="form-sidebar">
+      <div class="preview-card">
+        <p class="preview-title">Vista previa</p>
+        <div class="preview-content">
+          <div class="preview-cover">
+            <img *ngIf="canal.portadaPreview" [src]="canal.portadaPreview" alt="Portada del canal">
+            <div *ngIf="!canal.portadaPreview" class="placeholder-cover">
+              <mat-icon>image</mat-icon>
+            </div>
+          </div>
+          <div class="preview-info">
+            <h3 class="preview-channel-name">{{ canal.nombre || 'Tu nombre de canal' }}</h3>
+            <p class="preview-channel-desc">{{ canal.descripcion?.substring(0, 100) || 'Descripción del canal' }}{{ (canal.descripcion?.length ?? 0) > 100 ? '...' : '' }}</p>
+            
+          </div>
+        </div>
+      </div>
+    </aside>
+  </form>
+
+  <div *ngFor="let alerta of alerta" 
+       class="canal-alert" 
+       [ngClass]="{'success': alerta.type === 'success', 'error': alerta.type === 'error'}">
+    {{ alerta.message }}
   </div>
+
+  <div class="form-actions">
+    <button mat-button type="button" routerLink="/misVideos">
+      Cancelar
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            type="submit" 
+            [disabled]="dataform.invalid || uploading"
+            class="create-btn"
+            (click)="crearCanal()">
+      <span *ngIf="!uploading">Crear canal</span>
+      <span *ngIf="uploading" class="button-spinner">
+        <mat-spinner diameter="20"></mat-spinner>
+        {{ uploadProgress }}%
+      </span>
+    </button>
+  </div>
+</div>
 </div>

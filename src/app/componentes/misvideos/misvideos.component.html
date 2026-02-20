@@ -21,6 +21,10 @@
           <mat-icon>live_tv</mat-icon>
           <span>Crear stream</span>
         </a>
+         <a class="menu-item" routerLink="/estadisticas">
+          <mat-icon>bar_chart</mat-icon>
+          <span>Estadisticas</span>
+        </a>
       </nav>
     </div>
   </div>
@@ -82,7 +86,7 @@
     </div>
 
     <div class="col-thumbnail">
-      <a [href]="serverIp + '3001/video/' + video.id" target="_blank">
+      <a [href]="serverIp + '3000/video/' + video.id" target="_blank">
         <img [src]="video.miniatura" 
              (error)="onImageError($event)" 
              alt="Miniatura">
@@ -91,7 +95,7 @@
     </div>
 
     <div class="col-title">
-      <a [routerLink]="['/editarVideo', video.id]" target="_blank" class="video-title-link">
+      <a [href]="serverIp + '3000/video/' + video.id" target="_blank" class="video-title-link">
         {{ video.titulo }}
       </a>
       <p class="video-description-preview">{{ video.descripcion | slice:0:100 }}{{ video.descripcion.length > 100 ? '...' : '' }}</p>
@@ -112,6 +116,10 @@
     </div>
 
     <div class="col-actions">
+       <button mat-icon-button [routerLink]="['/estadisticas-video', video.id]" 
+              matTooltip="Estadisticas de video">
+        <mat-icon>bar_chart</mat-icon>
+      </button>
       <button mat-icon-button [routerLink]="['/editarVideo', video.id]" 
               matTooltip="Editar video">
         <mat-icon>edit</mat-icon>
@@ -121,9 +129,7 @@
               matTooltip="Eliminar">
         <mat-icon>delete</mat-icon>
       </button>
-      <button mat-icon-button matTooltip="Más opciones">
-        <mat-icon>more_vert</mat-icon>
-      </button>
+
     </div>
   </div>
 </div>
