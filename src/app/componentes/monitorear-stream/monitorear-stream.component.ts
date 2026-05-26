@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StreamService } from '../../servicios/stream.service';
 import { AuthService } from '../../servicios/auth.service';
 import { AfterViewInit, ViewChild, ElementRef } from '@angular/core';
@@ -13,7 +13,11 @@ import Pusher from 'pusher-js';
 import { CookieService } from 'ngx-cookie-service';
 import { ChangeDetectorRef } from '@angular/core';
 import {  Subject, takeUntil } from 'rxjs';
-
+import { SidebarService } from '../../servicios/sidebar.service';
+import { environment } from '../../../environments/environment.prod';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-monitorear-stream',
@@ -34,6 +38,7 @@ export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
   canal: any;
   streamUrl: any;
   chatMessagesList: any[] = [];
+  mensajes: any[] = [];
   streamKey:any;
   mensaje: string = '';
   metrics: any = null;
@@ -45,15 +50,19 @@ export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
   private chatSubscription: Subscription | null = null;
   private subscription: Subscription | null = null;
   playerHasStarted = false;
-
+  sidebarCollapsed$!: Observable<boolean>;
+  cerrarGuiaAutomaticamente = false;
+  isClosing = false;        
+  
   private destroy$ = new Subject<void>();
   private isUserAtBottom = true;
   private chatContainer!: ElementRef<HTMLDivElement>;
+  private videoPlayerNative!: HTMLVideoElement;
+
 
   viewers = 0;
   messages: ChatMessage[] = [];
 
-private videoPlayerNative!: HTMLVideoElement;
 
 
   @ViewChild('chatMessages') chatMessages!: ElementRef;
@@ -65,17 +74,20 @@ private videoPlayerNative!: HTMLVideoElement;
     }
   }
 
-  mensajes: any[] = [];
 
 
  constructor(
   private route: ActivatedRoute,
+  private router: Router,
   private streamService: StreamService,
   private chatService: ChatstreamService,
   private authService: AuthService,
+  private sidebarService: SidebarService,
   private cookie: CookieService,
   private cdr: ChangeDetectorRef,
-  public title: Title
+  private snackBar: MatSnackBar,
+  public title: Title,
+  private dialog: MatDialog
 ) {
   this.title.setTitle("Monitoreo de Stream - BlitzStudio");
 
@@ -103,22 +115,25 @@ private videoPlayerNative!: HTMLVideoElement;
   console.log('Laravel Echo inicializado correctamente');
 }
 
-  ngOnInit(): void {
-    this.transmisionId = Number(this.route.snapshot.paramMap.get('id')) || 0;
-    this.obtenerUsuario(); 
-    this.cargarMensajesIniciales();
-    this.suscribirseAMensajesEnTiempoReal();
-    this.cargarStreamYMetrics();
-    this.cargarViewers();
-    this.cargarStreamKeyDelCanal();
-    this.iniciarEscuchaViewersEnTiempoReal(),
+ngOnInit(): void {
+  this.transmisionId = Number(this.route.snapshot.paramMap.get('id')) || 0;
+  this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+  this.obtenerUsuario(); 
+  this.cargarMensajesIniciales();
+  this.suscribirseAMensajesEnTiempoReal();
+  this.cargarStreamYMetrics();
+  this.cargarViewers();
+  this.cargarStreamKeyDelCanal();
+  this.iniciarEscuchaViewersEnTiempoReal(); 
+  const guideClosed = localStorage.getItem('streamGuideClosed');
+    if (guideClosed === 'true') {
+      this.cerrarGuiaAutomaticamente = true;
+    }
 
-
-    this.subscription = this.chatService.startListening(this.transmisionId).subscribe((nuevo) => {
-      this.mensajes.push(nuevo);
-    });
-  }
-
+  this.subscription = this.chatService.startListening(this.transmisionId).subscribe((nuevo) => {
+    this.mensajes.push(nuevo);
+  });
+}
   ngAfterViewInit(): void {
     this.setupScrollListener();
   }
@@ -129,16 +144,35 @@ private iniciarEscuchaViewersEnTiempoReal() {
 
   window.Echo.channel(`stream.${this.transmisionId}`)
     .listen('.stream-event', (e: any) => {
-      console.log('Evento recibido:', e);
       if (e.count !== undefined) {
         this.stream.viewers = e.count;
-
         this.animarViewers(e.count);
       }
-    });
+    })
+    .listen('.stream.status.changed', (data: any) => {
+      console.log('Estado del stream cambió:', data.estado);
+      this.stream.video.estado = data.estado;
+    console.log('Suscrito al canal stream.' + this.transmisionId);
 
-  console.log(`Escuchando viewers en tiempo real para stream ${this.transmisionId}`);
+      if (data.estado === 'DIRECTO') {
+        this.stream.activo = true;
+        this.isReallyLive = false;
+        if (this.streamKey && !this.metricsPolling$) {
+          this.iniciarMetricsPolling(this.streamKey);
+        }
+      } else if (data.estado === 'FINALIZADO') {
+        this.stream.activo = false;
+        this.isReallyLive = false;
+        this.playerHasStarted = false;
+        this.metricsPolling$?.unsubscribe();
+        this.metricsPolling$ = null;
+        this.player?.src(null);
+      }
+
+      this.cdr.markForCheck();
+    });
 }
+
 
 private animarViewers(nuevoNumero: number) {
   const elemento = document.querySelector('.viewers-count strong');
@@ -226,7 +260,6 @@ cargarHLS() {
 
     const texto = this.mensaje.trim();
 
-    // Agregar mensaje optimista localmente con un ID temporal negativo
     const tempId = -Date.now();
     const mensajeOptimista: ChatMessage = {
       id: tempId,
@@ -248,7 +281,6 @@ cargarHLS() {
       },
       error: (err) => {
         console.error('Error enviando mensaje:', err);
-        // Remover el mensaje optimista en caso de error
         this.messages = this.messages.filter(m => m.id !== tempId);
         this.cdr.markForCheck();
       }
@@ -273,7 +305,6 @@ cargarStreamYMetrics() {
       }
 
       this.cargarStreamKeyDelCanal();
-
       this.actualizarVideoSource(); 
       this.cargando = false;
     }
@@ -318,12 +349,26 @@ iniciarMetricsPolling(streamKey: string) {
 
   this.metricsPolling$ = this.streamService.startMetricsPolling(streamKey, 4000)
     .subscribe(metrics => {
-      console.log(metrics)
       this.metrics = metrics;
-      this.isReallyLive = metrics.online && metrics.segments > 0;
+      const estaVivo = metrics.online && metrics.segments > 0;
 
-      if (this.isReallyLive && this.stream?.activo) {
-        this.actualizarVideoSource(); 
+      if (estaVivo && !this.isReallyLive) {
+        this.isReallyLive = true;
+
+        if (!this.streamUrl) {
+          this.streamService.obtenerDatosTransmision(this.transmisionId).subscribe({
+            next: (res: any) => {
+              this.streamUrl = res.url_hls;
+              console.log('URL obtenida:', this.streamUrl);
+              this.actualizarVideoSource();
+            }
+          });
+        } else {
+          this.actualizarVideoSource();
+        }
+
+      } else if (!estaVivo) {
+        this.isReallyLive = false;
       }
     });
 }
@@ -360,7 +405,6 @@ iniciarMetricsPolling(streamKey: string) {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (msg) => {
-        // Buscar si hay un mensaje optimista (ID negativo) con el mismo texto del mismo usuario
         const indexOptimista = this.messages.findIndex(m => 
           m.id < 0 && 
           m.text === msg.text && 
@@ -368,10 +412,8 @@ iniciarMetricsPolling(streamKey: string) {
         );
         
         if (indexOptimista !== -1) {
-          // Reemplazar el mensaje optimista con el real
           this.messages[indexOptimista] = msg;
         } else {
-          // Verificar si el mensaje ya existe (por ID real)
           const yaExiste = this.messages.some(m => m.id === msg.id && m.id > 0);
           
           if (!yaExiste) {
@@ -462,6 +504,19 @@ iniciarMetricsPolling(streamKey: string) {
     });
   }
 
+  mostrarMensaje(mensaje: string, tipo: 'success' | 'error' | 'info' = 'info', duracion: number = 4000) {
+  this.snackBar.open(mensaje, 'Cerrar', {
+    duration: duracion,
+    horizontalPosition: 'center',
+    verticalPosition: 'bottom',
+    panelClass: [
+      tipo === 'success' ? 'snack-success' : '',
+      tipo === 'error' ? 'snack-error' : '',
+      tipo === 'info' ? 'snack-info' : ''
+    ]
+  });
+}
+
 activarStreamManual() {
     if (this.activandoStream || !this.puedeActivarStream()) return;
 
@@ -474,33 +529,103 @@ activarStreamManual() {
           this.stream.video.estado = 'PROGRAMADO';
           this.actualizarVideoSource();
           this.cargarStreamKeyDelCanal();
-          this.cargarStreamKeyDelCanal(); 
-          alert('Stream activado. Conecta OBS para transmitir');
-        } else {
-          alert(res.message || 'Error al activar');
+          this.mostrarMensaje('✅ Stream activado correctamente. Conecta OBS para transmitir', 'success');
         }
       },
       error: (err) => {
-        const msg = err.error?.message || 'Error al activar el stream';
-        alert(msg);
+        const errorMsg = err.error?.message || err.message || 'Error al activar el stream';
+
+        if (errorMsg.includes('FINALIZADO') || err.status === 409) {
+          this.manejarStreamFinalizado();
+        } else {
+          this.mostrarMensaje(errorMsg, 'error');
+        }
       },
       complete: () => this.activandoStream = false
     });
   }
 
-desactivarStreamManual() {
-    if (!confirm('¿Desactivar el stream?')) return;
+  private manejarStreamFinalizado() {
+      const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+        width: '480px',
+        data: {
+          title: 'Stream Finalizado',
+          message: 'Este stream ya fue finalizado y no puede ser reutilizado.\n\n¿Deseas crear una nueva transmisión?',
+          confirmText: 'Crear Nueva Transmisión',
+          cancelText: 'Cerrar'
+        }
+      });
 
-    this.streamService.desactivarStream(this.transmisionId, this.userId).subscribe({
-      next: (res: any) => {
-        this.stream.activo = false;
-        alert('Stream desactivado');
-        this.isReallyLive = false;
-      },
-      error: (err) => alert(err.error?.message || 'Error al desactivar')
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.irACrearNuevoStream();      
+        }
+      });
+    }
+
+  private irACrearNuevoStream() {
+
+    this.router.navigate(['/crearStream'])
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+
+  }
+desactivarStreamManual() {
+    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+      width: '420px',
+      data: {
+        title: '¿Desactivar Stream?',
+        message: '¿Estás seguro que deseas desactivar esta transmisión? Esta acción no se puede deshacer.'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.ejecutarDesactivacion();
+      }
     });
   }
 
+  private ejecutarDesactivacion() {
+    this.streamService.desactivarStream(this.transmisionId, this.userId).subscribe({
+      next: () => {
+        this.stream.activo = false;
+        this.isReallyLive = false;
+        this.playerHasStarted = false;
+        this.metricsPolling$?.unsubscribe();
+        this.metricsPolling$ = null;
+        this.mostrarMensaje('✅ Stream desactivado correctamente', 'success');
+      },
+      error: (err) => {
+        this.mostrarMensaje(err.error?.message || 'Error al desactivar el stream', 'error');
+      }
+    });
+  }
+
+copiarRTMP() {
+  const rtmpUrl = environment.rtmpserver;
+  navigator.clipboard.writeText(rtmpUrl).then(() => {
+    alert('✅ RTMP copiado al portapapeles');
+  });
+}
+
+
+cerrarGuia() {
+    this.cerrarGuiaAutomaticamente = true;
+    localStorage.setItem('streamGuideClosed', 'true');
+  }
+
+volverAMostrarGuia() {
+    this.cerrarGuiaAutomaticamente = false;
+    localStorage.removeItem('streamGuideClosed');
+  }
+copiarStreamKey() {
+  if (this.streamKey) {
+    navigator.clipboard.writeText(this.streamKey).then(() => {
+      alert('✅ Clave de stream copiada');
+    });
+  }
+}
 
 copiar(texto: string | null) {
     if (!texto) return;
@@ -509,9 +634,9 @@ copiar(texto: string | null) {
     });
   } 
 
-  getStatusClass(): string {
+getStatusClass(): string {
     if (this.stream?.video?.estado === 'FINALIZADO') return 'finalizado';
-    if (this.playerHasStarted) return 'en-vivo';      
+    if (this.playerHasStarted) return 'en-vivo';
     if (this.stream?.activo) return 'esperando';
     return 'inactivo';
   }

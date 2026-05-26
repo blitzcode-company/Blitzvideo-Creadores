@@ -242,7 +242,7 @@
 }
 
 :host-context(.dark-theme) .periodo-buttons {
-  background: #2d3748;
+  background: #17212f;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -313,7 +313,7 @@
 }
 
 :host-context(.dark-theme) .metrica-card {
-  background: #2d3748;
+  background: #1e1e1e;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -634,7 +634,9 @@ hr {
 }
 
 :host-context(.dark-theme) .engagement-card {
-  background: linear-gradient(135deg, #3a4556 0%, #2d3748 100%);
+  background: #1e1e1e;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+
 }
 
 .engagement-card:hover {
@@ -728,7 +730,7 @@ hr {
 }
 
 :host-context(.dark-theme)  .puntuaciones-desglose {
-  background: #3a4556;
+  background: #17212f;
 }
 
 .puntuaciones-desglose h3 {
@@ -812,8 +814,9 @@ hr {
 }
 
 :host-context(.dark-theme)  .audiencia-card {
-  background: #3a4556;
+  background: #1e1e1e;
   border-left-color: #3498db;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) ;
 }
 
 .audiencia-card h3 {

@@ -35,12 +35,16 @@ import { TiempoPipe } from './pipes/tiempo.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips'; 
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ModalAgregarPlaylistComponent } from './componentes/modal-agregar-playlist/modal-agregar-playlist.component';
 import { EstadisticasComponent } from './componentes/estadisticas/estadisticas.component';
 import { EstadisticasVideoComponent } from './componentes/estadisticas-video/estadisticas-video.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +68,7 @@ import { EstadisticasVideoComponent } from './componentes/estadisticas-video/est
     TiempoPipe,
     EstadisticasComponent,
     EstadisticasVideoComponent,
+    ConfirmarDialogoComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,6 +91,8 @@ import { EstadisticasVideoComponent } from './componentes/estadisticas-video/est
     MatDividerModule,
     MatRadioModule,
     MatSnackBarModule,
+    FontAwesomeModule,
+
   ],
   providers: [
     CookieService,

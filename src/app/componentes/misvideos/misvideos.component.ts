@@ -32,6 +32,9 @@ export class MisvideosComponent implements OnInit{
   videos: any[] = [];
   videosSeleccionados = new Set<number>();
   todosSeleccionados = false;
+  paginaActual: number = 1;
+itemsPorPagina: number = 10;
+
 
   constructor(private videoService:VideosService, 
     private authService: AuthService, 
@@ -100,7 +103,50 @@ export class MisvideosComponent implements OnInit{
     });
   }
   
+
+get videosPaginados(): any[] {
+  const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+  const fin = inicio + this.itemsPorPagina;
+  return this.videos.slice(inicio, fin);
+}
+
+get totalPaginas(): number {
+  return Math.ceil(this.videos.length / this.itemsPorPagina);
+}
+
+get paginasMostradas(): number[] {
+  const total = this.totalPaginas;
+  const actual = this.paginaActual;
+  const delta = 2;
+  const rango: number[] = [];
   
+  for (let i = Math.max(2, actual - delta); i <= Math.min(total - 1, actual + delta); i++) {
+    rango.push(i);
+  }
+  
+  if (actual - delta > 2) {
+    rango.unshift(-1); 
+  }
+  
+  if (actual + delta < total - 1) {
+    rango.push(-1);
+  }
+  
+  rango.unshift(1);
+  if (total !== 1) {
+    rango.push(total);
+  }
+  
+  return rango;
+}
+
+cambiarPagina(pagina: number): void {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+  document.querySelector('.videos-list-container')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+
 
   convertirDuracion(segundos: number): string {
     const minutos = Math.floor(segundos / 60);

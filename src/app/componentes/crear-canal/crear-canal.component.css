@@ -75,7 +75,6 @@
 
 .canal-form {
   display: grid;
-  grid-template-columns: 1fr 320px;
   gap: 32px;
   align-items: start;
 }
@@ -647,4 +646,19 @@
   .form-section {
     padding: 12px;
   }
+}
+
+
+:host-context(.dark-theme) input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* Reemplaza #1e1e1e por el color de fondo exacto de tu contenedor oscuro */
+  -webkit-box-shadow: 0 0 0 1000px #292929 inset !important;
+  
+  /* Cambia el color del texto si el navegador te lo cambia a negro */
+  -webkit-text-fill-color: #ffffff !important;
+  
+  /* Mantiene la transición suave si es necesario */
+  transition: background-color 5000s ease-in-out 0s;
 }

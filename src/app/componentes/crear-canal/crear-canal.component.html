@@ -97,24 +97,7 @@
       </section>
     </div>
 
-    <aside class="form-sidebar">
-      <div class="preview-card">
-        <p class="preview-title">Vista previa</p>
-        <div class="preview-content">
-          <div class="preview-cover">
-            <img *ngIf="canal.portadaPreview" [src]="canal.portadaPreview" alt="Portada del canal">
-            <div *ngIf="!canal.portadaPreview" class="placeholder-cover">
-              <mat-icon>image</mat-icon>
-            </div>
-          </div>
-          <div class="preview-info">
-            <h3 class="preview-channel-name">{{ canal.nombre || 'Tu nombre de canal' }}</h3>
-            <p class="preview-channel-desc">{{ canal.descripcion?.substring(0, 100) || 'Descripción del canal' }}{{ (canal.descripcion?.length ?? 0) > 100 ? '...' : '' }}</p>
-            
-          </div>
-        </div>
-      </div>
-    </aside>
+  
   </form>
 
   <div *ngFor="let alerta of alerta" 

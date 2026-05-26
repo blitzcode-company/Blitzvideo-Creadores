@@ -173,15 +173,12 @@ onSubmit(form: NgForm) {
     formData.append('titulo', this.titulo.trim());
     formData.append('descripcion', this.descripcion.trim());
 
-    // Miniatura opcional
     if (this.thumbnailFile) {
       formData.append('miniatura', this.thumbnailFile, this.thumbnailFile.name);
     }
 
-    // Etiquetas → solo IDs (tu backend espera etiquetas[] o etiquetas[0], etc.)
     this.etiquetasSeleccionadas.forEach((id, i) => {
       formData.append(`etiquetas[${i}]`, id.toString());
-      // o si tu backend espera etiquetas[] → formData.append('etiquetas[]', id.toString());
     });
 
     this.videoService.subirVideoConProgress(this.canalId, formData).subscribe({

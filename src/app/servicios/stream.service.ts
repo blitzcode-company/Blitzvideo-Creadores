@@ -29,6 +29,7 @@ export class StreamService {
 
   }
 
+  
   obtenerDatosTransmision(transmisionId: any) {
     const httpOptions = {
         headers: new HttpHeaders({

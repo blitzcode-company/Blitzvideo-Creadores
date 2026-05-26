@@ -1,0 +1,123 @@
+
+.confirm-dialog {
+  min-width: 450px;
+  max-width: 560px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+:host-context(.dark-theme) .confirm-dialog {
+  background-color: #12335bfc;    
+  color: #f8fafc;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+}
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.42rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding: 28px 28px 18px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  margin: 0;
+}
+
+.dialog-title .icon {
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+:host-context(.dark-theme) .dialog-title {
+  border-bottom-color: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+}
+
+.dialog-content {
+  font-size: 15.1px;
+  line-height: 1.68;
+  padding: 22px 28px;
+  color: #334155;
+}
+
+:host-context(.dark-theme) .dialog-content {
+  color: #cbd5e1 !important;
+}
+
+.dialog-content p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.dialog-actions {
+  padding: 16px 28px 28px 28px !important;
+  gap: 14px;
+  justify-content: flex-end;
+  background-color: inherit;
+}
+
+.btn-cancel {
+  color: #64748b;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #1e293b;
+}
+
+:host-context(.dark-theme) .btn-cancel {
+  color: #94a3b8;
+}
+
+:host-context(.dark-theme) .btn-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+}
+
+.btn-confirm {
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-confirm:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.btn-confirm:active {
+  transform: translateY(0.5px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+:host-context(.dark-theme) .btn-confirm {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+:host-context(.dark-theme) .btn-confirm:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+:host-context(.dark-theme) .mat-raised-button[color="warn"] {
+  background-color: #ef4444;
+  color: white;
+}
+
+:host-context(.dark-theme) .mat-raised-button[color="primary"] {
+  background-color: #3b82f6;
+  color: white;
+}
+
+:host-context(.dark-theme) .confirm-dialog {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}

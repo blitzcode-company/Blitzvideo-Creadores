@@ -126,7 +126,34 @@
       </div>
     </div>
 
-    
+<div class="graficos-container">
+  <div class="grafico-card">
+    <div class="grafico-header">
+      <mat-icon>trending_up</mat-icon>
+      <h3>Evolución de vistas</h3>
+    </div>
+    <div class="grafico-body">
+      <canvas #viewsChart></canvas>
+    </div>
+    <div class="grafico-footer">
+      <span>Vistas en el {{ periodoSeleccionado === 'semana' ? 'último mes' : 
+                        periodoSeleccionado === 'mes' ? 'últimos meses' : 
+                        periodoSeleccionado === 'trimestre' ? 'últimos trimestres' : 'últimos años' }}</span>
+    </div>
+  </div>
+
+  <div class="grafico-card">
+    <div class="grafico-header">
+      <mat-icon>analytics</mat-icon>
+      <h3>Retención de audiencia</h3>
+    </div>
+    <div class="grafico-body">
+      <canvas #retentionChart></canvas>
+    </div>
+    <div class="grafico-footer">
+      <span>Porcentaje de espectadores que continúan viendo</span>
+    </div>
+  </div>
 
     <div *ngIf="cargando" class="loading-container">
       <mat-spinner></mat-spinner>

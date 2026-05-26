@@ -77,7 +77,34 @@
               </mat-form-field>
             </div>
           </section>
+          <section class="form-section">
+            <div class="section-header">
+              <h2>Etiquetas</h2>
+              <span class="optional-badge">Máximo recomendado: 6</span>
+            </div>
 
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Etiquetas</mat-label>
+              <mat-select 
+                multiple 
+                placeholder="Selecciona etiquetas"
+                [value]="etiquetasSeleccionadas"
+                (selectionChange)="onEtiquetaSeleccionada($event)">
+                <mat-option *ngFor="let e of etiquetasPlanas" [value]="e.id">
+                  {{ e.nombre }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="selected-tags" *ngIf="etiquetasSeleccionadas.length > 0">
+              <mat-chip 
+                *ngFor="let id of etiquetasSeleccionadas; let i = index"
+                (removed)="quitarEtiqueta(i)">
+                {{ getEtiquetaNombre(id) }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </div>
+          </section>
           <section class="form-section">
             <div class="section-header">
               <h2>Miniatura</h2>
@@ -123,39 +150,7 @@
           </section>
         </div>
 
-        <aside class="form-sidebar">
-          <div class="preview-card">
-            <h3 class="preview-title">Vista previa</h3>
-            
-            <div class="preview-content">
-              <div class="preview-thumbnail">
-                <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" alt="Miniatura">
-                <div *ngIf="!thumbnailPreview" class="placeholder-thumbnail">
-                  <mat-icon>image_not_supported</mat-icon>
-                </div>
-              </div>
 
-              <div class="preview-info">
-                <h4 class="preview-stream-title">
-                  {{ streamForm.get('titulo')?.value || 'Tu título aquí' }}
-                </h4>
-                <p class="preview-channel">{{ canalNombre }}</p>
-                <p class="preview-description">
-                  {{ (streamForm.get('descripcion')?.value || 'Tu descripción aquí').substring(0, 100) }}{{ (streamForm.get('descripcion')?.value || '').length > 100 ? '...' : '' }}
-                </p>
-              </div>
-            </div>
-
-            <div class="preview-footer">
-              <mat-chip-set>
-                <mat-chip>
-                  <mat-icon>live_tv</mat-icon>
-                  EN VIVO
-                </mat-chip>
-              </mat-chip-set>
-            </div>
-          </div>
-        </aside>
       </form>
 
       <div class="form-actions">

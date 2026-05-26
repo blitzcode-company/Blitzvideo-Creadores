@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { SidebarService } from '../../servicios/sidebar.service';
+import { VideosService } from '../../servicios/videos.service';
 
 
 @Component({
@@ -28,16 +29,18 @@ export class CrearStreamComponent implements OnInit {
   uploadProgress: number = 0;
   uploading: boolean = false;
     sidebarCollapsed$!: Observable<boolean>;
-  
+  etiquetasPlanas: any[] = [];                    
+etiquetasSeleccionadas: number[] = [];
   ngOnInit() {
     this.obtenerUsuario();
-        this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
-
+    this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+    this.cargarEtiquetas();
   }
 
   constructor(
     private fb: FormBuilder,
     private streamService: StreamService,
+    private videoService: VideosService,
     private dialog: MatDialog,
     private authService: AuthService,
     private snackBar: MatSnackBar,
@@ -66,6 +69,19 @@ export class CrearStreamComponent implements OnInit {
     } else {
       this.snackBar.open('Solo se permiten imágenes', 'Cerrar', { duration: 3000 });
     }
+  }
+
+  cargarEtiquetas() {
+    this.videoService.listarEtiquetas().subscribe({
+      next: (res: any) => {
+        this.etiquetasPlanas = res;
+        console.log('Etiquetas cargadas:', this.etiquetasPlanas);
+      },
+      error: (err) => {
+        console.error('Error al cargar etiquetas', err);
+        this.snackBar.open('Error al cargar etiquetas', 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   removeThumbnail(event: Event) {
@@ -99,7 +115,19 @@ export class CrearStreamComponent implements OnInit {
       }
     });
   }
+onEtiquetaSeleccionada(event: any) {
+    this.etiquetasSeleccionadas = event.value;   
+  }
 
+  getEtiquetaNombre(id: number): string {
+    const etiqueta = this.etiquetasPlanas.find(e => e.id === id);
+    return etiqueta ? etiqueta.nombre : 'Etiqueta desconocida';
+  } 
+
+    quitarEtiqueta(index: number) {
+  this.etiquetasSeleccionadas.splice(index, 1);
+}
+  
   crearStream() {
     if (!this.canalId) {
         this.snackBar.open('No se encontró tu canal', 'Cerrar', { duration: 4000 });
@@ -118,6 +146,10 @@ export class CrearStreamComponent implements OnInit {
     if (this.selectedFile) {
       formData.append('miniatura', this.selectedFile, this.selectedFile.name);
     }
+    this.etiquetasSeleccionadas.forEach((id, index) => {
+        formData.append(`etiquetas[${index}]`, id.toString());
+      });
+console.log('Etiquetas enviadas:', this.etiquetasSeleccionadas);
 
     this.uploading = true;
     this.uploadProgress = 0;
@@ -154,5 +186,5 @@ export class CrearStreamComponent implements OnInit {
     });
   }
 
-  
+
 }

@@ -1,38 +1,199 @@
 <header class="navbar navbar-expand-lg fixed-top bg-header shadow-sm">
   <div class="container-fluid d-flex align-items-center navbar-container">
-     <div class="navbar-left">
-      <button class="btn text-white me-2  d-md-block d-none menu-btn-left" (click)="toggleSidebar()">
+
+    <div class="navbar-left">
+
+      <button
+        class="btn text-white me-2 d-md-block d-none menu-btn-left"
+        (click)="toggleSidebar()">
+
         <mat-icon>menu</mat-icon>
       </button>
 
-      
-      <a class="navbar-brand d-flex align-items-center" [href]="serverIp + '3000' + '/#/'">
-        <img 
+      <a
+        class="navbar-brand d-flex align-items-center"
+        [href]="serverIp + '3000' + '/#/'">
+
+        <img
           class="logo-navbar"
-          [src]="usuario?.premium ? 'assets/images/logopremium.svg' : 'assets/images/logo.png'" 
+          [src]="usuario?.premium ? 'assets/images/logopremium.svg' : 'assets/images/logo.png'"
           alt="Logo">
       </a>
+
     </div>
 
-    
+    <div class="dropdown mx-1" [class.open]="isDropdownOpen">
 
-      <div class="dropdown mx-1" [class.open]="isDropdownOpen">
-        <button class="btn d-flex align-items-center text-white" (click)="toggleDropdown($event)">
-          <span *ngIf="usuario?.name" class="me-2 d-none d-lg-inline">{{ canalNombre }}</span>
-          <img *ngIf="usuario?.foto" [src]="usuario.foto" class="avatar" alt="Foto perfil">
-          <img *ngIf="!usuario?.foto" src="assets/images/user.png" class="avatar" alt="Perfil">
-          <mat-icon class="ms-1" style="font-size: 18px;">keyboard_arrow_down</mat-icon>
-        </button>
+      <button
+        class="btn d-flex align-items-center text-white"
+        (click)="toggleDropdown($event)">
 
-        <div class="dropdown-menu dropdown-menu-end" [class.show]="isDropdownOpen">
-          <a *ngIf="status.isLoggedIn && canalNombre" [href]="serverIp + '3000' + '/#/'" class="dropdown-item">Volver a BlitzVideo</a>
-          <a *ngIf="status.isLoggedIn && !canalNombre" routerLink="/crearCanal" class="dropdown-item">Crear canal</a>
+        <span *ngIf="usuario?.name"
+          class="me-2 d-none d-lg-inline">
+
+          {{ canalNombre }}
+        </span>
+
+        <img
+          *ngIf="usuario?.foto"
+          [src]="usuario.foto"
+          class="avatar"
+          alt="Foto perfil">
+
+        <img
+          *ngIf="!usuario?.foto"
+          src="assets/images/user.png"
+          class="avatar"
+          alt="Perfil">
+
+        <mat-icon class="ms-1" style="font-size: 18px;">
+          keyboard_arrow_down
+        </mat-icon>
+
+      </button>
+
+      <div
+        class="dropdown-menu dropdown-menu-end"
+        [class.show]="isDropdownOpen">
+        <ng-container *ngIf="!mostrandoTemas">
+
+          <a
+            *ngIf="status.isLoggedIn && canalNombre"
+            [href]="serverIp + '3000' + '/#/'"
+            class="dropdown-item">
+
+            Volver a BlitzVideo
+          </a>
+
+          <a
+            *ngIf="status.isLoggedIn && !canalNombre"
+            routerLink="/crearCanal"
+            class="dropdown-item">
+
+            Crear canal
+          </a>
+
+          <a
+            class="dropdown-item d-flex align-items-center"
+            (click)="mostrarTemasView(); $event.stopPropagation()">
+
+            <mat-icon class="me-3">palette</mat-icon>
+
+            <span>Tema</span>
+
+            <mat-icon class="ms-auto">
+              chevron_right
+            </mat-icon>
+          </a>
+
           <hr class="dropdown-divider">
-          <a *ngIf="status.isLoggedIn" (click)="logout()" class="dropdown-item">Cerrar sesión</a>
-          <a *ngIf="!status.isLoggedIn" [href]="serverIp +  '3002' + '/#/'" class="dropdown-item">Login</a>
-          <a *ngIf="!status.isLoggedIn" [href]="serverIp +  '3002' + '/#/registro'" class="dropdown-item">Registro</a>
-        </div>
+
+          <a
+            *ngIf="status.isLoggedIn"
+            (click)="logout()"
+            class="dropdown-item">
+
+            Cerrar sesión
+          </a>
+
+          <a
+            *ngIf="!status.isLoggedIn"
+            [href]="serverIp + '3002' + '/#/'"
+            class="dropdown-item">
+
+            Login
+          </a>
+
+          <a
+            *ngIf="!status.isLoggedIn"
+            [href]="serverIp + '3002' + '/#/registro'"
+            class="dropdown-item">
+
+            Registro
+          </a>
+
+        </ng-container>
+
+        <ng-container *ngIf="mostrandoTemas">
+
+          <div
+            class="dropdown-header px-3 py-2 d-flex align-items-center">
+
+            <button
+              class="btn btn-sm p-0 me-2"
+              (click)="volverAlMenu(); $event.stopPropagation()">
+
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+
+            <small class="text-muted fw-semibold">
+              Apariencia
+            </small>
+
+          </div>
+
+          <a
+            class="dropdown-item tema-item d-flex align-items-center"
+            (click)="cambiarTema('light')"
+            [class.active]="themeService.temaActual() === 'light'">
+
+            <mat-icon class="me-3">
+              light_mode
+            </mat-icon>
+
+            <span>Claro</span>
+
+            <mat-icon
+              class="ms-auto text-primary"
+              *ngIf="themeService.temaActual() === 'light'">
+
+              check
+            </mat-icon>
+          </a>
+
+          <a
+            class="dropdown-item tema-item d-flex align-items-center"
+            (click)="cambiarTema('dark')"
+            [class.active]="themeService.temaActual() === 'dark'">
+
+            <mat-icon class="me-3">
+              dark_mode
+            </mat-icon>
+
+            <span>Oscuro</span>
+
+            <mat-icon
+              class="ms-auto text-primary"
+              *ngIf="themeService.temaActual() === 'dark'">
+
+              check
+            </mat-icon>
+          </a>
+
+          <a
+            class="dropdown-item tema-item d-flex align-items-center"
+            (click)="cambiarTema('auto')"
+            [class.active]="themeService.temaActual() === 'auto'">
+
+            <mat-icon class="me-3">
+              brightness_auto
+            </mat-icon>
+
+            <span>Automático</span>
+
+            <mat-icon
+              class="ms-auto text-primary"
+              *ngIf="themeService.temaActual() === 'auto'">
+
+              check
+            </mat-icon>
+          </a>
+
+        </ng-container>
+
       </div>
+
     </div>
-  </header>
-  
+
+  </div>
+</header>

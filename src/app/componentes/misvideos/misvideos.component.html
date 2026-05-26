@@ -21,7 +21,7 @@
           <mat-icon>live_tv</mat-icon>
           <span>Crear stream</span>
         </a>
-         <a class="menu-item" routerLink="/estadisticas">
+        <a class="menu-item" routerLink="/estadisticas">
           <mat-icon>bar_chart</mat-icon>
           <span>Estadisticas</span>
         </a>
@@ -42,97 +42,115 @@
       </div>
 
       <div class="videos-list-container" *ngIf="videos.length > 0">
-  <div class="selection-toolbar" *ngIf="videosSeleccionados.size > 0">
-    <div class="selection-info">
-      <mat-icon>check_circle</mat-icon>
-      <span>{{ videosSeleccionados.size }} video{{ videosSeleccionados.size !== 1 ? 's' : '' }} seleccionado{{ videosSeleccionados.size !== 1 ? 's' : '' }}</span>
-    </div>
-    <div class="selection-actions">
-      <button mat-raised-button color="primary" (click)="abrirModalPlaylists()">
-        <mat-icon>playlist_add</mat-icon>
-        Agregar a playlist
-      </button>
-      <button mat-raised-button color="warn" (click)="eliminarVideosSeleccionados()">
-        <mat-icon>delete</mat-icon>
-        Eliminar seleccionados
-      </button>
-      <button mat-button (click)="limpiarSeleccion()">
-        <mat-icon>clear</mat-icon>
-        Limpiar selección
-      </button>
-    </div>
-  </div>
+        <div class="selection-toolbar" *ngIf="videosSeleccionados.size > 0">
+          <div class="selection-info">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ videosSeleccionados.size }} video{{ videosSeleccionados.size !== 1 ? 's' : '' }} seleccionado{{ videosSeleccionados.size !== 1 ? 's' : '' }}</span>
+          </div>
+          <div class="selection-actions">
+            <button (click)="abrirModalPlaylists()">
+              <mat-icon>playlist_add</mat-icon>
+              Agregar a playlist
+            </button>
+            <button (click)="eliminarVideosSeleccionados()">
+              <mat-icon>delete</mat-icon>
+              Eliminar seleccionados
+            </button>
+            <button (click)="limpiarSeleccion()">
+              <mat-icon>clear</mat-icon>
+              Limpiar selección
+            </button>
+          </div>
+        </div>
 
-  <div class="list-header">
-    <div class="col-checkbox">
-      <mat-checkbox [checked]="todosSeleccionados" 
-                    [indeterminate]="videosSeleccionados.size > 0 && !todosSeleccionados"
-                    (change)="toggleSeleccionTodos()">
-      </mat-checkbox>
-    </div>
-    <div class="col-thumbnail">Miniatura</div>
-    <div class="col-title">Título</div>
-    <div class="col-visibility">Visibilidad</div>
-    <div class="col-date">Fecha</div>
-    <div class="col-views">Vistas</div>
-    <div class="col-actions">Acciones</div>
-  </div>
+        <div class="list-header">
+          <div class="col-checkbox">
+            <mat-checkbox [checked]="todosSeleccionados" 
+                          [indeterminate]="videosSeleccionados.size > 0 && !todosSeleccionados"
+                          (change)="toggleSeleccionTodos()">
+            </mat-checkbox>
+          </div>
+          <div class="col-thumbnail">Miniatura</div>
+          <div class="col-title">Título</div>
+          <div class="col-visibility">Visibilidad</div>
+          <div class="col-date">Fecha</div>
+          <div class="col-views">Vistas</div>
+          <div class="col-actions">Acciones</div>
+        </div>
 
-  <div class="video-row" *ngFor="let video of videos" [class.selected]="isVideoSeleccionado(video.id)">
-    <div class="col-checkbox">
-      <mat-checkbox [checked]="isVideoSeleccionado(video.id)"
-                    (change)="toggleSeleccionVideo(video.id)">
-      </mat-checkbox>
-    </div>
+        <div class="video-row" *ngFor="let video of videosPaginados" [class.selected]="isVideoSeleccionado(video.id)">
+          <div class="col-checkbox">
+            <mat-checkbox [checked]="isVideoSeleccionado(video.id)"
+                          (change)="toggleSeleccionVideo(video.id)">
+            </mat-checkbox>
+          </div>
 
-    <div class="col-thumbnail">
-      <a [href]="serverIp + '3000/video/' + video.id" target="_blank">
-        <img [src]="video.miniatura" 
-             (error)="onImageError($event)" 
-             alt="Miniatura">
-        <span class="duration">{{ video.duracion || '3:45' }}</span>
-      </a>
-    </div>
+          <div class="col-thumbnail">
+            <a [href]="serverIp + '3000/video/' + video.id" target="_blank">
+              <img [src]="video.miniatura" 
+                   (error)="onImageError($event)" 
+                   alt="Miniatura">
+              <span class="duration">{{ video.duracion || '3:45' }}</span>
+            </a>
+          </div>
 
-    <div class="col-title">
-      <a [href]="serverIp + '3000/video/' + video.id" target="_blank" class="video-title-link">
-        {{ video.titulo }}
-      </a>
-      <p class="video-description-preview">{{ video.descripcion | slice:0:100 }}{{ video.descripcion.length > 100 ? '...' : '' }}</p>
-    </div>
+          <div class="col-title">
+            <a [href]="serverIp + '3000/video/' + video.id" target="_blank" class="video-title-link">
+              {{ video.titulo }}
+            </a>
+            <p class="video-description-preview">{{ video.descripcion | slice:0:100 }}{{ video.descripcion.length > 100 ? '...' : '' }}</p>
+          </div>
 
-    <div class="col-visibility">
-      <mat-chip [color]="video.publicado ? 'primary' : 'warn'" selected>
-        {{ video.acceso ? 'Público' : 'Privado' }}
-      </mat-chip>
-    </div>
+          <div class="col-visibility">
+            <mat-chip [color]="video.publicado ? 'primary' : 'warn'" selected>
+              {{ video.acceso ? 'Público' : 'Privado' }}
+            </mat-chip>
+          </div>
 
-    <div class="col-date">
-      {{ video.created_at | tiempo }}
-    </div>
+          <div class="col-date">
+            {{ video.created_at | tiempo }}
+          </div>
 
-    <div class="col-views">
-      {{ video.visitas_count | number }}
-    </div>
+          <div class="col-views">
+            {{ video.visitas_count | number }}
+          </div>
 
-    <div class="col-actions">
-       <button mat-icon-button [routerLink]="['/estadisticas-video', video.id]" 
-              matTooltip="Estadisticas de video">
-        <mat-icon>bar_chart</mat-icon>
-      </button>
-      <button mat-icon-button [routerLink]="['/editarVideo', video.id]" 
-              matTooltip="Editar video">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button color="warn" 
-              (click)="eliminarVideo(video.id)" 
-              matTooltip="Eliminar">
-        <mat-icon>delete</mat-icon>
-      </button>
+          <div class="col-actions">
+            <button mat-icon-button [routerLink]="['/estadisticas-video', video.id]" matTooltip="Estadisticas de video">
+              <mat-icon>bar_chart</mat-icon>
+            </button>
+            <button mat-icon-button [routerLink]="['/editarVideo', video.id]" matTooltip="Editar video">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarVideo(video.id)" matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
 
-    </div>
-  </div>
-</div>
+        <div class="pagination-container" *ngIf="totalPaginas > 1">
+          <button class="pagination-btn" (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">
+            &laquo; Anterior
+          </button>
+          
+          <div class="pagination-numbers">
+            <button *ngFor="let pagina of paginasMostradas" 
+                    class="pagination-number" 
+                    [class.active]="pagina === paginaActual"
+                    (click)="cambiarPagina(pagina)">
+              {{ pagina }}
+            </button>
+          </div>
+          
+          <button class="pagination-btn" (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">
+            Siguiente &raquo;
+          </button>
+          
+          <div class="pagination-info">
+            Mostrando {{ (paginaActual - 1) * itemsPorPagina + 1 }} - {{ (paginaActual - 1) * itemsPorPagina + videosPaginados.length }} de {{ videos.length }} videos
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

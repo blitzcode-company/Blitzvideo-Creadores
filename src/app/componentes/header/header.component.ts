@@ -6,6 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Canal } from '../../clases/canal';
 import { environment } from '../../../environments/environment.prod';
 import { SidebarService } from '../../servicios/sidebar.service';
+import { ThemeService } from '../../servicios/theme.service';
 
 
 @Component({
@@ -19,7 +20,8 @@ export class HeaderComponent implements OnInit{
               private router:Router, 
               public status:StatusService,
               public cookie:CookieService,
-              private sidebarService:SidebarService){}      
+              private sidebarService:SidebarService,
+            public themeService:ThemeService){}      
 
               ngOnInit() {
                 this.obtenerUsuario();
@@ -38,6 +40,10 @@ serverIp = environment.serverIp
   historialFiltrado: string[] = [];
   historialBusquedas: string[] = [];
   maxHistorial = 5;
+  isTemaDropdownOpen = false; 
+  isUserDropdownOpen = false;
+  mostrandoTemas = false;
+  mostrandoTemasUsuario = false;
 
   obtenerUsuario() {
     this.api.usuario$.subscribe(user => {
@@ -96,7 +102,26 @@ serverIp = environment.serverIp
     localStorage.removeItem('historialBusquedas');
     this.historialFiltrado = [];
   }
-  
+  mostrarTemasView() {
+  this.mostrandoTemas = true;
+  }
+
+  volverAlMenu() {
+    this.mostrandoTemas = false;
+  }
+
+mostrarTemasUsuarioView() {
+  this.mostrandoTemasUsuario = true;
+}
+
+  cambiarTema(tema: 'light' | 'dark' | 'auto') {
+    this.themeService.setTema(tema);
+    this.isTemaDropdownOpen = false;
+    this.mostrandoTemas = false;
+    this.mostrandoTemasUsuario = false;
+    this.isUserDropdownOpen = false;
+  }
+
 
   buscarVideos() {
     if (this.nombre?.trim()) {

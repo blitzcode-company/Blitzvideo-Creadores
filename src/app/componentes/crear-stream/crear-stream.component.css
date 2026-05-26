@@ -238,7 +238,6 @@
 
 .stream-form {
   display: grid;
-  grid-template-columns: 1fr 320px;
   gap: 32px;
   align-items: start;
 }
@@ -1028,7 +1027,26 @@
   }
 }
 
+.selected-tags {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
+.tag-chip {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+:host-context(.dark-theme) .tag-chip {
+  background: #1e3a5f;
+  color: #81c4ff;
+}
 :host-context(.dark-theme) .sidebar {
   background-color: rgba(15, 15, 15, 0.75);
   border-right-color: rgba(255, 255, 255, 0.1);
