@@ -28,7 +28,18 @@ export class StreamService {
     return this.httpClient.post(url, formData, httpOptions);
 
   }
+  
+actualizarDatosDeTransmision(transmisionId: number, canalId: number, formData: FormData) {
+  const httpOptions = {
+    headers: new HttpHeaders({
+      Authorization: 'Bearer ' + this.cookie.get('accessToken')
+    })
+  };
 
+  const url = `${this.apiUrl}api/v1/streams/${transmisionId}/canal/${canalId}/update`;
+
+  return this.httpClient.post(url, formData, httpOptions);
+}
   
   obtenerDatosTransmision(transmisionId: any) {
     const httpOptions = {

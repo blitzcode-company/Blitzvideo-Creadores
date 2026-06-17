@@ -21,9 +21,12 @@ export class EstadisticasComponent implements OnInit, OnDestroy {
   canalNombre:any
   serverIp = environment.serverIp
   canal:any;
-      canals = new Canal();
-      canalId:any;
-    sidebarCollapsed$!: Observable<boolean>;
+  canals = new Canal();
+  canalId:any;
+  sidebarCollapsed$!: Observable<boolean>;
+  Math = Math;
+
+  
   
   resumen: any = {
     totalVistas: 0,
@@ -74,7 +77,7 @@ export class EstadisticasComponent implements OnInit, OnDestroy {
     public themeService: ThemeService
   ) {
     this.titleService.setTitle('Estadísticas - Creadores');
-    this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+    this.sidebarCollapsed$ = this.usuarioGlobal.sidebarCollapsed$;
   }
 
   ngOnInit(): void {
@@ -149,6 +152,24 @@ export class EstadisticasComponent implements OnInit, OnDestroy {
         console.error('Error al cargar engagement:', error);
       }
     );
+  }
+
+
+promedioRating(promedio: number | null | undefined): number {
+  return Math.round(promedio || 0);
+}
+
+  getRatingLabel(rating: number): string {
+    const labels: { [key: number]: string } = {
+      5: 'Me encanta',
+      4: 'Me divierte',
+      3: 'Me gusta',
+      2: 'Me entristece',
+      1: 'Me enoja',
+      0: 'Sin valoración',
+    };
+
+    return labels[rating] || '';
   }
 
 

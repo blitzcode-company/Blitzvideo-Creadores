@@ -1,0 +1,220 @@
+<div class="comentarios-studio">
+
+  <div class="header">
+    <h2>Comentarios ({{ totalComentarios }})</h2>
+  </div>
+
+  <div class="loading" *ngIf="cargando">
+    <mat-spinner diameter="32"></mat-spinner>
+    <p>Cargando comentarios...</p>
+  </div>
+
+  <div class="empty" *ngIf="!cargando && comentarios.length === 0">
+    <mat-icon>chat_bubble_outline</mat-icon>
+    <p>Todavía no hay comentarios en este video.</p>
+  </div>
+
+  <div class="lista" *ngIf="!cargando">
+    <div *ngFor="let c of comentarios" class="comentario-raiz">
+      <div class="comentario">
+        <img
+          [src]="c.user?.foto || 'assets/images/user.png'"
+          (error)="onImageError($event)"
+          class="avatar"
+          [alt]="c.user?.name">
+        <div class="cuerpo">
+          <div class="meta">
+            <span class="nombre">
+              {{ c.user?.name }}
+            </span>
+            <span class="fecha">
+              {{ c.created_at | tiempo }}
+            </span>
+          </div>
+          <p class="mensaje">
+            {{ c.mensaje }}
+          </p>
+          <div class="acciones">
+            
+            <button
+              class="btn-like"
+              [class.liked]="c.likedByUser"
+              (click)="toggleLike(c)">
+              <mat-icon>
+                {{ c.likedByUser ? 'thumb_up' : 'thumb_up_off_alt' }}
+              </mat-icon>
+              <span *ngIf="c.contadorDeLikes > 0">
+                {{ c.contadorDeLikes }}
+              </span>
+            </button>
+             <button
+              class="btn-responder-texto"
+              (click)="c.respondiendo = !c.respondiendo">
+              Responder
+            </button>
+            <br>
+            <button
+              *ngIf="c.hijos.length > 0"
+              class="btn-respuestas"
+              (click)="toggleRespuestas(c)">
+              <mat-icon>
+                {{ c.expandido ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+              {{ c.expandido ? 'Ocultar' : c.hijos.length }}
+              {{ c.hijos.length === 1 ? 'respuesta' : 'respuestas' }}
+            </button>
+            <button
+              *ngIf="c.puedeBorrar"
+              class="btn-eliminar"
+              (click)="eliminar(c)"
+              matTooltip="Eliminar comentario">
+              <mat-icon>
+                delete_outline
+              </mat-icon>
+            </button>
+          </div>
+          <div
+            class="respuesta-container"
+            *ngIf="c.respondiendo">
+            <div class="input-group">
+              <div class="avatar-respuesta">
+                <img
+                  [src]="usuarioFoto || 'assets/images/user.png'"
+                  class="avatar-pequeno"
+                  (error)="onImageError($event)">
+              </div>
+              <div class="input-wrapper">
+                <input
+                  class="input-respuesta"
+                  [(ngModel)]="c.textoRespuesta"
+                  placeholder="Añadir una respuesta..."
+                  [class.active]="c.textoRespuesta">
+                <div class="botones-accion">
+                  <button
+                    class="btn-cancelar"
+                    (click)="cancelarRespuesta(c)">
+                    Cancelar
+                  </button>
+                  <button
+                    class="btn-responder"
+                    [disabled]="!c.textoRespuesta?.trim()"
+                    (click)="responder(c)">
+                    Responder
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="respuestas"
+        *ngIf="c.expandido && c.hijos.length > 0">
+        <ng-container
+          *ngTemplateOutlet="arbolRespuestas; context: { hijos: c.hijos, padre: c }">
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #arbolRespuestas let-hijos="hijos" let-padre="padre">
+  <div *ngFor="let hijo of hijos" class="comentario-hijo">
+    <div class="comentario">
+      <img
+        [src]="hijo.user?.foto || 'assets/images/user.png'"
+        (error)="onImageError($event)"
+        class="avatar avatar-sm"
+        [alt]="hijo.user?.name">
+      <div class="cuerpo">
+        <div class="meta">
+          <span class="nombre">
+            {{ hijo.user?.name }}
+          </span>
+          <span class="fecha">
+            {{ hijo.created_at | tiempo }}
+          </span>
+        </div>
+        <p class="mensaje">
+          {{ hijo.mensaje }}
+        </p>
+        <div class="acciones">
+          <button
+            class="btn-like"
+            [class.liked]="hijo.likedByUser"
+            (click)="toggleLike(hijo)">
+            <mat-icon>
+              {{ hijo.likedByUser ? 'thumb_up' : 'thumb_up_off_alt' }}
+            </mat-icon>
+            <span *ngIf="hijo.contadorDeLikes > 0">
+              {{ hijo.contadorDeLikes }}
+            </span>
+          </button>
+          <button
+            class="btn-responder-texto"
+            (click)="hijo.respondiendo = !hijo.respondiendo">
+            Responder
+          </button>
+          <button
+            *ngIf="hijo.hijos.length > 0"
+            class="btn-respuestas"
+            (click)="toggleRespuestas(hijo)">
+            <mat-icon>
+              {{ hijo.expandido ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
+            {{ hijo.expandido ? 'Ocultar' : hijo.hijos.length }}
+            {{ hijo.hijos.length === 1 ? 'respuesta' : 'respuestas' }}
+          </button>
+          <button
+            *ngIf="hijo.puedeBorrar"
+            class="btn-eliminar"
+            (click)="eliminar(hijo)"
+            matTooltip="Eliminar">
+            <mat-icon>
+              delete_outline
+            </mat-icon>
+          </button>
+        </div>
+        <div
+          class="respuesta-container"
+          *ngIf="hijo.respondiendo">
+          <div class="input-group">
+            <div class="avatar-respuesta">
+              <img
+                [src]="usuarioFoto || 'assets/images/user.png'"
+                class="avatar-pequeno"
+                (error)="onImageError($event)">
+            </div>
+            <div class="input-wrapper">
+              <input
+                class="input-respuesta"
+                [(ngModel)]="hijo.textoRespuesta"
+                placeholder="Añadir una respuesta..."
+                [class.active]="hijo.textoRespuesta">
+              <div class="botones-accion">
+                <button
+                  class="btn-cancelar"
+                  (click)="cancelarRespuesta(hijo)">
+                  Cancelar
+                </button>
+                <button
+                  class="btn-responder"
+                  [disabled]="!hijo.textoRespuesta?.trim()"
+                  (click)="responder(hijo)">
+                  Responder
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="respuestas"
+          *ngIf="hijo.expandido && hijo.hijos.length > 0">
+          <ng-container
+            *ngTemplateOutlet="arbolRespuestas; context: { hijos: hijo.hijos, padre: hijo }">
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { SidebarService } from '../../servicios/sidebar.service';
 import { VideosService } from '../../servicios/videos.service';
-
+import { UsuarioGlobalService } from '../../servicios/usuario-global.service';
 
 @Component({
   selector: 'app-crear-stream',
@@ -28,12 +28,13 @@ export class CrearStreamComponent implements OnInit {
   thumbnailPreview: string | null = null;
   uploadProgress: number = 0;
   uploading: boolean = false;
-    sidebarCollapsed$!: Observable<boolean>;
+  sidebarCollapsed$!: Observable<boolean>;
   etiquetasPlanas: any[] = [];                    
-etiquetasSeleccionadas: number[] = [];
+  etiquetasSeleccionadas: number[] = [];
+
   ngOnInit() {
     this.obtenerUsuario();
-    this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+    this.sidebarCollapsed$ = this.usuarioGlobal.sidebarCollapsed$;
     this.cargarEtiquetas();
   }
 
@@ -43,6 +44,7 @@ etiquetasSeleccionadas: number[] = [];
     private videoService: VideosService,
     private dialog: MatDialog,
     private authService: AuthService,
+    private usuarioGlobal: UsuarioGlobalService,
     private snackBar: MatSnackBar,
     private sidebarService: SidebarService,
     private router: Router,

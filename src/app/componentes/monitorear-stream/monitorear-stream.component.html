@@ -1,274 +1,242 @@
 <app-header></app-header>
 <div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async">
-  <div class="sidebar-container">
-    <div class="sidebar" *ngIf="canalNombre">
-      <div class="profile-section">
-        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
-        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
-        <h1 class="channel-name">{{ canalNombre }}</h1>
-      </div>
-      <hr class="lineaSideBar">
-      <nav class="menu-nav">
-        <a class="menu-item" routerLink="/misVideos">
-          <mat-icon>video_library</mat-icon>
-          <span>Mis videos</span>
-        </a>
-        <a class="menu-item" routerLink="/subirVideo">
-          <mat-icon>cloud_upload</mat-icon>
-          <span>Subir video</span>
-        </a>
-        <a class="menu-item active" routerLink="/crearStream">
-          <mat-icon>live_tv</mat-icon>
-          <span>Crear stream</span>
-        </a>
-        <a class="menu-item" routerLink="/estadisticas">
-          <mat-icon>bar_chart</mat-icon>
-          <span>Estadisticas</span>
-        </a>
-      </nav>
-    </div>
+ <div class="sidebar-container">
+    <app-sidebar-creador [class.collapsed]="(sidebarCollapsed$ | async)"></app-sidebar-creador>
   </div>
+  
   <div class="content-wrapper">
-
-<div class="monitor-page" *ngIf="!cargando && stream">
-
-  <div class="title-bar">
-
-<div class="show-guide-btn" 
-        *ngIf="!stream?.activo && cerrarGuiaAutomaticamente"
-        (click)="volverAMostrarGuia()">
-        <i class="fas fa-question-circle"></i>
-        <span>Cómo iniciar el stream</span>
-      </div>
-    <div class="title-left">
-
-      <ng-container [ngSwitch]="getStatusClass()">
-        <span class="pill pill-live" *ngSwitchCase="'en-vivo'">
-          <span class="live-dot"></span>En vivo
-        </span>
-        <span class="pill pill-waiting" *ngSwitchCase="'esperando'">
-          <i class="fas fa-clock"></i>&nbsp;Esperando OBS...
-        </span>
-        <span class="pill pill-finished" *ngSwitchCase="'finalizado'">
-          <i class="fas fa-stop-circle"></i>&nbsp;Finalizado
-        </span>
-        <span class="pill pill-off" *ngSwitchDefault>
-          <i class="fas fa-circle"></i>&nbsp;Inactivo
-        </span>
-      </ng-container>
- 
-      <h1 class="stream-title">
-        {{ stream.video?.titulo || stream.video.titulo || 'Transmisión sin título' }}
-      </h1>
-     
-    </div>
-
-    <div class="action-row">
-      <button
-        class="btn"
-        [ngClass]="{
-          'btn-activar': !stream?.activo,
-          'btn-waiting':  stream?.activo && !playerHasStarted,
-          'btn-live':     playerHasStarted,
-          'btn-loading':  activandoStream
-        }"
-        (click)="activarStreamManual()"
-        [disabled]="!puedeActivarStream() || activandoStream">
-
-        <i class="fas fa-spinner fa-spin"  *ngIf="activandoStream"></i>
-        <i class="fas fa-power-off"        *ngIf="!activandoStream && !stream?.activo"></i>
-        <i class="fas fa-broadcast-tower"  *ngIf="!activandoStream && stream?.activo && !playerHasStarted"></i>
-        <i class="fas fa-circle blink-dot" *ngIf="!activandoStream && playerHasStarted"></i>
-
-        <span *ngIf="!activandoStream && !stream?.activo">Activar stream</span>
-        <span *ngIf="!activandoStream && stream?.activo && !playerHasStarted">Esperando OBS...</span>
-        <span *ngIf="!activandoStream && playerHasStarted">En vivo</span>
-        <span *ngIf="activandoStream">Activando...</span>
-      </button>
-
-      <button
-        *ngIf="stream?.activo && !playerHasStarted"
-        class="btn-stop"
-        (click)="desactivarStreamManual()"
-        title="Detener stream">
-        <i class="fas fa-stop"></i>
-      </button>
-    </div>
-  </div>
-
-  <div class="main-layout">
-
-    <div class="video-column">
-
-      <div class="video-wrap">
-        <video
-          #videoPlayer
-          id="monitoreo-player"
-          class="video-js vjs-default-skin vjs-big-play-centered"
-          controls playsinline preload="auto">
-        </video>
-
-        <div class="video-overlay" *ngIf="stream?.activo && !playerHasStarted">
-          <div class="overlay-content">
-            <i class="fas fa-broadcast-tower"></i>
-            <h3>Conectando con OBS...</h3>
-            <p>La señal llegará en segundos</p>
+    <div class="monitor-page" *ngIf="!cargando && stream">
+      <div class="title-bar">
+        <div class="title-left">
+          <div class="status-container" [class]="getStatusClass()">
+            <div class="status-indicator"></div>
+            <span class="status-text">
+              <ng-container [ngSwitch]="getStatusClass()">
+                <span *ngSwitchCase="'en-vivo'">EN VIVO</span>
+                <span *ngSwitchCase="'esperando'">ESPERANDO CONEXIÓN</span>
+                <span *ngSwitchCase="'finalizado'">FINALIZADO</span>
+                <span *ngSwitchDefault>INACTIVO</span>
+              </ng-container>
+            </span>
+            <span class="viewers-count-small" *ngIf="playerHasStarted && stream.viewers">
+              <mat-icon>visibility</mat-icon>
+              {{ stream.viewers }}
+            </span>
           </div>
-        </div>
-
-        <div class="video-overlay" *ngIf="!stream?.activo">
-          <div class="overlay-content">
-            <i class="fas fa-power-off"></i>
-            <h3>Stream inactivo</h3>
-            <p>Activá el stream para comenzar a transmitir</p>
-          </div>
-        </div>
-      </div>
-<div class="stream-guide-tooltip" *ngIf="!stream?.activo && !cerrarGuiaAutomaticamente" [class.closing]="isClosing">
-
-<div class="guide-header">
-    <div class="header-content">
-      <div>
-        <h4>Cómo iniciar tu Stream</h4>
-        <p class="guide-subtitle">Sigue estos 3 pasos rápidos</p>
-      </div>
-    </div>
-    <button class="close-guide" (click)="cerrarGuia()" title="Cerrar guía">
-      <mat-icon>close</mat-icon>
-    </button>
-    </div>
-  <div class="guide-steps">
-
-    <div class="step-item">
-      <div class="step-number">1</div>
-      <div class="step-content">
-        <strong>Activa el stream</strong>
-        <p>Hacé clic en el botón <span class="highlight">"Activar stream"</span></p>
-      </div>
-    </div>
-
-    <div class="step-item">
-      <div class="step-number">2</div>
-      <div class="step-content">
-        <strong>Configura OBS Studio</strong>
-        <p>Usa estos datos en **Ajustes → Emisión**</p>
-
-        <div class="obs-config">
-          <div class="config-row">
-            <span class="config-label">Servidor RTMP</span>
-            <div class="config-value" (click)="copiarRTMP()">
-              rtmp://172.18.0.15:1935/live/
-              <i class="fas fa-copy"></i>
-            </div>
-          </div>
-          <div class="config-row">
-            <span class="config-label">Clave de transmisión</span>
-            <div class="config-value" (click)="copiarStreamKey()">
-              {{ streamKey || 'Cargando...' }}
-              <i class="fas fa-copy"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="step-item">
-      <div class="step-number">3</div>
-      <div class="step-content">
-        <strong>Inicia la transmisión</strong>
-        <p>En OBS presiona "Iniciar transmisión". La señal llegará en pocos segundos.</p>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-      <div class="metrics-section" *ngIf="playerHasStarted && metrics">
-        <div class="metrics-hdr">
-          <span class="live-dot"></span> Señal en vivo desde OBS
-        </div>
-        <div class="metrics-grid">
-          <div class="mcard mcard-accent">
-            <span class="mcard-label">Resolución</span>
-            <span class="mcard-val val-blue">{{ metrics.resolution || 'Auto' }}</span>
-            <span class="mcard-sub">Full HD</span>
-          </div>
-          <div class="mcard mcard-green">
-            <span class="mcard-label">FPS</span>
-            <span class="mcard-val val-green">{{ metrics.fps || '?' }}</span>
-            <span class="mcard-sub">Estable</span>
-          </div>
-          <div class="mcard mcard-accent">
-            <span class="mcard-label">Bitrate</span>
-            <span class="mcard-val val-blue">{{ (metrics.bitrate_kbps || 0) | number:'1.0-0' }}</span>
-            <span class="mcard-sub">kbps</span>
-          </div>
-          <div class="mcard mcard-amber">
-            <span class="mcard-label">Latencia</span>
-            <span class="mcard-val val-amber">~{{ metrics.latency_seconds || 6 }}s</span>
-            <span class="mcard-sub">Baja</span>
-          </div>
-          <div class="mcard">
-            <span class="mcard-label">Codec</span>
-            <span class="mcard-val">{{ metrics.codec || 'H.264' }}</span>
-            <span class="mcard-sub">Hardware</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="description-area">
-        <div class="section-label">Descripción</div>
-        <p class="desc-text">{{ stream.video.descripcion || 'Sin descripción disponible.' }}</p>
-      </div>
-    </div>
-
-    <div class="chat-column">
-
-      <div class="chat-header">
-        <div class="chat-header-left">
-          <span class="chat-title">Chat en vivo</span>
-        </div>
-        <div class="viewers-badge">
-          <mat-icon class="viewers-icon">visibility</mat-icon>
-          <strong class="viewers-text">{{ stream.viewers || 0 }}</strong>
-        </div>
-      </div>
-
-      <div #chatMessages class="chat-messages">
-        <div *ngFor="let msg of messages" class="msg">
-          <img
-            [src]="msg.user_photo"
-            (error)="onImageError($event)"
-            class="msg-avatar"
-            alt="">
-          <div class="msg-body">
-            <div class="msg-meta">
-              <span class="msg-name">{{ msg.user }}</span>
-              <span class="msg-time">{{ msg.created_at | date:'HH:mm' }}</span>
-            </div>
-            <div class="msg-text">{{ msg.text }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chat-input-area">
-        <form (submit)="enviarMensaje(); $event.preventDefault()">
-          <div class="chat-input-row">
-            <input
-              [(ngModel)]="mensaje"
-              name="msg"
-              placeholder="Enviar mensaje en el chat..."
-              autocomplete="off">
-            <button type="submit" class="send-btn" [disabled]="!mensaje.trim()">
-          <mat-icon>send</mat-icon>
+          
+          <div class="stream-title-row">
+            <h1 class="stream-title">{{ stream.video?.titulo || 'Transmisión sin título' }}</h1>
+            <button mat-icon-button class="edit-title-btn" (click)="abrirModalEditarStream()">
+              <mat-icon>edit</mat-icon>
             </button>
           </div>
-        </form>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-primary" [class]="getButtonClass()" (click)="activarStreamManual()"
+            [disabled]="!puedeActivarStream() || activandoStream">
+            <div class="btn-content">
+              <i class="fas" [class]="getButtonIcon()"></i>
+              <span>{{ getButtonText() }}</span>
+            </div>
+          </button>
+          <button class="btn-secondary" *ngIf="stream?.activo && !playerHasStarted" 
+            (click)="desactivarStreamManual()">
+            <i class="fas fa-stop"></i>
+            <span>Detener</span>
+          </button>
+        </div>
       </div>
 
+      <div class="main-layout">
+        <div class="video-column">
+          <div class="video-container">
+            <app-reproductor-stream
+              [streamUrl]="streamUrl"
+              [activoStream]="stream?.activo ? 1 : 0"
+              [estadoStream]="stream?.video?.estado"
+              (streamIniciado)="onStreamIniciado()"
+              (streamFinalizado)="onStreamFinalizado()"
+              [isCinemaMode]="false">
+            </app-reproductor-stream>
+            
+            <div class="quality-badge" *ngIf="playerHasStarted && metrics">
+              <i class="fas fa-hd"></i>
+              <span>{{ metrics.resolution || 'HD' }}</span>
+            </div>
+          </div>
+
+          <div class="stream-guide" *ngIf="!stream?.activo && !cerrarGuiaAutomaticamente" 
+               [class.closing]="isClosing">
+            <div class="guide-header">
+              <div class="guide-icon">
+                <i class="fas fa-play-circle"></i>
+              </div>
+              <div class="guide-title-section">
+                <h3>Cómo iniciar tu Stream</h3>
+                <p>Configuración rápida en 3 pasos</p>
+              </div>
+              <button class="guide-close" (click)="cerrarGuia()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="guide-steps">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <strong>Activar transmisión</strong>
+                  <p>Presiona el botón <span class="highlight">"Activar stream"</span> para comenzar</p>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <strong>Configurar OBS Studio</strong>
+                  <p>Usa estos datos en Ajustes → Emisión</p>
+                  
+                  <div class="config-cards">
+                    <div class="config-card">
+                      <div class="config-label">Servidor RTMP</div>
+                      <div class="config-value" (click)="copiarRTMP()">
+                        <code>rtmp://172.18.0.15:1935/live/</code>
+                        <i class="fas fa-copy"></i>
+                      </div>
+                    </div>
+                    <div class="config-card">
+                      <div class="config-label">Clave de transmisión</div>
+                      <div class="config-value" (click)="copiarStreamKey()">
+                        <code>{{ streamKey || '••••••••' }}</code>
+                        <i class="fas fa-copy"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <strong>Iniciar en OBS</strong>
+                  <p>Presiona "Iniciar transmisión" y espera la conexión</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="show-guide-btn" *ngIf="!stream?.activo && cerrarGuiaAutomaticamente"
+            (click)="volverAMostrarGuia()">
+            <i class="fas fa-question-circle"></i>
+            <span>Guía rápida</span>
+          </button>
+
+          <div class="metrics-section" *ngIf="playerHasStarted && metrics">
+            <div class="metrics-header">
+              <div class="live-indicator">
+                <span class="pulse-dot"></span>
+                <span>SEÑAL EN VIVO</span>
+              </div>
+              <div class="quality-score">
+                <i class="fas fa-chart-line"></i>
+                <span>Calidad: {{ getQualityScore() }}%</span>
+              </div>
+            </div>
+            
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <i class="fas fa-tv metric-icon"></i>
+                <div class="metric-info">
+                  <label>Resolución</label>
+                  <span class="metric-value">{{ metrics.resolution || '1920x1080' }}</span>
+                </div>
+              </div>
+              
+              <div class="metric-card">
+                <i class="fas fa-chart-line metric-icon"></i>
+                <div class="metric-info">
+                  <label>FPS</label>
+                  <span class="metric-value">{{ metrics.fps || 60 }}</span>
+                </div>
+              </div>
+              
+              <div class="metric-card">
+                <i class="fas fa-tachometer-alt metric-icon"></i>
+                <div class="metric-info">
+                  <label>Bitrate</label>
+                  <span class="metric-value">{{ (metrics.bitrate_kbps || 0) | number:'1.0-0' }} kbps</span>
+                </div>
+              </div>
+              
+              <div class="metric-card">
+                <i class="fas fa-hourglass-half metric-icon"></i>
+                <div class="metric-info">
+                  <label>Latencia</label>
+                  <span class="metric-value">~{{ metrics.latency_seconds || 6 }}s</span>
+                </div>
+              </div>
+              
+              <div class="metric-card">
+                <i class="fas fa-microchip metric-icon"></i>
+                <div class="metric-info">
+                  <label>Codec</label>
+                  <span class="metric-value">{{ metrics.codec || 'H.264' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="description-section">
+            <div class="section-header">
+              <i class="fas fa-align-left"></i>
+              <span>Descripción</span>
+            </div>
+            <p class="description-text">{{ stream.video.descripcion || 'Sin descripción disponible.' }}</p>
+          </div>
+        </div>
+
+        <div class="chat-column" [class.collapsed]="isChatCollapsed" *ngIf="!isMobile || !isChatCollapsed">
+          <div class="chat-header" (click)="toggleChat()">
+            <div class="chat-info">
+              <i class="fas fa-comments"></i>
+              <h3>Chat en vivo</h3>
+            </div>
+            <div class="viewers-container">
+              <i class="fas fa-eye"></i>
+              <span class="viewers-count" [class]="getViewerAnimationClass()">{{ stream.viewers || 0 }}</span>
+            </div>
+          </div>
+
+          <div #chatMessages class="chat-messages">
+            <div *ngFor="let msg of messages" class="message">
+              <img [src]="msg.user_photo" (error)="onImageError($event)" class="message-avatar" alt="">
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-user">{{ msg.user }}</span>
+                  <span class="message-time">{{ msg.created_at | date:'HH:mm' }}</span>
+                </div>
+                <div class="message-text">{{ msg.text }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input">
+            <form (submit)="enviarMensaje(); $event.preventDefault()">
+              <div class="input-group">
+                <input [(ngModel)]="mensaje" name="msg" 
+                  placeholder="Escribe un mensaje..." autocomplete="off">
+                <button type="submit" class="send-button" [disabled]="!mensaje.trim()">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <button class="show-chat-btn" *ngIf="isMobile && isChatCollapsed" class="show-chat-btn" (click)="toggleChat()">
+        <i class="fas fa-comments"></i>
+        <span>Mostrar chat ({{ stream.viewers || 0 }})</span>
+      </button>
+      </div>
     </div>
-  </div>
-  </div>
   </div>
 </div>

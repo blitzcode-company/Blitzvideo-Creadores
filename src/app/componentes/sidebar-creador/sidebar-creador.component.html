@@ -1,0 +1,26 @@
+<div class="sidebar" [class.collapsed]="sidebarCollapsed$ | async" *ngIf="canalNombre">
+  <div class="profile-section">
+    <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
+    <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
+    <h1 class="channel-name">{{ canalNombre }}</h1>
+  </div>
+  <hr class="lineaSideBar">
+  <nav class="menu-nav">
+    <a class="menu-item" routerLink="/misVideos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>video_library</mat-icon>
+      <span>Mis videos</span>
+    </a>
+    <a class="menu-item" routerLink="/subirVideo" routerLinkActive="active">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Subir video</span>
+    </a>
+    <a class="menu-item" routerLink="/crearStream" routerLinkActive="active">
+      <mat-icon>live_tv</mat-icon>
+      <span>Crear stream</span>
+    </a>
+    <a class="menu-item" routerLink="/estadisticas" routerLinkActive="active">
+      <mat-icon>bar_chart</mat-icon>
+      <span>Estadisticas</span>
+    </a>
+  </nav>
+</div>

@@ -1,0 +1,123 @@
+<h2 mat-dialog-title>
+  <mat-icon>edit</mat-icon>
+  Editar información del stream
+</h2>
+
+<mat-dialog-content>
+  <div class="miniatura-section">
+    <div class="miniatura-container">
+      <img
+        *ngIf="previewMiniatura; else miniaturaActual"
+        [src]="previewMiniatura"
+        class="miniatura-preview miniatura-hover"
+        alt="Vista previa de la miniatura">
+      
+      <ng-template #miniaturaActual>
+        <img
+          [src]="data.miniaturaActual"
+          class="miniatura-preview"
+          alt="Miniatura actual">
+      </ng-template>
+      
+      <div class="miniatura-overlay" *ngIf="previewMiniatura">
+        <button
+          mat-icon-button
+          type="button"
+          class="remove-miniatura-btn"
+          (click)="removerMiniatura()"
+          matTooltip="Eliminar miniatura">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="miniatura-actions">
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        hidden
+        (change)="onMiniaturaSeleccionada($event)">
+      
+      <button
+        mat-raised-button
+        type="button"
+        (click)="fileInput.click()">
+        <mat-icon>cloud_upload</mat-icon>
+        Cambiar miniatura
+      </button>
+      
+      <button
+        mat-stroked-button
+        type="button"
+        *ngIf="previewMiniatura"
+        (click)="cancelarMiniatura()">
+        <mat-icon>cancel</mat-icon>
+        Cancelar
+      </button>
+      
+      <span class="requisitos-miniatura">
+        <mat-icon>info</mat-icon>
+        JPG, PNG (máx. 5MB)
+      </span>
+    </div>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Título del stream</mat-label>
+    <input
+      matInput
+      [(ngModel)]="titulo"
+      name="titulo"
+      #tituloInput="ngModel"
+      required
+      minlength="3"
+      maxlength="100"
+      placeholder="Ej: Aprendiendo Angular avanzado">
+    
+    
+    <mat-error *ngIf="tituloInput.errors?.['required']">
+      El título es obligatorio
+    </mat-error>
+    <mat-error *ngIf="tituloInput.errors?.['minlength']">
+      El título debe tener al menos 3 caracteres
+    </mat-error>
+    
+    <mat-hint align="end">{{titulo?.length || 0}}/100</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Descripción</mat-label>
+    <textarea
+      matInput
+      rows="5"
+      [(ngModel)]="descripcion"
+      name="descripcion"
+      maxlength="500"
+      placeholder="Describe el contenido de tu stream...">
+    </textarea>
+    
+    
+    <mat-hint align="end">{{descripcion?.length || 0}}/500 caracteres</mat-hint>
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <div class="spacer"></div>
+  
+  <button
+    mat-button
+    (click)="cerrar()">
+    Cancelar
+  </button>
+  
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="guardar()"
+    [disabled]="!titulo || titulo.length < 3">
+    <mat-icon>save</mat-icon>
+    Guardar cambios
+  </button>
+</mat-dialog-actions>

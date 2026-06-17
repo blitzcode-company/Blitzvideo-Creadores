@@ -31,7 +31,7 @@
 }
 
 .containerHome.collapsed .content-wrapper {
-  margin-left: 1px;
+  margin-left: 55px;
 }
 
 .sidebar {
@@ -663,8 +663,6 @@
   margin-right: 4px;
 }
 
-/* ============= FORM ACTIONS ============= */
-
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -719,8 +717,6 @@
   stroke: white !important;
 }
 
-/* ============= DARK THEME OVERWRITES ============= */
-
 :host-context(.dark-theme) .sidebar {
   background-color: rgba(15, 15, 15, 0.75);
   border-right-color: rgba(255, 255, 255, 0.1);
@@ -748,8 +744,6 @@
   background: #0f0f0f;
   color: #e0e0e0;
 }
-
-/* ============= NO ACCESS ============= */
 
 .no-access {
   text-align: center;
@@ -1004,12 +998,14 @@
   }
 
   .form-actions {
-    flex-direction: column-reverse;
+    flex-direction: row;
+    justify-content: center;
     gap: 8px;
   }
 
   .form-actions button {
-    width: 100%;
+    width: auto;
+    min-width: 140px;
   }
 
   .sidebar a span {

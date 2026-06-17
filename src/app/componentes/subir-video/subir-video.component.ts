@@ -11,7 +11,8 @@ import { Title } from '@angular/platform-browser';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { SidebarService } from '../../servicios/sidebar.service';
 import { Observable } from 'rxjs';
-
+import { UsuarioGlobalService } from '../../servicios/usuario-global.service';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-subir-video',
@@ -24,7 +25,7 @@ export class SubirVideoComponent implements OnInit {
   canal: any;
   canalNombre: any;
   canalId: any;
-  etiquetasSeleccionadas: Etiqueta[] = [];
+  etiquetasSeleccionadas: number[] = [];
   alerta: { message: string; type: 'success' | 'error' }[] = [];
   etiquetasPlanas: Etiqueta[] = [];
   sidebarCollapsed$!: Observable<boolean>;
@@ -44,6 +45,7 @@ export class SubirVideoComponent implements OnInit {
 
   constructor(
     private videoService: VideosService, 
+    private usuarioGlobal: UsuarioGlobalService,
     private authService: AuthService,
     public router: Router,
     public location: Location,
@@ -54,7 +56,7 @@ export class SubirVideoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+    this.sidebarCollapsed$ = this.usuarioGlobal.sidebarCollapsed$;
     this.obtenerUsuario();
     this.listarEtiquetas();
   }
@@ -140,6 +142,7 @@ onThumbnailUpload(event: any) {
     reader.onload = () => this.thumbnailPreview = reader.result as string;
     reader.readAsDataURL(file);
   }
+
   listarEtiquetas() {
     this.videoService.listarEtiquetas().subscribe({
       next: (res) => this.etiquetasPlanas = res,
@@ -150,14 +153,21 @@ onThumbnailUpload(event: any) {
     });
   }
 
-  onEtiquetaSeleccionada(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedOptions = Array.from(selectElement.selectedOptions);
-    this.etiquetasSeleccionadas = selectedOptions.map(option => {
-      const id = Number(option.value);
-      return this.etiquetasPlanas.find(etiqueta => etiqueta.id === id);
-    }).filter(Boolean) as Etiqueta[];
+  onEtiquetaSeleccionada(event: MatSelectChange) {
+    this.etiquetasSeleccionadas = event.value as number[];
   }
+
+  getEtiquetaNombre(id: number): string {
+    const etiqueta = this.etiquetasPlanas.find(
+      e => Number(e.id) === Number(id)
+    );
+
+    return etiqueta ? etiqueta.nombre : 'Etiqueta desconocida';
+  }
+
+    quitarEtiqueta(index: number) {
+  this.etiquetasSeleccionadas.splice(index, 1);
+}
 
 onSubmit(form: NgForm) {
     if (!form.valid || !this.videoFile || !this.canalId) {

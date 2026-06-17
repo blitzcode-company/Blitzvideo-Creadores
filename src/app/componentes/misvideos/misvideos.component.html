@@ -1,32 +1,7 @@
 <app-header></app-header>
 <div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async">
   <div class="sidebar-container">
-    <div class="sidebar" *ngIf="canalNombre">
-      <div class="profile-section">
-        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
-        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
-        <h1 class="channel-name">{{ canalNombre }}</h1>
-      </div>
-      <hr class="lineaSideBar">
-      <nav class="menu-nav">
-        <a class="menu-item active" routerLink="/misVideos">
-          <mat-icon>video_library</mat-icon>
-          <span>Mis videos</span>
-        </a>
-        <a class="menu-item" routerLink="/subirVideo">
-          <mat-icon>cloud_upload</mat-icon>
-          <span>Subir video</span>
-        </a>
-        <a class="menu-item" routerLink="/crearStream">
-          <mat-icon>live_tv</mat-icon>
-          <span>Crear stream</span>
-        </a>
-        <a class="menu-item" routerLink="/estadisticas">
-          <mat-icon>bar_chart</mat-icon>
-          <span>Estadisticas</span>
-        </a>
-      </nav>
-    </div>
+    <app-sidebar-creador></app-sidebar-creador>
   </div>
 
   <div class="content-wrapper">
@@ -122,9 +97,13 @@
             <button mat-icon-button [routerLink]="['/editarVideo', video.id]" matTooltip="Editar video">
               <mat-icon>edit</mat-icon>
             </button>
+             <button mat-icon-button (click)="abrirComentarios(video)" matTooltip="Ver comentarios">
+              <mat-icon>comment</mat-icon>
+            </button>
             <button mat-icon-button color="warn" (click)="eliminarVideo(video.id)" matTooltip="Eliminar">
               <mat-icon>delete</mat-icon>
             </button>
+
           </div>
         </div>
 
@@ -153,11 +132,30 @@
       </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="!canalNombre" class="no-access">
-  <mat-icon>lock</mat-icon>
-  <h2>No tienes canal</h2>
-  <p>Crea un canal para ver tus videos</p>
-  <a mat-button [routerLink]="['/crearCanal']">Crear canal</a>
+  <div class="comentarios-drawer" [class.open]="panelComentariosAbierto">
+  <div class="drawer-overlay" (click)="cerrarComentarios()"></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <mat-icon>comment</mat-icon>
+        <div>
+          <h3>Comentarios</h3>
+          <p class="drawer-subtitle">{{ videoSeleccionado?.titulo }}</p>
+        </div>
+      </div>
+      <button mat-icon-button (click)="cerrarComentarios()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <app-comentarios-studio
+        *ngIf="panelComentariosAbierto && videoSeleccionado"
+        [videoId]="videoSeleccionado.id"
+        [usuarioId]="usuario?.id"
+        [usuarioFoto]="usuario?.foto">
+      </app-comentarios-studio>
+    </div>
+  </div>
+</div>
 </div>

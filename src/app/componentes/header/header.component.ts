@@ -7,6 +7,7 @@ import { Canal } from '../../clases/canal';
 import { environment } from '../../../environments/environment.prod';
 import { SidebarService } from '../../servicios/sidebar.service';
 import { ThemeService } from '../../servicios/theme.service';
+import { UsuarioGlobalService } from '../../servicios/usuario-global.service';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class HeaderComponent implements OnInit{
               public status:StatusService,
               public cookie:CookieService,
               private sidebarService:SidebarService,
-            public themeService:ThemeService){}      
+              public themeService:ThemeService,
+              private usuarioGlobal:UsuarioGlobalService){}      
 
               ngOnInit() {
                 this.obtenerUsuario();
@@ -187,7 +189,7 @@ mostrarTemasUsuarioView() {
   }
 
   toggleSidebar(): void {
-    this.sidebarService.toggleSidebar();
+    this.usuarioGlobal.toggleSidebar();
   }
 
   @HostListener('document:click', ['$event'])

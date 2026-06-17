@@ -1,0 +1,83 @@
+<div class="reproductor-video-container" #videoContainer
+  (mousemove)="showControls()"
+  (mouseleave)="hideControls()"
+  [ngClass]="{'cinema-mode': isCinemaMode, 'fullscreen': isFullscreen}">
+
+  <div class="video-wrapper">
+
+    <video #videoPlayer
+      class="video-js vjs-default-skin"
+      muted
+      autoplay
+      playsinline
+      (loadedmetadata)="setDuration()"
+      (timeupdate)="updateProgressBar()">
+    </video>
+    <div class="stream-overlay" *ngIf="!activoStream">
+      <i class="fas fa-power-off"></i>
+      <h3>Stream Inactivo</h3>
+      <p>Activa el stream para comenzar</p>
+    </div>
+
+    <div class="stream-overlay loading" *ngIf="activoStream && isLoading">
+      <div class="spinner"></div>
+      <h3>Conectando con OBS...</h3>
+      <p>Esperando señal HLS</p>
+    </div>
+
+    <div class="live-badge" *ngIf="activoStream === 1">
+      <span class="live-pulse"></span>
+      EN VIVO
+    </div>
+
+    <div class="video-overlay" >
+      <i [class]="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
+    </div>
+
+    <div class="controls" #controlsRef [class.hide]="!showControlsActive">
+
+      <div class="progress-container">
+        <input #progressBar type="range" min="0" max="100" step="0.1"
+          class="progreso"
+          (input)="seek(progressBar)">
+      </div>
+
+      <div class="controls-buttons">
+        <div class="left-controls">
+          <button (click)="togglePlayPause()"
+            [matTooltip]="isPlaying ? 'Pausar (Espacio)' : 'Reproducir (Espacio)'">
+            <i [class]="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
+          </button>
+
+          <div class="live-badge" *ngIf="activoStream === 1">
+            <span class="live-pulse"></span>
+            <span class="live-text">EN VIVO</span>
+          </div>
+
+          <span class="time-display" *ngIf="activoStream !== 1">
+            {{ formatTime(currentTime) }}
+          </span>
+        </div>
+
+        <div class="right-controls">
+          <button (click)="toggleMute()"
+            [matTooltip]="isMuted ? 'Activar sonido (M)' : 'Silenciar (M)'">
+            <i [class]="isMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'"></i>
+          </button>
+
+          <input type="range" #volumeSlider class="volume"
+            value="100" min="0" max="100"
+            (input)="changeVolume(volumeSlider)"
+            matTooltip="Cambiar volumen">
+
+    
+          <button (click)="toggleFullscreen(videoContainer)"
+            matTooltip="Pantalla completa (F)">
+            <i class="fas fa-expand"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

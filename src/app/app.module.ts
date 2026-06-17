@@ -12,6 +12,7 @@ import { HomeComponent } from './componentes/home/home.component';
 import { LoginComponent } from './componentes/login/login.component';
 import { MainPageComponent } from './componentes/main-page/main-page.component';
 import { MisvideosComponent } from './componentes/misvideos/misvideos.component';
+import { SidebarCreadorComponent } from './componentes/sidebar-creador/sidebar-creador.component';
 import { RegistroComponent } from './componentes/registro/registro.component';
 import { SubirVideoComponent } from './componentes/subir-video/subir-video.component';
 import { ChunkPipe } from './pipes/chunk.pipe';
@@ -37,6 +38,7 @@ import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips'; 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
@@ -45,6 +47,9 @@ import { EstadisticasComponent } from './componentes/estadisticas/estadisticas.c
 import { EstadisticasVideoComponent } from './componentes/estadisticas-video/estadisticas-video.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
+import { ReproductorStreamComponent } from './componentes/reproductor-stream/reproductor-stream.component';
+import { ComentariosStudioComponent } from './componentes/comentarios-studio/comentarios-studio.component';
+import { ModalEditarStreamComponent } from './componentes/modal-editar-stream/modal-editar-stream.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +61,7 @@ import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confi
     LoginComponent,
     MainPageComponent,
     MisvideosComponent,
+    SidebarCreadorComponent,
     RegistroComponent,
     SubirVideoComponent,
     ChunkPipe,
@@ -69,6 +75,9 @@ import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confi
     EstadisticasComponent,
     EstadisticasVideoComponent,
     ConfirmarDialogoComponent,
+    ReproductorStreamComponent,
+    ComentariosStudioComponent,
+    ModalEditarStreamComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +89,7 @@ import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confi
     NgbModule,
     MatIconModule,
     MatFormFieldModule,
+    MatTooltipModule,
     MatProgressBarModule,
     MatInputModule,
     MatButtonModule,
@@ -93,6 +103,9 @@ import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confi
     MatSnackBarModule,
     FontAwesomeModule,
 
+  ],
+  exports: [
+    SidebarCreadorComponent,
   ],
   providers: [
     CookieService,

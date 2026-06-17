@@ -2,34 +2,10 @@
 
 <div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async"> 
 
-<div class="sidebar-container">
-    <div class="sidebar" *ngIf="canalNombre">
-      <div class="profile-section">
-        <img *ngIf="!usuario?.foto" class="fotoPerfilDefault" src="assets/images/user.png" alt="Perfil">
-        <img *ngIf="usuario?.foto" class="fotoPerfil" [src]="usuario.foto" alt="Perfil">
-        <h1 class="channel-name">{{ canalNombre }}</h1>
-      </div>
-      <hr class="lineaSideBar">
-      <nav class="menu-nav">
-        <a class="menu-item" routerLink="/misVideos">
-          <mat-icon>video_library</mat-icon>
-          <span>Mis videos</span>
-        </a>
-        <a class="menu-item" routerLink="/subirVideo">
-          <mat-icon>cloud_upload</mat-icon>
-          <span>Subir video</span>
-        </a>
-        <a class="menu-item" routerLink="/crearStream">
-          <mat-icon>live_tv</mat-icon>
-          <span>Crear stream</span>
-        </a>
-        <a class="menu-item active" routerLink="/estadisticas">
-          <mat-icon>bar_chart</mat-icon>
-          <span>Estadisticas</span>
-        </a>
-      </nav>
-    </div>
+  <div class="sidebar-container">
+    <app-sidebar-creador></app-sidebar-creador>
   </div>
+
 <div class="content-wrapper">
     <div class="estadisticas-container">
     <div class="estadisticas-header">
@@ -136,10 +112,14 @@
               </p>
               <hr>
               <div class="canalNombre">
-                <span class="engagement-item">
-                  <img [src]="getRatingEmoji(video.promedioPuntuacion || 0)" alt="Rating" class="rating-svg-small">
-                  {{ (video.promedioPuntuacion || 0) | number: '1.0-1' }}/5
-                </span>
+               <span class="engagement-item">
+  <img
+    [src]="getRatingEmoji(promedioRating(video.promedioPuntuacion))"
+    [alt]="getRatingLabel(promedioRating(video.promedioPuntuacion))"
+    class="rating-svg-small">
+  {{ (video.promedioPuntuacion || 0) | number:'1.0-1' }}/5
+  ({{ getRatingLabel(promedioRating(video.promedioPuntuacion)) }})
+</span>
                 •
                 <span class="engagement-item">
                   <mat-icon class="small-icon">comment</mat-icon>

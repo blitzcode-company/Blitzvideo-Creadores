@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VideosService } from '../../servicios/videos.service';
 import { AuthService } from '../../servicios/auth.service';
 import { StatusService } from '../../servicios/status.service';
+import { UsuarioGlobalService } from '../../servicios/usuario-global.service';
 import { Canal } from '../../clases/canal';
 import { CanalService } from '../../servicios/canal.service';
 import { ModalEliminarVideoComponent } from '../modal-eliminar-video/modal-eliminar-video.component';
@@ -9,7 +10,6 @@ import { ModalAgregarPlaylistComponent } from '../modal-agregar-playlist/modal-a
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment.prod';
 import { Title } from '@angular/platform-browser';
-import { SidebarService } from '../../servicios/sidebar.service';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -25,7 +25,6 @@ export class MisvideosComponent implements OnInit{
   canal:any;
   canals = new Canal();
   canalId:any;
-  canalNombre:any
   serverIp = environment.serverIp
   sidebarCollapsed$!: Observable<boolean>;
 
@@ -33,7 +32,9 @@ export class MisvideosComponent implements OnInit{
   videosSeleccionados = new Set<number>();
   todosSeleccionados = false;
   paginaActual: number = 1;
-itemsPorPagina: number = 10;
+  itemsPorPagina: number = 10;
+  panelComentariosAbierto = false;
+  videoSeleccionado: any = null;
 
 
   constructor(private videoService:VideosService, 
@@ -42,14 +43,14 @@ itemsPorPagina: number = 10;
     private canalService: CanalService,
     public dialog: MatDialog,
     private title: Title,
-    private sidebarService: SidebarService,
+    private usuarioGlobal: UsuarioGlobalService,
     private snackBar: MatSnackBar){
     this.title.setTitle("Mis videos - BlitzStudio");
 
     }
 
   ngOnInit() {
-    this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
+    this.sidebarCollapsed$ = this.usuarioGlobal.sidebarCollapsed$;
     this.obtenerUsuario();
     this.mostrarTodosLosVideos();
   }
@@ -95,7 +96,6 @@ itemsPorPagina: number = 10;
       this.canal = res;
       if (res.canales) {
         this.canalId = res.canales.id;
-        this.canalNombre = res.canales.nombre;
         this.mostrarTodosLosVideos();
       } else {
         console.error('El usuario no tiene canal hecho');
@@ -103,6 +103,20 @@ itemsPorPagina: number = 10;
     });
   }
   
+
+abrirComentarios(video: any): void {
+  this.videoSeleccionado = video;
+  this.panelComentariosAbierto = true;
+  document.body.style.overflow = 'hidden'; 
+}
+
+cerrarComentarios(): void {
+  this.panelComentariosAbierto = false;
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    this.videoSeleccionado = null; 
+  }, 300);
+}
 
 get videosPaginados(): any[] {
   const inicio = (this.paginaActual - 1) * this.itemsPorPagina;

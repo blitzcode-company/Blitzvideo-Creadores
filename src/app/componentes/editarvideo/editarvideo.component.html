@@ -1,12 +1,14 @@
 <app-header></app-header>
 
-<div class="edit-container">
-  <div class="edit-header">
-    <button mat-icon-button routerLink="/misVideos" class="back-btn">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>Editar video</h1>
-  </div>
+<div class="containerHome" [class.collapsed]="sidebarCollapsed$ | async">
+  <div class="content-wrapper">
+    <div class="edit-container">
+      <div class="edit-header">
+        <button mat-icon-button routerLink="/misVideos" class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>Editar video</h1>
+      </div>
 
   <div *ngFor="let a of alerta" class="alert-banner" [ngClass]="a.type">
     <span [innerHTML]="a.message"></span>
@@ -117,5 +119,6 @@
         </button>
       </div>
     </form>
+    </div>
   </div>
 </div>

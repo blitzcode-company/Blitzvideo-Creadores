@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VideosService } from '../../servicios/videos.service';
+import { UsuarioGlobalService } from '../../servicios/usuario-global.service';
 import { Videos } from '../../clases/videos';
 import { environment } from '../../../environments/environment.prod';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../servicios/auth.service';
+import { Observable } from 'rxjs';
 interface Etiqueta {
   id: number;
   nombre: string;
@@ -28,6 +30,9 @@ export class EditarvideoComponent implements OnInit {
   etiquetas: Etiqueta[] = [];
   etiquetasSeleccionadas: number[] = [];
   guardando = false;
+
+  // Sidebar
+  sidebarCollapsed$: Observable<boolean> = this.usuarioGlobal.sidebarCollapsed$;
   alerta: { message: string; type: 'success' | 'error' }[] = [];
 
   serverIp = environment.serverIp;
@@ -37,7 +42,8 @@ export class EditarvideoComponent implements OnInit {
     private api:AuthService, 
     private router: Router,
     private videoService: VideosService,
-    private title: Title
+    private title: Title,
+    private usuarioGlobal: UsuarioGlobalService
   ) {
     this.title.setTitle('Editar video - BlitzStudio');
     this.id = +this.route.snapshot.params['id'];

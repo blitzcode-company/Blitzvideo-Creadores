@@ -18,6 +18,8 @@ import { environment } from '../../../environments/environment.prod';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
+import { ModalEditarStreamComponent } from '../modal-editar-stream/modal-editar-stream.component';
+import { UsuarioGlobalService } from '../../servicios/usuario-global.service';
 
 @Component({
   selector: 'app-monitorear-stream',
@@ -26,8 +28,6 @@ import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialog
 })
 export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
 
-  player!: any
-  private playerInitialized = false;
   transmisionId: number = 0;
   stream = new Streams();
   cargando: boolean = true;
@@ -57,7 +57,6 @@ export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
   private destroy$ = new Subject<void>();
   private isUserAtBottom = true;
   private chatContainer!: ElementRef<HTMLDivElement>;
-  private videoPlayerNative!: HTMLVideoElement;
 
 
   viewers = 0;
@@ -66,13 +65,9 @@ export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
 
 
   @ViewChild('chatMessages') chatMessages!: ElementRef;
-  @ViewChild('videoPlayer') videoRef!: ElementRef;
-  @ViewChild('videoPlayer', { static: false }) set videoPlayerElement(element: ElementRef<HTMLVideoElement>) {
-    if (element && !this.playerInitialized) {
-      this.videoPlayerNative = element.nativeElement;
-      this.inicializarVideoJS();
-    }
-  }
+
+  isChatCollapsed: boolean = false;
+  isMobile: boolean = false;
 
 
 
@@ -82,6 +77,7 @@ export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
   private streamService: StreamService,
   private chatService: ChatstreamService,
   private authService: AuthService,
+  private usuarioGlobal: UsuarioGlobalService,
   private sidebarService: SidebarService,
   private cookie: CookieService,
   private cdr: ChangeDetectorRef,
@@ -116,28 +112,92 @@ export class MonitorearStreamComponent implements OnInit,  AfterViewInit  {
 }
 
 ngOnInit(): void {
-  this.transmisionId = Number(this.route.snapshot.paramMap.get('id')) || 0;
-  this.sidebarCollapsed$ = this.sidebarService.sidebarCollapsed$;
-  this.obtenerUsuario(); 
-  this.cargarMensajesIniciales();
-  this.suscribirseAMensajesEnTiempoReal();
-  this.cargarStreamYMetrics();
-  this.cargarViewers();
-  this.cargarStreamKeyDelCanal();
-  this.iniciarEscuchaViewersEnTiempoReal(); 
-  const guideClosed = localStorage.getItem('streamGuideClosed');
-    if (guideClosed === 'true') {
-      this.cerrarGuiaAutomaticamente = true;
-    }
+    this.sidebarCollapsed$ = this.usuarioGlobal.sidebarCollapsed$;
+    this.checkMobile();
+    window.addEventListener('resize', () => this.checkMobile());
+    this.transmisionId = Number(this.route.snapshot.paramMap.get('id')) || 0;
+    this.obtenerUsuario(); 
+    this.cargarMensajesIniciales();
+    this.suscribirseAMensajesEnTiempoReal();
+    this.cargarStreamYMetrics();
+    this.cargarViewers();
+    this.cargarStreamKeyDelCanal();
+    this.iniciarEscuchaViewersEnTiempoReal(); 
+    const guideClosed = localStorage.getItem('streamGuideClosed');
+      if (guideClosed === 'true') {
+        this.cerrarGuiaAutomaticamente = true;
+      }
 
-  this.subscription = this.chatService.startListening(this.transmisionId).subscribe((nuevo) => {
-    this.mensajes.push(nuevo);
-  });
+    this.subscription = this.chatService.startListening(this.transmisionId).subscribe((nuevo) => {
+      this.mensajes.push(nuevo);
+    });
 }
   ngAfterViewInit(): void {
     this.setupScrollListener();
   }
 
+ abrirModalEditarStream(): void {
+
+  const dialogRef = this.dialog.open(
+    ModalEditarStreamComponent,
+    {
+      width: '600px',
+      data: {
+        titulo: this.stream.video.titulo,
+        descripcion: this.stream.video.descripcion,
+        miniaturaActual: this.stream.video.miniatura
+      }
+    }
+  );
+
+  dialogRef.afterClosed().subscribe(resultado => {
+
+    if (!resultado) {
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append('titulo', resultado.titulo);
+    formData.append('descripcion', resultado.descripcion);
+
+    if (resultado.miniatura) {
+      formData.append('miniatura', resultado.miniatura);
+    }
+
+    this.streamService.actualizarDatosDeTransmision(
+      this.transmisionId,
+      this.canalId,
+      formData
+    ).subscribe({
+
+      next: () => {
+
+        this.stream.video.titulo = resultado.titulo;
+        this.stream.video.descripcion = resultado.descripcion;
+
+        if (resultado.previewMiniatura) {
+          this.stream.video.miniatura = resultado.previewMiniatura;
+        }
+
+      }
+
+    });
+
+  });
+
+}
+  
+
+checkMobile() {
+  this.isMobile = window.innerWidth <= 992;
+}
+
+toggleChat() {
+  if (this.isMobile) {
+    this.isChatCollapsed = !this.isChatCollapsed;
+  }
+}
 
 private iniciarEscuchaViewersEnTiempoReal() {
   if (!this.transmisionId) return;
@@ -166,94 +226,26 @@ private iniciarEscuchaViewersEnTiempoReal() {
         this.playerHasStarted = false;
         this.metricsPolling$?.unsubscribe();
         this.metricsPolling$ = null;
-        this.player?.src(null);
       }
-
+      setTimeout(() => {
+          this.router.navigate(['/crearStream']);
+        }, 2000);
       this.cdr.markForCheck();
     });
 }
 
+  private animarViewers(nuevoNumero: number) {
+    const elemento = document.querySelector('.viewers-count strong');
+    if (!elemento) return;
 
-private animarViewers(nuevoNumero: number) {
-  const elemento = document.querySelector('.viewers-count strong');
-  if (!elemento) return;
+    elemento.classList.remove('pulse-up', 'pulse-down');
+    
+    const anterior = this.stream.viewers || 0;
+    const clase = nuevoNumero > anterior ? 'pulse-up' : 'pulse-down';
 
-  elemento.classList.remove('pulse-up', 'pulse-down');
-  
-  const anterior = this.stream.viewers || 0;
-  const clase = nuevoNumero > anterior ? 'pulse-up' : 'pulse-down';
-
-  elemento.classList.add(clase);
-  setTimeout(() => elemento.classList.remove(clase), 800);
-}
-
-
-  inicializarVideoJS() {
-  if (this.playerInitialized || !this.videoPlayerNative) return;
-
-  console.log('Inicializando Video.js...');
-  this.player = videojs(this.videoPlayerNative, {
-    html5: {
-      vhs: {
-        overrideNative: true,
-        enableLowInitialPlaylist: true,
-        fastQualityChange: true,
-        smoothQualityChange: true
-      }
-    },
-    liveui: true,
-    responsive: true,
-    fluid: true,
-    autoplay: true,
-    muted: true,
-    controls: true,
-    preload: 'auto',
-    liveTracker: true
-  }, () => {
-    console.log('Video.js inicializado correctamente');
-    this.playerInitialized = true;
-
-    if (this.stream?.activo && this.streamUrl) {
-      this.actualizarVideoSource();
-    }
-  });
-
-  this.player.on('playing', () => {
-    this.playerHasStarted = true;
-    this.player.addClass('vjs-has-started');
-    this.player.addClass('vjs-playing'); 
-    console.log('EN VIVO - Señal recibida de OBS');
-  });
-
-  this.player.on('pause', () => {
-    if (!this.player.ended()) {
-      this.playerHasStarted = false;
-    }
-  });
-  this.player.on('waiting', () => {
-    if (this.playerHasStarted) console.log('Buffering...');
-  });
-
-  this.player.on('error', (e: any) => {
-    console.error('Error en Video.js:', this.player.error());
-  });
-}
-
-cargarHLS() {
-  if (!this.player || !this.streamUrl || !this.stream?.activo) return;
-
-  console.log('Cargando HLS:', this.streamUrl);
-  this.player.src({
-    src: this.streamUrl,
-    type: 'application/x-mpegURL'
-  });
-
-  this.player.ready(() => {
-    this.player.play().catch(() => {
-      console.log('Autoplay bloqueado (normal)');
-    });
-  });
-}
+    elemento.classList.add(clase);
+    setTimeout(() => elemento.classList.remove(clase), 800);
+  }
 
    enviarMensaje(): void {
     if (!this.mensaje.trim() || !this.transmisionId || !this.userId) return;
@@ -287,16 +279,34 @@ cargarHLS() {
     });
   }
 
+onStreamIniciado(): void {
+  this.playerHasStarted = true;
+  this.cdr.markForCheck();
+  if (this.streamKey && !this.metricsPolling$) {
+    this.iniciarMetricsPolling(this.streamKey);
+  }
+}
 
+onStreamFinalizado(): void {
+  this.playerHasStarted = false;
+  this.metricsPolling$?.unsubscribe();
+  this.metricsPolling$ = null;
+  this.cdr.markForCheck();
+}
 
 cargarStreamYMetrics() {
   this.streamService.obtenerDatosTransmision(this.transmisionId).subscribe({
     next: (res: any) => {
       this.stream = res;
-            console.log('Datos del stream:', this.stream );
-
+      console.log('Datos del stream:', this.stream );
       this.streamUrl = res.url_hls;
       this.canalId = res.canal.id; 
+
+      if (this.stream.video?.estado === 'FINALIZADO') {
+        this.router.navigate(['/crearStream']);
+        return;
+      }
+
 
      if (!this.canalId) {
         console.error('No se pudo obtener el ID del canal');
@@ -305,7 +315,6 @@ cargarStreamYMetrics() {
       }
 
       this.cargarStreamKeyDelCanal();
-      this.actualizarVideoSource(); 
       this.cargando = false;
     }
   });
@@ -360,11 +369,9 @@ iniciarMetricsPolling(streamKey: string) {
             next: (res: any) => {
               this.streamUrl = res.url_hls;
               console.log('URL obtenida:', this.streamUrl);
-              this.actualizarVideoSource();
             }
           });
         } else {
-          this.actualizarVideoSource();
         }
 
       } else if (!estaVivo) {
@@ -374,9 +381,7 @@ iniciarMetricsPolling(streamKey: string) {
 }
 
   ngOnDestroy() {
-    if (this.player) {
-      this.player.dispose();
-    }
+
     if (this.metricsPolling$) this.metricsPolling$.unsubscribe();
     if (this.subscription) this.subscription.unsubscribe();
     if (this.chatSubscription) this.chatSubscription.unsubscribe();
@@ -527,7 +532,6 @@ activarStreamManual() {
         if (res.success) {
           this.stream.activo = true;
           this.stream.video.estado = 'PROGRAMADO';
-          this.actualizarVideoSource();
           this.cargarStreamKeyDelCanal();
           this.mostrarMensaje('✅ Stream activado correctamente. Conecta OBS para transmitir', 'success');
         }
@@ -633,25 +637,50 @@ copiar(texto: string | null) {
       alert('¡Copiado al portapapeles!');
     });
   } 
-
+  
+  getButtonClass(): string {
+    if (this.activandoStream) return 'activate';
+    if (!this.stream?.activo) return 'activate';
+    if (this.stream?.activo && !this.playerHasStarted) return 'waiting';
+    if (this.playerHasStarted) return 'live';
+    return 'activate';
+  }
 getStatusClass(): string {
     if (this.stream?.video?.estado === 'FINALIZADO') return 'finalizado';
     if (this.playerHasStarted) return 'en-vivo';
     if (this.stream?.activo) return 'esperando';
     return 'inactivo';
   }
-  getStatusText(): string {
-    if (this.stream?.video?.estado === 'FINALIZADO') return 'FINALIZADO';
-    if (this.playerHasStarted) return 'EN VIVO';           
-    if (this.stream?.activo) return 'Esperando OBS...';
-    return 'Inactivo';
+  getButtonText(): string {
+    if (this.activandoStream) return 'Activando...';
+    if (!this.stream?.activo) return 'Activar stream';
+    if (this.stream?.activo && !this.playerHasStarted) return 'Esperando OBS...';
+    if (this.playerHasStarted) return 'En vivo';
+    return 'Activar stream';
   }
-getStatusIcon(): string {
-  if (this.stream?.video?.estado === 'FINALIZADO') return 'fas fa-stop-circle';
-  if (this.playerHasStarted) return 'fas fa-circle text-danger blink';
-  if (this.stream?.activo) return 'fas fa-clock text-warning';
-  return 'fas fa-pause-circle text-muted';
-}
+
+  
+  getButtonIcon(): string {
+    if (this.activandoStream) return 'fa-spinner fa-spin';
+    if (!this.stream?.activo) return 'fa-play';
+    if (this.stream?.activo && !this.playerHasStarted) return 'fa-clock';
+    if (this.playerHasStarted) return 'fa-circle';
+    return 'fa-play';
+  }
+  
+    getQualityScore(): number {
+    if (!this.metrics) return 100;
+    let score = 100;
+    if (this.metrics.fps && this.metrics.fps < 30) score -= 20;
+    if (this.metrics.bitrate_kbps && this.metrics.bitrate_kbps < 2500) score -= 15;
+    if (this.metrics.latency_seconds && this.metrics.latency_seconds > 8) score -= 10;
+    return Math.max(0, score);
+  }
+  
+  getViewerAnimationClass(): string {
+    return this.viewerAnimation ? 'animate' : '';
+  }
+  viewerAnimation:any
 
   puedeActivarStream(): boolean {
     if (!this.stream) return false;
@@ -676,21 +705,6 @@ getStatusIcon(): string {
             this.stream?.video?.estado === 'DIRECTO';
     }
 
-actualizarVideoSource() {
-  if (!this.playerInitialized) {
-    console.log('Player no listo aún, reintentando...');
-    setTimeout(() => this.actualizarVideoSource(), 500);
-    return;
-  }
-
-  if (this.stream?.activo && this.streamUrl) {
-    console.log('Cargando stream activo:', this.streamUrl);
-    this.cargarHLS();
-  } else {
-    this.player?.src(null);
-    this.playerHasStarted = false;
-  }
-}
 
 
 }

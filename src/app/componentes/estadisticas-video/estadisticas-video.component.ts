@@ -8,6 +8,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, Observable } from 'rxjs';
 import { Canal } from '../../clases/canal';
 import Chart from 'chart.js/auto';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-estadisticas-video',
@@ -65,7 +66,7 @@ export class EstadisticasVideoComponent implements OnInit, OnDestroy, AfterViewI
 
   currentTheme = this.themeService.temaActual;
   private themeSubscription: Subscription | null = null;
-
+  Math = Math;
   private viewsChart: Chart | null = null;
   private retentionChart: Chart | null = null;
   private trafficChart: Chart | null = null;
@@ -73,6 +74,7 @@ export class EstadisticasVideoComponent implements OnInit, OnDestroy, AfterViewI
   constructor(
     private route: ActivatedRoute,
     private estadisticasService: EstadisticasService,
+    private location: Location,
     private authService: AuthService,
     public themeService: ThemeService,
     private sidebarService: SidebarService,
@@ -153,6 +155,21 @@ export class EstadisticasVideoComponent implements OnInit, OnDestroy, AfterViewI
     );
   }
 
+
+
+  getRatingLabel(rating: number): string {
+    const labels: { [key: number]: string } = {
+      5: 'Me encanta',
+      4: 'Me divierte',
+      3: 'Me gusta',
+      2: 'Me entristece',
+      1: 'Me enoja'
+    };
+
+    return labels[rating] || '';
+  }
+
+
   generarDatosRetencion(): void {
     const duracionTotal = this.video.duracion || 117;
     const tasaCompletitud = this.estadisticas.tasaCompletitud / 100; 
@@ -182,6 +199,10 @@ export class EstadisticasVideoComponent implements OnInit, OnDestroy, AfterViewI
         retencion: Math.round(retencion * 10) / 10
       });
     }
+  }
+
+  volver(): void {
+    this.location.back();
   }
 
   generarDatosVistasPorFecha(): void {
@@ -354,15 +375,16 @@ export class EstadisticasVideoComponent implements OnInit, OnDestroy, AfterViewI
           }
         },
         scales: {
-          y: {
-            beginAtZero: true,
-            grid: { color: colores.gridColor },
-            ticks: { color: colores.textColor },
-            title: {
-              display: true,
-              text: 'Número de vistas',
-              color: colores.textColor
+      y: {
+          beginAtZero: true,
+          grid: { color: colores.gridColor },
+          ticks: {
+            color: colores.textColor,
+            precision: 0,
+            callback: function(value) {
+              return Number(value).toLocaleString();
             }
+          },
           },
           x: {
             grid: { color: colores.gridColor },
